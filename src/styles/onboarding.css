@@ -1,0 +1,409 @@
+/* ==========================================================================
+   CAREEROS - Student Onboarding Stylesheet
+   5-Step Intelligent Wizard
+   ========================================================================== */
+
+.onboard-container {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 0%, #EEF2FF 0%, #F8FAFC 60%, #FAFCFF 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px 64px;
+  font-family: var(--font-sans);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Onboarding Header & Progress Tracker
+   -------------------------------------------------------------------------- */
+.onboard-header {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.onboard-top-nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.onboard-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.onboard-logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.onboard-skip-btn {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--slate-500);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.onboard-skip-btn:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* Step tracker indicator */
+.onboard-progress-tracker {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.onboard-progress-bar-bg {
+  position: absolute;
+  top: 18px;
+  left: 36px;
+  right: 36px;
+  height: 4px;
+  background: #E2E8F0;
+  z-index: 1;
+  border-radius: 999px;
+}
+
+.onboard-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4F46E5 0%, #8B5CF6 100%);
+  border-radius: 999px;
+  transition: width var(--transition-normal);
+}
+
+.onboard-step-node {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.onboard-node-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2px solid #CBD5E1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--slate-500);
+  transition: all var(--transition-fast);
+}
+
+.onboard-step-node.active .onboard-node-circle {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+}
+
+.onboard-step-node.completed .onboard-node-circle {
+  background: #10B981;
+  border-color: #10B981;
+  color: #FFFFFF;
+}
+
+.onboard-node-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate-500);
+  white-space: nowrap;
+}
+
+.onboard-step-node.active .onboard-node-label {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Onboarding Wizard Card
+   -------------------------------------------------------------------------- */
+.onboard-card {
+  width: 100%;
+  max-width: 760px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.08);
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  animation: slideUpFade 300ms ease-out;
+}
+
+.onboard-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.onboard-card-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--slate-900);
+  letter-spacing: -0.02em;
+}
+
+.onboard-card-desc {
+  font-size: 14.5px;
+  color: var(--slate-500);
+  line-height: 1.5;
+}
+
+/* Form Layout inside Card */
+.onboard-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.onboard-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.onboard-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.onboard-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--slate-800);
+}
+
+.onboard-input,
+.onboard-select {
+  height: 46px;
+  background: #F8FAFC;
+  border: 1px solid var(--slate-200);
+  border-radius: 12px;
+  padding: 0 16px;
+  font-size: 14px;
+  color: var(--slate-900);
+  transition: all var(--transition-fast);
+}
+
+.onboard-input:focus,
+.onboard-select:focus {
+  outline: none;
+  background: #FFFFFF;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.14);
+}
+
+/* Selectable Pills & Badges */
+.onboard-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.onboard-pill-btn {
+  padding: 10px 18px;
+  background: #F8FAFC;
+  border: 1px solid var(--slate-200);
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--slate-700);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.onboard-pill-btn:hover {
+  background: #EEF2FF;
+  border-color: #C7D2FE;
+  color: var(--primary);
+}
+
+.onboard-pill-btn.selected {
+  background: #EEF2FF;
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+}
+
+/* Selectable Cards (e.g. Year, Target Tiers, Time Preference) */
+.onboard-card-option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.onboard-option-card {
+  border: 1.5px solid var(--slate-200);
+  border-radius: 16px;
+  padding: 16px;
+  background: #F8FAFC;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.onboard-option-card:hover {
+  border-color: #C7D2FE;
+  background: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.onboard-option-card.selected {
+  border-color: var(--primary);
+  background: #F5F7FF;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.15);
+}
+
+.onboard-option-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--slate-900);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.onboard-option-desc {
+  font-size: 12.5px;
+  color: var(--slate-500);
+  line-height: 1.4;
+}
+
+/* AI Preview Summary in Step 5 */
+.onboard-summary-box {
+  background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+  border-radius: 18px;
+  padding: 24px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.onboard-summary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.onboard-summary-stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+}
+
+/* Action Footer Buttons */
+.onboard-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--slate-100);
+}
+
+.onboard-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--slate-600);
+  background: none;
+  border: 1px solid var(--slate-200);
+  padding: 11px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.onboard-btn-back:hover {
+  background: var(--slate-100);
+  color: var(--slate-900);
+}
+
+.onboard-btn-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.onboard-btn-next:hover {
+  background: linear-gradient(135deg, #4338CA 0%, #3730A3 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+}
+
+/* Responsive */
+@media (max-width: 680px) {
+  .onboard-card {
+    padding: 24px 18px;
+  }
+  .onboard-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .onboard-summary-stats {
+    grid-template-columns: 1fr;
+  }
+  .onboard-node-label {
+    display: none;
+  }
+}

@@ -1,0 +1,373 @@
+/* ==========================================================================
+   CAREEROS - Resume Builder Stylesheet
+   ATS-Optimized Real-Time Interactive Editor
+   ========================================================================== */
+
+.resume-builder-page {
+  min-height: 100vh;
+  background-color: #F1F5F9;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+}
+
+/* --------------------------------------------------------------------------
+   Top Navigation Bar
+   -------------------------------------------------------------------------- */
+.resume-topbar {
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--slate-200);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.resume-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.resume-doc-title-input {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--slate-900);
+  border: 1px solid transparent;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: transparent;
+  transition: all var(--transition-fast);
+}
+
+.resume-doc-title-input:hover {
+  background: var(--slate-100);
+}
+
+.resume-doc-title-input:focus {
+  outline: none;
+  background: #FFFFFF;
+  border-color: var(--primary);
+}
+
+/* ATS Score Pill in Topbar */
+.resume-ats-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  color: #059669;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.resume-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.resume-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--slate-300);
+  color: var(--slate-700);
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.resume-btn-secondary:hover {
+  background: var(--slate-50);
+  border-color: var(--slate-400);
+  color: var(--slate-900);
+}
+
+.resume-btn-ai {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  color: var(--primary);
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.resume-btn-ai:hover {
+  background: #E0E7FF;
+  border-color: var(--primary);
+}
+
+.resume-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+  color: #FFFFFF;
+  border: none;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+  transition: all var(--transition-fast);
+}
+
+.resume-btn-primary:hover {
+  background: linear-gradient(135deg, #4338CA 0%, #3730A3 100%);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Two-Column Split Workspace
+   -------------------------------------------------------------------------- */
+.resume-workspace {
+  display: grid;
+  grid-template-columns: 460px 1fr;
+  flex: 1;
+  min-height: calc(100vh - 65px);
+  overflow: hidden;
+}
+
+/* Left Editor Panel */
+.resume-editor-panel {
+  background: #FFFFFF;
+  border-right: 1px solid var(--slate-200);
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: calc(100vh - 65px);
+}
+
+.resume-section-accordion {
+  border: 1px solid var(--slate-200);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #FFFFFF;
+  transition: border-color var(--transition-fast);
+}
+
+.resume-accordion-header {
+  width: 100%;
+  padding: 14px 18px;
+  background: #F8FAFC;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--slate-800);
+  cursor: pointer;
+  border: none;
+  text-align: left;
+}
+
+.resume-accordion-header:hover {
+  background: #F1F5F9;
+}
+
+.resume-accordion-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-top: 1px solid var(--slate-200);
+}
+
+.resume-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.resume-field-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--slate-700);
+}
+
+.resume-input,
+.resume-textarea {
+  width: 100%;
+  border: 1px solid var(--slate-200);
+  background: #F8FAFC;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  color: var(--slate-900);
+  transition: all var(--transition-fast);
+}
+
+.resume-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.45;
+}
+
+.resume-input:focus,
+.resume-textarea:focus {
+  outline: none;
+  background: #FFFFFF;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+/* Right Live Preview Panel */
+.resume-preview-panel {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  max-height: calc(100vh - 65px);
+  background: #E2E8F0;
+}
+
+/* Paper Document (A4 format ATS standard) */
+.resume-paper {
+  width: 100%;
+  max-width: 780px;
+  min-height: 1020px;
+  background: #FFFFFF;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  padding: 48px 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #1E293B;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Resume Paper ATS Typography & Sections */
+.paper-header {
+  text-align: center;
+  border-bottom: 2px solid #0F172A;
+  padding-bottom: 12px;
+}
+
+.paper-name {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.paper-contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #475569;
+  flex-wrap: wrap;
+}
+
+.paper-contact-row a {
+  color: #2563EB;
+  text-decoration: underline;
+}
+
+.paper-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paper-section-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0F172A;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #CBD5E1;
+  padding-bottom: 3px;
+}
+
+.paper-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.paper-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.paper-entry-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #475569;
+  font-style: italic;
+}
+
+.paper-bullet-list {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.paper-bullet-list li {
+  font-size: 12.5px;
+  color: #334155;
+  line-height: 1.45;
+}
+
+/* Skills Category Line */
+.paper-skill-line {
+  font-size: 12.5px;
+  color: #334155;
+}
+
+.paper-skill-line strong {
+  color: #0F172A;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .resume-workspace {
+    grid-template-columns: 1fr;
+  }
+  .resume-editor-panel {
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--slate-200);
+  }
+  .resume-preview-panel {
+    padding: 16px;
+    max-height: none;
+  }
+  .resume-paper {
+    padding: 24px 20px;
+  }
+}

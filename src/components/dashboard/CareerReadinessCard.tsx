@@ -1,0 +1,79 @@
+import React from 'react';
+import { Target, TrendingUp, Info } from 'lucide-react';
+
+interface CareerReadinessCardProps {
+  score: number;
+  onViewDetails?: () => void;
+}
+
+export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
+  score = 78,
+  onViewDetails,
+}) => {
+  // SVG Donut calculation
+  const radius = 65;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (score / 100) * circumference;
+
+  return (
+    <div className="dash-card">
+      <div className="card-header">
+        <h2 className="card-title">
+          Career Readiness
+        </h2>
+        <button
+          onClick={onViewDetails}
+          title="How readiness is computed"
+          style={{ color: '#94A3B8', display: 'flex', alignItems: 'center' }}
+          aria-label="Readiness calculation info"
+        >
+          <Info size={16} />
+        </button>
+      </div>
+
+      <div className="readiness-body">
+        <div className="gauge-container">
+          <svg className="gauge-svg" viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="readinessGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#4F46E5" />
+                <stop offset="60%" stopColor="#6366F1" />
+                <stop offset="100%" stopColor="#818CF8" />
+              </linearGradient>
+            </defs>
+            <circle
+              className="gauge-bg"
+              cx="80"
+              cy="80"
+              r={radius}
+            />
+            <circle
+              className="gauge-progress"
+              cx="80"
+              cy="80"
+              r={radius}
+              style={{
+                strokeDasharray: circumference,
+                strokeDashoffset: strokeDashoffset,
+              }}
+            />
+          </svg>
+
+          <div className="gauge-center-content">
+            <span className="gauge-value">{score}%</span>
+            <span className="gauge-label">Placement Ready</span>
+          </div>
+        </div>
+
+        <button
+          className="readiness-status-badge"
+          onClick={onViewDetails}
+          title="Click to view readiness breakdown"
+        >
+          <TrendingUp size={14} />
+          <span>Keep going!</span>
+        </button>
+      </div>
+    </div>
+  );
+};
