@@ -430,8 +430,8 @@ export async function handleApi(request, response) {
     return;
   }
 
-  // 8.2 Get Interview Question
-  if (pathname === '/api/ai/interview/question' && request.method === 'POST') {
+  // 8.2 Get Interview Question (Supports /question and /next-question)
+  if ((pathname === '/api/ai/interview/question' || pathname === '/api/ai/interview/next-question') && request.method === 'POST') {
     let body = '';
     request.on('data', (chunk) => { body += chunk; });
     request.on('end', async () => {
@@ -448,8 +448,8 @@ export async function handleApi(request, response) {
     return;
   }
 
-  // 8.3 Analyze Candidate Response
-  if (pathname === '/api/ai/interview/analyze' && request.method === 'POST') {
+  // 8.3 Analyze / Respond to Candidate Transcript (Supports /analyze and /respond)
+  if ((pathname === '/api/ai/interview/analyze' || pathname === '/api/ai/interview/respond') && request.method === 'POST') {
     let body = '';
     request.on('data', (chunk) => { body += chunk; });
     request.on('end', async () => {
@@ -493,8 +493,8 @@ export async function handleApi(request, response) {
     return;
   }
 
-  // 8.5 Complete Interview & Generate Final Evaluation Report
-  if (pathname === '/api/ai/interview/complete' && request.method === 'POST') {
+  // 8.5 Complete Interview & Generate Final Evaluation Report (Supports /complete and /evaluate)
+  if ((pathname === '/api/ai/interview/complete' || pathname === '/api/ai/interview/evaluate') && request.method === 'POST') {
     let body = '';
     request.on('data', (chunk) => { body += chunk; });
     request.on('end', async () => {

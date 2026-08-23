@@ -39,7 +39,7 @@ export const SkillMasteryCard: React.FC<SkillMasteryCardProps> = ({
   };
 
   return (
-    <div className="dash-card">
+    <div className="dash-card" data-tour="analytics">
       <div className="card-header">
         <h2 className="card-title">
           Skill Mastery

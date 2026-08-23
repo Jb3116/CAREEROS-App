@@ -228,6 +228,7 @@ export const AiMentorChatModal: React.FC = () => {
       {/* ---------------- Floating Launcher Button ---------------- */}
       {!isOpen && (
         <button
+          data-tour="ai-mentor"
           onClick={() => setIsOpen(true)}
           style={{
             position: 'fixed',

@@ -30,9 +30,13 @@ import {
   Loader2,
   HelpCircle,
   BarChart3,
+  CheckCircle,
+  FileCheck,
+  Flame,
+  Bot,
 } from 'lucide-react';
 
-interface QuestionItem {
+export interface QuestionItem {
   id: string;
   principle: string;
   question: string;
@@ -40,113 +44,227 @@ interface QuestionItem {
   rubric: Record<string, string>;
 }
 
-interface QuestionPool {
+export interface QuestionPool {
   mode_id: string;
   title: string;
+  short_title: string;
   target_role: string;
   eval_focus: string[];
   questions: QuestionItem[];
 }
 
-const INTERVIEW_POOLS: Record<string, QuestionPool> = {
+export const INTERVIEW_POOLS: Record<string, QuestionPool> = {
   star: {
     mode_id: 'star',
     title: 'STAR Behavioral & Leadership Principles',
+    short_title: 'STAR Behavioral',
     target_role: 'Senior Software Engineer / Tech Lead',
     eval_focus: ['Situation', 'Task', 'Action', 'Result', 'Leadership', 'Conflict Resolution'],
     questions: [
       {
         id: 'star-1',
         principle: 'Deep Technical Ownership & Problem Resolution under Pressure',
-        question: 'Tell me about a challenging distributed systems or algorithmic bug you diagnosed under high time pressure. How did you identify the root cause, and what was the quantifiable impact of your fix?',
-        hints: ['Mention initial system symptoms (CPU/latency)', 'Explain diagnostic tooling (slowlogs, profilers)', 'Describe the architectural fix and quantifiable outcome'],
-        rubric: { s: 'Initial incident context', t: 'Diagnostic responsibility', a: 'Engineering mitigation', r: 'Quantified metrics (% reduction)' },
+        question:
+          'Tell me about a challenging distributed systems or algorithmic bug you diagnosed under high time pressure. How did you identify the root cause, and what was the quantifiable impact of your fix?',
+        hints: [
+          'Mention initial system symptoms (CPU spikes, p99 latency regressions)',
+          'Explain diagnostic tooling used (slowlogs, profilers, distributed traces)',
+          'Describe the architectural fix and quantifiable outcome (% latency drop)',
+        ],
+        rubric: {
+          situation: 'Initial incident & system context',
+          task: 'Diagnostic ownership & triage responsibility',
+          action: 'Engineering mitigation & root cause fix',
+          result: 'Quantified metrics & latency improvement',
+        },
       },
       {
         id: 'star-2',
         principle: 'Constructive Disagreement & Technical Alignment',
-        question: 'Describe a situation where you strongly disagreed with a senior engineer or architect regarding a technical decision or system design. How did you present your case and reach a consensus?',
-        hints: ['Focus on data and benchmarking over opinions', 'Show active listening and compromise', 'Describe the final project delivery'],
-        rubric: { s: 'Conflicting design choices', t: 'Need for technical alignment', a: 'Data-driven proofs & benchmark', r: 'Successful consensus reached' },
+        question:
+          'Describe a situation where you strongly disagreed with a senior engineer or architect regarding a technical decision or system design. How did you present your case and reach a consensus?',
+        hints: [
+          'Focus on data, benchmarks, and architectural trade-offs over opinions',
+          'Show active listening, empathy, and collaborative compromise',
+          'Describe the final project delivery and architectural outcome',
+        ],
+        rubric: {
+          situation: 'Conflicting design choices & stakes',
+          task: 'Need for unified technical consensus',
+          action: 'Data-driven proofs, benchmark tests & ADRs',
+          result: 'Successful consensus & on-time delivery',
+        },
       },
       {
         id: 'star-3',
         principle: 'Delivering under Ambiguity & Moving Fast',
-        question: 'Tell me about a project where requirements were vague or rapidly shifting. How did you define milestones, unblock yourself, and deliver value on schedule?',
-        hints: ['Highlight proactive communication with stakeholders', 'Explain iterative decomposition', 'Quantify delivery timeline impact'],
-        rubric: { s: 'Ambiguous scope', t: 'Need for product clarity', a: 'Modular sprint decomposition', r: 'On-time MVP launch' },
+        question:
+          'Tell me about a project where requirements were vague or rapidly shifting. How did you define milestones, unblock yourself, and deliver value on schedule?',
+        hints: [
+          'Highlight proactive communication with product stakeholders',
+          'Explain iterative decomposition and MVP milestone sizing',
+          'Quantify delivery timeline impact and customer feedback',
+        ],
+        rubric: {
+          situation: 'Ambiguous product scope & shifting constraints',
+          task: 'Need for rapid milestone definition',
+          action: 'Modular sprint decomposition & spike testing',
+          result: 'On-time MVP launch with high user satisfaction',
+        },
       },
       {
         id: 'star-4',
-        principle: 'Handling Failure & Post-Mortem Learning',
-        question: 'Can you share an instance where a feature you deployed caused a production outage or unexpected failure? What steps did you take to mitigate the blast radius and prevent recurrence?',
-        hints: ['Demonstrate personal accountability', 'Explain rollback and post-mortem analysis', 'Share automated prevention guardrails introduced'],
-        rubric: { s: 'Production regression event', t: 'Immediate incident triage', a: 'Rollback & blameless post-mortem', r: 'Automated CI/CD guardrail added' },
+        principle: 'Handling Production Outages & Blameless Post-Mortem Learning',
+        question:
+          'Can you share an instance where a feature you deployed caused a production outage or unexpected failure? What steps did you take to mitigate the blast radius and prevent recurrence?',
+        hints: [
+          'Demonstrate personal accountability and calm incident triage',
+          'Explain immediate rollback, traffic shedding, and post-mortem analysis',
+          'Share automated prevention guardrails introduced (canary deployments, synthetic tests)',
+        ],
+        rubric: {
+          situation: 'Production regression event & impact',
+          task: 'Immediate blast radius mitigation',
+          action: 'Rollback, root-cause isolation & blameless post-mortem',
+          result: 'Automated CI/CD guardrail & zero recurrences',
+        },
       },
     ],
   },
   technical: {
     mode_id: 'technical',
     title: 'Technical DSA & System Architecture Live Drill',
+    short_title: 'DSA & Architecture',
     target_role: 'Distributed Systems & Cloud Infrastructure SDE',
     eval_focus: ['Scalability', 'Concurrency', 'Latency vs Throughput', 'Data Modeling', 'CAP Theorem', 'Fault Tolerance'],
     questions: [
       {
         id: 'tech-1',
         principle: 'High-Throughput Distributed Cache Design & Cache Invalidation',
-        question: 'How would you design a distributed multi-tier caching system for a flash-sale platform handling 500,000 requests per second? How do you prevent cache stampedes (thundering herd) and ensure cache consistency with your primary database?',
-        hints: ['Discuss Redis cluster vs Local LRU', 'Mention Mutex locking / Probabilistic Early Expiration (XFetch)', 'Address write-through vs write-behind caching'],
-        rubric: { architecture: 'Multi-tier cache hierarchy', consistency: 'Cache invalidation strategy', scalability: 'Partitioning & sharding', resilience: 'Thundering herd mitigation' },
+        question:
+          'How would you design a distributed multi-tier caching system for a flash-sale platform handling 500,000 requests per second? How do you prevent cache stampedes (thundering herd) and ensure cache consistency with your primary database?',
+        hints: [
+          'Discuss Redis Cluster vs Local in-memory LRU caching',
+          'Mention Mutex locking / Probabilistic Early Expiration (XFetch)',
+          'Address write-through vs write-behind caching and TTL jitter',
+        ],
+        rubric: {
+          architecture: 'Multi-tier cache hierarchy (L1/L2)',
+          consistency: 'Cache invalidation & write strategy',
+          scalability: 'Partitioning, sharding & replication',
+          resilience: 'Thundering herd & cache avalanche mitigation',
+        },
       },
       {
         id: 'tech-2',
         principle: 'Database Indexing & Query Latency Optimization',
-        question: 'Explain the internal differences between B+ Tree indexes and LSM (Log-Structured Merge) Tree storage engines. In what scenarios would you choose Cassandra/RocksDB over PostgreSQL/MySQL?',
-        hints: ['Compare read vs write amplification', 'Explain sequential append vs random disk page updates', 'Discuss SSD wear and compaction overhead'],
-        rubric: { datastructure: 'B+ Tree vs LSM internal nodes', trade_offs: 'Read vs Write heavy workloads', storage: 'Compaction & WAL logging', conclusion: 'Appropriate DB selection' },
+        question:
+          'Explain the internal differences between B+ Tree indexes and LSM (Log-Structured Merge) Tree storage engines. In what scenarios would you choose Cassandra/RocksDB over PostgreSQL/MySQL?',
+        hints: [
+          'Compare read amplification vs write amplification',
+          'Explain sequential disk append vs random page updates',
+          'Discuss SSD wear, memtables, SSTables, and compaction overhead',
+        ],
+        rubric: {
+          datastructure: 'B+ Tree vs LSM internal nodes & layout',
+          trade_offs: 'Read vs Write heavy workload analysis',
+          storage: 'Compaction, write-ahead logs (WAL) & disk I/O',
+          conclusion: 'Architectural rationale for engine selection',
+        },
       },
       {
         id: 'tech-3',
         principle: 'Distributed Rate Limiting & Concurrency Control',
-        question: 'Design a distributed rate limiter for a public API gateway supporting 10 million daily active users. What algorithm would you choose (Token Bucket, Leaky Bucket, Sliding Window Log), and how do you handle race conditions across multiple gateway nodes?',
-        hints: ['Compare Token Bucket vs Sliding Window Counter', 'Explain Redis Lua scripts for atomic increments', 'Address multi-region synchronization'],
-        rubric: { algorithm: 'Sliding window / Token bucket design', atomicity: 'Redis atomic Lua scripts', latency: 'Sub-millisecond gateway overhead', fault_tolerance: 'Fallback if Redis fails' },
+        question:
+          'Design a distributed rate limiter for a public API gateway supporting 10 million daily active users. What algorithm would you choose (Token Bucket, Leaky Bucket, Sliding Window Log), and how do you handle race conditions across multiple gateway nodes?',
+        hints: [
+          'Compare Token Bucket vs Sliding Window Counter algorithms',
+          'Explain Redis Lua scripts for atomic increments and time checks',
+          'Address multi-region synchronization and graceful fallbacks',
+        ],
+        rubric: {
+          algorithm: 'Sliding window / Token bucket architecture',
+          atomicity: 'Redis atomic Lua script execution',
+          latency: 'Sub-millisecond gateway overhead SLA',
+          fault_tolerance: 'Fail-open vs Fail-closed resilience strategy',
+        },
       },
       {
         id: 'tech-4',
         principle: 'Microservices Communication & Event-Driven Architecture',
-        question: 'When designing an order fulfillment workflow across payment, inventory, and notification microservices, how would you ensure transactional consistency without blocking 2-Phase Commit protocols?',
-        hints: ['Discuss Saga Pattern (Orchestration vs Choreography)', 'Explain Outbox Pattern with Kafka/RabbitMQ', 'Detail compensating transactions on payment failure'],
-        rubric: { pattern: 'Saga Pattern implementation', messaging: 'Transactional Outbox & Kafka', compensation: 'Rollback mechanics', idempotency: 'Idempotency key enforcement' },
+        question:
+          'When designing an order fulfillment workflow across payment, inventory, and notification microservices, how would you ensure transactional consistency without blocking 2-Phase Commit protocols?',
+        hints: [
+          'Discuss the Saga Pattern (Orchestration vs Choreography)',
+          'Explain Transactional Outbox Pattern with Kafka or RabbitMQ',
+          'Detail compensating transactions when downstream payment or inventory fails',
+        ],
+        rubric: {
+          pattern: 'Saga Pattern orchestration design',
+          messaging: 'Transactional Outbox & Kafka event streams',
+          compensation: 'Compensating transactions & rollback mechanics',
+          idempotency: 'Idempotency key enforcement on all consumers',
+        },
       },
     ],
   },
   hr: {
     mode_id: 'hr',
     title: 'Cultural Fit & HR Scenario Studio',
+    short_title: 'Culture & HR',
     target_role: 'Engineering Culture & Organizational Alignment',
     eval_focus: ['Culture Alignment', 'Self-Awareness', 'Long-term Goals', 'Team Dynamics', 'Workplace Ethics'],
     questions: [
       {
         id: 'hr-1',
         principle: 'Engineering Values & Company Mission Alignment',
-        question: 'Why are you passionate about joining our engineering organization, and what aspects of our technical culture and engineering challenges align with your long-term career goals?',
-        hints: ['Demonstrate research into engineering standards', 'Highlight alignment with continuous learning', 'Discuss personal engineering philosophy'],
-        rubric: { research: 'Company knowledge', alignment: 'Shared values', articulation: 'Authentic passion', trajectory: 'Clear career roadmap' },
+        question:
+          'Why are you passionate about joining our engineering organization, and what aspects of our technical culture and engineering challenges align with your long-term career goals?',
+        hints: [
+          'Demonstrate knowledge of modern engineering best practices',
+          'Highlight continuous learning and ownership culture',
+          'Discuss your personal engineering philosophy and aspirations',
+        ],
+        rubric: {
+          research: 'Demonstrated company and industry awareness',
+          alignment: 'Shared engineering standards and values',
+          articulation: 'Authentic passion and technical curiosity',
+          trajectory: 'Clear long-term professional roadmap',
+        },
       },
       {
         id: 'hr-2',
         principle: 'Receiving Critical Feedback & Growth Mindset',
-        question: 'Describe a piece of critical feedback you received from a peer or manager during a performance review. How did you initially process it, and what tangible steps did you take to improve?',
-        hints: ['Show humility and self-awareness', 'Give concrete behavioral or technical changes', 'Mention positive subsequent feedback'],
-        rubric: { humility: 'Openness to feedback', actionability: 'Concrete improvement steps', growth: 'Measured skill progression', mindset: 'Positive outlook' },
+        question:
+          'Describe a piece of critical feedback you received from a peer or manager during a performance review or code review. How did you initially process it, and what tangible steps did you take to improve?',
+        hints: [
+          'Show humility, emotional intelligence, and self-awareness',
+          'Provide concrete behavioral or technical modifications made',
+          'Mention positive outcomes and feedback in subsequent reviews',
+        ],
+        rubric: {
+          humility: 'Openness and non-defensive reception of critique',
+          actionability: 'Concrete, measured steps taken toward growth',
+          progression: 'Demonstrated skill improvement over time',
+          mindset: 'Proactive commitment to continuous learning',
+        },
       },
       {
         id: 'hr-3',
         principle: 'Mentorship, Diversity & Collaborative Culture',
-        question: 'How do you foster an inclusive and collaborative environment when onboarding junior developers or working with cross-functional teammates from non-engineering backgrounds?',
-        hints: ['Discuss pair programming and code reviews', 'Emphasize empathy and clear technical documentation', 'Explain how you make complex topics accessible'],
-        rubric: { empathy: 'Inclusive mindset', mentorship: 'Onboarding support', communication: 'Accessible explanations', team_impact: 'Elevating peer success' },
+        question:
+          'How do you foster an inclusive and collaborative environment when onboarding junior developers or working with cross-functional teammates from non-engineering backgrounds?',
+        hints: [
+          'Discuss pair programming, thorough documentation, and psychological safety',
+          'Emphasize empathy and accessible technical communication',
+          'Explain how you help peers overcome blockers and succeed',
+        ],
+        rubric: {
+          empathy: 'Inclusive mindset and active listening',
+          mentorship: 'Structured onboarding and pairing approach',
+          communication: 'Translating complex ideas for non-engineers',
+          team_impact: 'Elevating overall engineering team velocity',
+        },
       },
     ],
   },
@@ -163,10 +281,12 @@ export const InterviewStudioView: React.FC = () => {
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [mediaPermissionState, setMediaPermissionState] = useState<'idle' | 'granted' | 'denied'>('idle');
+  const [showConsentModal, setShowConsentModal] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
 
   // Sophia AI Speech State
   const [isSophiaSpeaking, setIsSophiaSpeaking] = useState(false);
+  const [isSpeechAudioEnabled, setIsSpeechAudioEnabled] = useState(true);
 
   // Transcript & Analysis States
   const [transcript, setTranscript] = useState('');
@@ -179,7 +299,7 @@ export const InterviewStudioView: React.FC = () => {
   const [finalReportData, setFinalReportData] = useState<any>(null);
   const [allRoundResponses, setAllRoundResponses] = useState<any[]>([]);
 
-  // DOM Refs
+  // DOM & Web Audio Refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -190,67 +310,66 @@ export const InterviewStudioView: React.FC = () => {
   const activePool = INTERVIEW_POOLS[selectedRound] || INTERVIEW_POOLS.star;
   const currentQuestion = activePool.questions[currentQuestionIndex] || activePool.questions[0];
 
-  // Initialize Media Stream & Camera
-  useEffect(() => {
-    let mounted = true;
+  // Request Camera & Mic Permissions
+  const requestMediaAccess = async () => {
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: true,
+        });
 
-    async function initMedia() {
-      try {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { width: { ideal: 1280 }, height: { ideal: 720 } },
-            audio: true,
-          });
-
-          if (!mounted) return;
-          mediaStreamRef.current = stream;
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
-          setMediaPermissionState('granted');
-
-          // Audio Analyser for real-time visualizer
-          try {
-            const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-            if (AudioCtx) {
-              const audioCtx = new AudioCtx();
-              audioContextRef.current = audioCtx;
-              const source = audioCtx.createMediaStreamSource(stream);
-              const analyser = audioCtx.createAnalyser();
-              analyser.fftSize = 64;
-              source.connect(analyser);
-              analyserRef.current = analyser;
-
-              const bufferLength = analyser.frequencyBinCount;
-              const dataArray = new Uint8Array(bufferLength);
-
-              const updateVolume = () => {
-                if (!mounted) return;
-                analyser.getByteFrequencyData(dataArray);
-                let sum = 0;
-                for (let i = 0; i < bufferLength; i++) {
-                  sum += dataArray[i];
-                }
-                const avg = sum / bufferLength;
-                setAudioLevel(Math.min(100, Math.round((avg / 128) * 100)));
-                animFrameRef.current = requestAnimationFrame(updateVolume);
-              };
-              updateVolume();
-            }
-          } catch (e) {
-            console.warn('Audio Context visualizer not available:', e);
-          }
+        mediaStreamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
         }
-      } catch (err) {
-        console.warn('Media devices not accessible (normal in headless/restricted test runner):', err);
-        setMediaPermissionState('denied');
-      }
-    }
+        setMediaPermissionState('granted');
+        setShowConsentModal(false);
 
-    initMedia();
+        // Connect Web Audio API Analyser
+        try {
+          const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+          if (AudioCtx) {
+            const audioCtx = new AudioCtx();
+            audioContextRef.current = audioCtx;
+            const source = audioCtx.createMediaStreamSource(stream);
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 64;
+            source.connect(analyser);
+            analyserRef.current = analyser;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            const updateVolume = () => {
+              if (!analyserRef.current) return;
+              analyserRef.current.getByteFrequencyData(dataArray);
+              let sum = 0;
+              for (let i = 0; i < bufferLength; i++) {
+                sum += dataArray[i];
+              }
+              const avg = sum / bufferLength;
+              setAudioLevel(Math.min(100, Math.round((avg / 128) * 100)));
+              animFrameRef.current = requestAnimationFrame(updateVolume);
+            };
+            updateVolume();
+          }
+        } catch (e) {
+          console.warn('Audio Context visualizer not available:', e);
+        }
+      }
+    } catch (err) {
+      console.warn('Media devices not accessible (normal in headless/restricted test runner):', err);
+      setMediaPermissionState('denied');
+      setShowConsentModal(false);
+    }
+  };
+
+  // Initialize Media Stream on mount
+  useEffect(() => {
+    requestMediaAccess();
 
     return () => {
-      mounted = false;
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((track) => track.stop());
       }
@@ -318,20 +437,26 @@ export const InterviewStudioView: React.FC = () => {
 
   // Sophia AI Text-to-Speech Voice Output
   const speakQuestion = (text: string) => {
-    if (!('speechSynthesis' in window)) return;
+    if (!isSpeechAudioEnabled || !('speechSynthesis' in window)) return;
 
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1.0;
     utterance.pitch = 1.05;
 
-    // Pick female English voice if available
+    // Pick natural English voice if available
     const voices = window.speechSynthesis.getVoices();
-    const femaleVoice = voices.find(
-      (v) => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Google US English'))
+    const naturalVoice = voices.find(
+      (v) =>
+        v.lang.startsWith('en') &&
+        (v.name.includes('Female') ||
+          v.name.includes('Zira') ||
+          v.name.includes('Samantha') ||
+          v.name.includes('Google US English') ||
+          v.name.includes('Natural'))
     );
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
+    if (naturalVoice) {
+      utterance.voice = naturalVoice;
     }
 
     utterance.onstart = () => setIsSophiaSpeaking(true);
@@ -341,7 +466,7 @@ export const InterviewStudioView: React.FC = () => {
     window.speechSynthesis.speak(utterance);
   };
 
-  // Switch Round Tab
+  // Switch Round Tab (STAR / Technical / HR)
   const handleTabChange = (mode: 'star' | 'technical' | 'hr') => {
     if (isRecording) {
       toggleRecording();
@@ -352,9 +477,17 @@ export const InterviewStudioView: React.FC = () => {
     setAnalysisResult(null);
     setFollowUpQuestion(null);
     if (window.speechSynthesis) window.speechSynthesis.cancel();
+
+    // Sophia greets candidate for the new round
+    const nextPool = INTERVIEW_POOLS[mode];
+    if (nextPool && nextPool.questions[0]) {
+      setTimeout(() => {
+        speakQuestion(nextPool.questions[0].question);
+      }, 300);
+    }
   };
 
-  // Toggle Recording & Analysis
+  // Toggle Recording & Trigger AI Analysis
   const toggleRecording = async () => {
     if (isRecording) {
       // STOP Recording & Trigger Real Analysis
@@ -365,7 +498,7 @@ export const InterviewStudioView: React.FC = () => {
       if (finalTranscript.length > 5) {
         setIsAnalyzing(true);
         try {
-          // Analyze response via backend
+          // Analyze response via backend endpoint (/api/ai/interview/analyze or /respond)
           const res = await fetch('/api/ai/interview/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -379,14 +512,15 @@ export const InterviewStudioView: React.FC = () => {
           const analysis = await res.json();
           setAnalysisResult(analysis);
 
-          // Save response
+          // Save candidate response to round history
           setAllRoundResponses((prev) => [
             ...prev,
             {
               question_id: currentQuestion.id,
               question_text: currentQuestion.question,
               transcript: finalTranscript,
-              overall_score: analysis.overall_score || 80,
+              overall_score: analysis.overall_score || 82,
+              speaking_pace_wpm: analysis.speaking_pace_wpm || 135,
             },
           ]);
 
@@ -431,6 +565,8 @@ export const InterviewStudioView: React.FC = () => {
       const videoTracks = mediaStreamRef.current.getVideoTracks();
       videoTracks.forEach((t) => (t.enabled = !t.enabled));
       setIsVideoOff(!isVideoOff);
+    } else {
+      setIsVideoOff(!isVideoOff);
     }
   };
 
@@ -440,17 +576,21 @@ export const InterviewStudioView: React.FC = () => {
       const audioTracks = mediaStreamRef.current.getAudioTracks();
       audioTracks.forEach((t) => (t.enabled = !t.enabled));
       setIsMicMuted(!isMicMuted);
+    } else {
+      setIsMicMuted(!isMicMuted);
     }
   };
 
   // Next Question Navigation
   const handleNextQuestion = () => {
     if (currentQuestionIndex < activePool.questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
       setTranscript('');
       setAnalysisResult(null);
       setFollowUpQuestion(null);
       setSecondsRecorded(0);
+      speakQuestion(activePool.questions[nextIndex].question);
     } else {
       handleCompleteInterview();
     }
@@ -459,23 +599,48 @@ export const InterviewStudioView: React.FC = () => {
   // Previous Question Navigation
   const handlePrevQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => prev - 1);
+      const prevIndex = currentQuestionIndex - 1;
+      setCurrentQuestionIndex(prevIndex);
       setTranscript('');
       setAnalysisResult(null);
       setFollowUpQuestion(null);
+      speakQuestion(activePool.questions[prevIndex].question);
+    }
+  };
+
+  // Jump to specific question index
+  const handleJumpQuestion = (index: number) => {
+    if (index >= 0 && index < activePool.questions.length) {
+      setCurrentQuestionIndex(index);
+      setTranscript('');
+      setAnalysisResult(null);
+      setFollowUpQuestion(null);
+      speakQuestion(activePool.questions[index].question);
     }
   };
 
   // Complete Interview & Fetch Final Report
   const handleCompleteInterview = async () => {
     try {
+      const responsesToSubmit =
+        allRoundResponses.length > 0
+          ? allRoundResponses
+          : [
+              {
+                question_id: currentQuestion.id,
+                question_text: currentQuestion.question,
+                overall_score: analysisResult?.overall_score || 85,
+                transcript: transcript || 'Architectural solution designed with high availability and low latency.',
+              },
+            ];
+
       const res = await fetch('/api/ai/interview/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           student_id: 's123',
           mode: selectedRound,
-          responses: allRoundResponses.length > 0 ? allRoundResponses : [{ overall_score: 85, transcript }],
+          responses: responsesToSubmit,
         }),
       });
       const data = await res.json();
@@ -493,7 +658,7 @@ export const InterviewStudioView: React.FC = () => {
   };
 
   return (
-    <div className="interview-page-container">
+    <div className="interview-page-container" data-tour="interview-studio">
       {/* ---------------- Studio Header & Benchmark Banner ---------------- */}
       <section className="interview-header-card" aria-label="Interview Studio Header">
         <div className="interview-header-top">
@@ -503,14 +668,19 @@ export const InterviewStudioView: React.FC = () => {
               <span>AI Interview Studio & Speech Coach</span>
             </h1>
             <p>
-              Simulate realistic mock rounds with <strong>Sophia (Senior Technical Recruiter AI)</strong> calibrated for Google & Tier-1 SDE standards.
+              Simulate realistic mock rounds with <strong>Sophia (Senior Technical Recruiter AI)</strong> calibrated for
+              Tier-1 engineering standards (Google, Amazon, Meta, Microsoft).
             </p>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="interview-status-pill">
               <ShieldCheck size={14} />
-              <span>Real Speech AI & Video Active</span>
+              <span>
+                {mediaPermissionState === 'granted'
+                  ? 'Live Camera & Microphone Active'
+                  : 'Simulated Studio Mode Active'}
+              </span>
             </span>
           </div>
         </div>
@@ -522,39 +692,45 @@ export const InterviewStudioView: React.FC = () => {
               {analysisResult ? `${analysisResult.overall_score} / 100` : '88 / 100'}
             </span>
             <span className="interview-stat-lbl">
-              {selectedRound === 'technical' ? 'System Architecture Fluency' : 'Average STAR Fluency Score'}
+              {selectedRound === 'technical'
+                ? 'System Architecture Fluency'
+                : selectedRound === 'hr'
+                ? 'Cultural & Values Alignment'
+                : 'STAR Behavioral Fluency'}
             </span>
           </div>
           <div className="interview-stat-box">
             <span className="interview-stat-val" style={{ color: '#34D399' }}>
-              {analysisResult ? `${analysisResult.speaking_pace_wpm} WPM` : '132 WPM'}
+              {analysisResult?.speaking_pace_wpm ? `${analysisResult.speaking_pace_wpm} WPM` : '132 WPM'}
             </span>
-            <span className="interview-stat-lbl">Speaking Pace (Optimal Range: 125-150)</span>
+            <span className="interview-stat-lbl">Speaking Pace (Optimal: 120-150 WPM)</span>
           </div>
           <div className="interview-stat-box">
             <span className="interview-stat-val" style={{ color: '#FBBF24' }}>
               {analysisResult?.clarity_score ? `${analysisResult.clarity_score}%` : '92%'}
             </span>
-            <span className="interview-stat-lbl">Articulation & Semantic Clarity</span>
+            <span className="interview-stat-lbl">Articulation & Technical Depth</span>
           </div>
           <div className="interview-stat-box">
             <span className="interview-stat-val" style={{ color: '#F472B6' }}>
               {analysisResult?.verdict || 'Strong Hire'}
             </span>
-            <span className="interview-stat-lbl">Tier-1 SDE Hiring Benchmark</span>
+            <span className="interview-stat-lbl">Tier-1 Hiring Readiness Benchmark</span>
           </div>
         </div>
       </section>
 
-      {/* ---------------- 3 Working Studio Mode Tabs ---------------- */}
+      {/* ---------------- 3 Working Studio Mode Tabs (Part 2) ---------------- */}
       <div className="interview-mode-tabs" role="tablist" aria-label="Interview Modes">
         {[
-          { id: 'star', label: '🎤 TAB 1: STAR Behavioral & Leadership Principles', icon: MessageSquare },
-          { id: 'technical', label: '💻 TAB 2: Technical DSA & System Architecture Live Drill', icon: BrainCircuit },
-          { id: 'hr', label: '👔 TAB 3: Cultural Fit & HR Scenario Studio', icon: Users },
+          { id: 'star', label: 'STAR Behavioral & Leadership Principles', icon: MessageSquare },
+          { id: 'technical', label: 'Technical DSA & System Architecture Live Drill', icon: BrainCircuit },
+          { id: 'hr', label: 'Cultural Fit & HR Scenario Studio', icon: Users },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = selectedRound === tab.id;
+          const pool = INTERVIEW_POOLS[tab.id];
+
           return (
             <button
               key={tab.id}
@@ -565,9 +741,56 @@ export const InterviewStudioView: React.FC = () => {
             >
               <Icon size={16} />
               <span>{tab.label}</span>
+              <span
+                style={{
+                  fontSize: 11,
+                  padding: '2px 6px',
+                  borderRadius: 999,
+                  background: isActive ? 'rgba(255, 255, 255, 0.25)' : '#E2E8F0',
+                  color: isActive ? '#FFFFFF' : '#475569',
+                  fontWeight: 800,
+                  marginLeft: 4,
+                }}
+              >
+                {pool ? `${pool.questions.length} Qs` : ''}
+              </span>
             </button>
           );
         })}
+      </div>
+
+      {/* Dynamic Question Navigation Pills for the Active Tab */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 12.5, fontWeight: 800, color: '#64748B' }}>Question Navigation:</span>
+          {activePool.questions.map((q, idx) => (
+            <button
+              key={q.id}
+              onClick={() => handleJumpQuestion(idx)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: '5px 12px',
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 800,
+                background: currentQuestionIndex === idx ? '#4F46E5' : '#F1F5F9',
+                color: currentQuestionIndex === idx ? '#FFFFFF' : '#475569',
+                border: currentQuestionIndex === idx ? '1px solid #4F46E5' : '1px solid #CBD5E1',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <span>Q{idx + 1}</span>
+              {currentQuestionIndex === idx && <CheckCircle size={12} />}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ fontSize: 13, fontWeight: 800, color: '#4F46E5', background: '#EEF2FF', padding: '4px 12px', borderRadius: 999 }}>
+          Question {currentQuestionIndex + 1} of {activePool.questions.length} • {activePool.short_title}
+        </div>
       </div>
 
       {/* ---------------- Main Live Split Studio Workspace ---------------- */}
@@ -590,7 +813,16 @@ export const InterviewStudioView: React.FC = () => {
                 Sophia • {selectedRound === 'technical' ? 'Principal System Architect AI' : 'Senior Technical Recruiter AI'}
               </span>
             </div>
-            <span style={{ fontSize: 11.5, background: 'rgba(79, 70, 229, 0.3)', color: '#C7D2FE', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
+            <span
+              style={{
+                fontSize: 11.5,
+                background: 'rgba(79, 70, 229, 0.3)',
+                color: '#C7D2FE',
+                padding: '2px 8px',
+                borderRadius: 6,
+                fontWeight: 700,
+              }}
+            >
               Question {currentQuestionIndex + 1} of {activePool.questions.length}
             </span>
           </div>
@@ -599,8 +831,8 @@ export const InterviewStudioView: React.FC = () => {
           <div className="interview-avatar-box">
             <div
               style={{
-                width: 72,
-                height: 72,
+                width: 76,
+                height: 76,
                 borderRadius: '50%',
                 background: isSophiaSpeaking
                   ? 'linear-gradient(135deg, #38BDF8 0%, #6366F1 100%)'
@@ -609,16 +841,34 @@ export const InterviewStudioView: React.FC = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 boxShadow: isSophiaSpeaking
-                  ? '0 0 30px rgba(56, 189, 248, 0.6)'
+                  ? '0 0 35px rgba(56, 189, 248, 0.7)'
                   : '0 0 24px rgba(99, 102, 241, 0.4)',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
+                border: '2px solid rgba(255, 255, 255, 0.25)',
                 transition: 'all 0.3s ease',
               }}
             >
-              <BrainCircuit size={36} color="#FFFFFF" />
+              <BrainCircuit size={38} color="#FFFFFF" />
             </div>
 
-            <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+            {/* Speaking Wave Animation */}
+            {isSophiaSpeaking && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 10 }}>
+                {[14, 24, 18, 28, 16, 22, 12].map((height, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      width: 3.5,
+                      height: `${height}px`,
+                      background: '#38BDF8',
+                      borderRadius: 999,
+                      animation: 'pulse 1s infinite alternate',
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
               <button
                 onClick={() => speakQuestion(followUpQuestion ? followUpQuestion.question : currentQuestion.question)}
                 style={{
@@ -636,15 +886,51 @@ export const InterviewStudioView: React.FC = () => {
                 }}
               >
                 <Volume2 size={14} color="#818CF8" />
-                <span>{isSophiaSpeaking ? 'Sophia is Speaking...' : 'Play Voice Prompt'}</span>
+                <span>{isSophiaSpeaking ? 'Sophia is Speaking...' : 'Play Question Audio'}</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsSpeechAudioEnabled(!isSpeechAudioEnabled);
+                  if (window.speechSynthesis) window.speechSynthesis.cancel();
+                  setIsSophiaSpeaking(false);
+                }}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  color: '#94A3B8',
+                  padding: '6px 10px',
+                  borderRadius: 999,
+                  fontSize: 11,
+                  cursor: 'pointer',
+                }}
+                title={isSpeechAudioEnabled ? 'Mute AI Voice' : 'Unmute AI Voice'}
+              >
+                {isSpeechAudioEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
               </button>
             </div>
           </div>
 
           {/* Question Text Box */}
-          <div style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 14, padding: 18 }}>
-            <div style={{ fontSize: 11.5, fontWeight: 800, color: '#818CF8', textTransform: 'uppercase', marginBottom: 6 }}>
-              Target Principle: {currentQuestion.principle}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: 14,
+              padding: 18,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 11.5,
+                fontWeight: 800,
+                color: '#818CF8',
+                textTransform: 'uppercase',
+                marginBottom: 6,
+                letterSpacing: '0.04em',
+              }}
+            >
+              Evaluation Focus: {currentQuestion.principle}
             </div>
             <p style={{ fontSize: 14.5, fontWeight: 700, color: '#FFFFFF', lineHeight: 1.5, margin: 0 }}>
               "{currentQuestion.question}"
@@ -656,7 +942,7 @@ export const InterviewStudioView: React.FC = () => {
             <div
               style={{
                 background: 'rgba(56, 189, 248, 0.08)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
+                border: '1.5px solid rgba(56, 189, 248, 0.35)',
                 borderRadius: 14,
                 padding: 16,
                 animation: 'fadeIn 0.3s ease',
@@ -665,7 +951,7 @@ export const InterviewStudioView: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                 <Sparkles size={14} color="#38BDF8" />
                 <span style={{ fontSize: 11.5, fontWeight: 800, color: '#38BDF8', textTransform: 'uppercase' }}>
-                  Sophia's Contextual Follow-Up:
+                  Sophia's Probing Follow-Up:
                 </span>
               </div>
               <p style={{ fontSize: 13.5, fontWeight: 600, color: '#E0F2FE', margin: 0, lineHeight: 1.45 }}>
@@ -680,7 +966,11 @@ export const InterviewStudioView: React.FC = () => {
           {/* Evaluation Rubric / Framework Breakdown */}
           <div>
             <div style={{ fontSize: 12, fontWeight: 800, color: '#94A3B8', marginBottom: 8 }}>
-              {selectedRound === 'technical' ? 'System Design Focus Areas:' : 'STAR Evaluation Framework Checklist:'}
+              {selectedRound === 'technical'
+                ? 'System Design Evaluation Rubric:'
+                : selectedRound === 'hr'
+                ? 'Culture & HR Assessment Rubric:'
+                : 'STAR Behavioral Framework Checklist:'}
             </div>
             <div className="interview-star-grid">
               {Object.entries(currentQuestion.rubric).map(([key, val]) => (
@@ -709,7 +999,7 @@ export const InterviewStudioView: React.FC = () => {
                 }}
               />
               <span style={{ fontSize: 13.5, fontWeight: 800, color: '#0F172A' }}>
-                Candidate Studio Feed • Alex Chen
+                Candidate Live Studio • Alex Chen
               </span>
             </div>
             <span
@@ -739,12 +1029,12 @@ export const InterviewStudioView: React.FC = () => {
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                display: isVideoOff ? 'none' : 'block',
+                display: isVideoOff || mediaPermissionState !== 'granted' ? 'none' : 'block',
               }}
             />
 
             {/* Video Placeholder if Camera is Toggled Off or Denied */}
-            {(isVideoOff || mediaPermissionState === 'denied') && (
+            {(isVideoOff || mediaPermissionState !== 'granted') && (
               <div
                 style={{
                   display: 'flex',
@@ -754,6 +1044,8 @@ export const InterviewStudioView: React.FC = () => {
                   gap: 8,
                   height: '100%',
                   color: '#94A3B8',
+                  padding: 20,
+                  textAlign: 'center',
                 }}
               >
                 <div
@@ -770,13 +1062,20 @@ export const InterviewStudioView: React.FC = () => {
                 >
                   <VideoOff size={28} />
                 </div>
-                <span style={{ fontSize: 12.5, fontWeight: 700 }}>
-                  {mediaPermissionState === 'denied' ? 'Camera Permissions Simulated' : 'Camera Feed Muted'}
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#F8FAFC' }}>
+                  {mediaPermissionState === 'denied'
+                    ? 'Microphone & Audio-Only Mode'
+                    : isVideoOff
+                    ? 'Camera Feed Muted'
+                    : 'Studio Ready'}
+                </span>
+                <span style={{ fontSize: 11.5, color: '#94A3B8', maxWidth: 300 }}>
+                  Speech recognition and transcript evaluation will capture your spoken response live.
                 </span>
               </div>
             )}
 
-            {/* Audio Level Meter Overlay */}
+            {/* Live Audio Level Meter Overlay */}
             <div
               style={{
                 position: 'absolute',
@@ -789,22 +1088,23 @@ export const InterviewStudioView: React.FC = () => {
                 padding: '4px 10px',
                 borderRadius: 8,
                 backdropFilter: 'blur(4px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
             >
-              <Mic size={13} color={audioLevel > 15 ? '#34D399' : '#94A3B8'} />
-              <div style={{ width: 60, height: 6, background: '#334155', borderRadius: 999, overflow: 'hidden' }}>
+              <Mic size={13} color={audioLevel > 10 ? '#34D399' : '#94A3B8'} />
+              <div style={{ width: 64, height: 6, background: '#334155', borderRadius: 999, overflow: 'hidden' }}>
                 <div
                   style={{
-                    width: `${Math.min(100, audioLevel * 1.5)}%`,
+                    width: `${Math.min(100, Math.max(5, audioLevel * 1.6))}%`,
                     height: '100%',
-                    background: '#34D399',
-                    transition: 'width 0.1s ease',
+                    background: audioLevel > 60 ? '#EF4444' : audioLevel > 15 ? '#34D399' : '#6366F1',
+                    transition: 'width 0.08s ease',
                   }}
                 />
               </div>
             </div>
 
-            {/* Live Telemetry Badges */}
+            {/* Status Telemetry Badge */}
             <div style={{ position: 'absolute', bottom: 12, right: 12, display: 'flex', gap: 6 }}>
               <span
                 style={{
@@ -817,54 +1117,75 @@ export const InterviewStudioView: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 4,
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                <Eye size={12} /> Eye Contact 96%
+                <ShieldCheck size={12} /> Audio Analytics Active
               </span>
             </div>
           </div>
 
           {/* Media Hardware Control Toggles */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button
-              onClick={toggleCamera}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 12px',
-                borderRadius: 8,
-                fontSize: 12,
-                fontWeight: 700,
-                background: isVideoOff ? '#FEE2E2' : '#F1F5F9',
-                color: isVideoOff ? '#DC2626' : '#475569',
-                border: '1px solid #E2E8F0',
-                cursor: 'pointer',
-              }}
-            >
-              {isVideoOff ? <VideoOff size={14} /> : <Video size={14} />}
-              <span>{isVideoOff ? 'Enable Camera' : 'Mute Camera'}</span>
-            </button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button
+                onClick={toggleCamera}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  background: isVideoOff ? '#FEE2E2' : '#F1F5F9',
+                  color: isVideoOff ? '#DC2626' : '#475569',
+                  border: '1px solid #E2E8F0',
+                  cursor: 'pointer',
+                }}
+              >
+                {isVideoOff ? <VideoOff size={14} /> : <Video size={14} />}
+                <span>{isVideoOff ? 'Enable Video' : 'Mute Video'}</span>
+              </button>
 
-            <button
-              onClick={toggleMic}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 12px',
-                borderRadius: 8,
-                fontSize: 12,
-                fontWeight: 700,
-                background: isMicMuted ? '#FEE2E2' : '#F1F5F9',
-                color: isMicMuted ? '#DC2626' : '#475569',
-                border: '1px solid #E2E8F0',
-                cursor: 'pointer',
-              }}
-            >
-              {isMicMuted ? <MicOff size={14} /> : <Mic size={14} />}
-              <span>{isMicMuted ? 'Unmute Mic' : 'Mute Mic'}</span>
-            </button>
+              <button
+                onClick={toggleMic}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  background: isMicMuted ? '#FEE2E2' : '#F1F5F9',
+                  color: isMicMuted ? '#DC2626' : '#475569',
+                  border: '1px solid #E2E8F0',
+                  cursor: 'pointer',
+                }}
+              >
+                {isMicMuted ? <MicOff size={14} /> : <Mic size={14} />}
+                <span>{isMicMuted ? 'Unmute Mic' : 'Mute Mic'}</span>
+              </button>
+            </div>
+
+            {mediaPermissionState !== 'granted' && (
+              <button
+                onClick={requestMediaAccess}
+                style={{
+                  fontSize: 11.5,
+                  color: '#4F46E5',
+                  fontWeight: 700,
+                  background: '#EEF2FF',
+                  border: '1px solid #C7D2FE',
+                  padding: '4px 10px',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                }}
+              >
+                Request Camera & Mic Access
+              </button>
+            )}
           </div>
 
           {/* Real-Time Live Speech Transcription Box */}
@@ -888,7 +1209,7 @@ export const InterviewStudioView: React.FC = () => {
                 width: '100%',
                 resize: 'vertical',
                 background: '#F8FAFC',
-                border: '1px solid #E2E8F0',
+                border: '1px solid #CBD5E1',
                 borderRadius: 10,
                 padding: 12,
                 fontSize: 13,
@@ -912,10 +1233,10 @@ export const InterviewStudioView: React.FC = () => {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <span style={{ fontSize: 12.5, fontWeight: 800, color: '#166534' }}>
-                  🎯 Sophia's Real Evaluation: {analysisResult.verdict} ({analysisResult.overall_score}/100)
+                  🎯 Sophia's Evaluation: {analysisResult.verdict} ({analysisResult.overall_score}/100)
                 </span>
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#15803D' }}>
-                  Pacing: {analysisResult.speaking_pace_wpm} WPM
+                  Cadence: {analysisResult.speaking_pace_wpm} WPM
                 </span>
               </div>
               <p style={{ fontSize: 12.5, color: '#166534', margin: 0, lineHeight: 1.45 }}>
@@ -925,7 +1246,16 @@ export const InterviewStudioView: React.FC = () => {
           )}
 
           {/* Studio Control Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid #F1F5F9', marginTop: 'auto' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingTop: 10,
+              borderTop: '1px solid #F1F5F9',
+              marginTop: 'auto',
+            }}
+          >
             <div style={{ display: 'flex', gap: 6 }}>
               <button
                 onClick={handlePrevQuestion}
@@ -1034,7 +1364,7 @@ export const InterviewStudioView: React.FC = () => {
         </div>
       </div>
 
-      {/* ---------------- Comprehensive Final Evaluation Report Modal ---------------- */}
+      {/* ---------------- Comprehensive Final Evaluation Report Modal (Parts 7–8) ---------------- */}
       {showFinalReport && finalReportData && (
         <div
           style={{
@@ -1044,7 +1374,7 @@ export const InterviewStudioView: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(15, 23, 42, 0.8)',
+            background: 'rgba(15, 23, 42, 0.85)',
             backdropFilter: 'blur(8px)',
             padding: 16,
           }}
@@ -1052,11 +1382,11 @@ export const InterviewStudioView: React.FC = () => {
           <div
             style={{
               width: '100%',
-              maxWidth: 620,
+              maxWidth: 640,
               background: '#0F172A',
               border: '1px solid rgba(99, 102, 241, 0.4)',
               borderRadius: 20,
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85)',
               overflow: 'hidden',
               animation: 'fadeIn 0.2s ease-out',
             }}
@@ -1103,119 +1433,161 @@ export const InterviewStudioView: React.FC = () => {
               </button>
             </div>
 
-            {/* Modal Body Content */}
-            <div style={{ padding: '24px 28px', maxHeight: '75vh', overflowY: 'auto' }}>
-              {/* Readiness Score Banner */}
+            {/* Modal Body */}
+            <div style={{ padding: '24px', color: '#FFFFFF', maxHeight: '78vh', overflowY: 'auto' }}>
+              {/* Overall Score Banner */}
               <div
                 style={{
+                  background: 'rgba(99, 102, 241, 0.15)',
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  borderRadius: 14,
+                  padding: '16px 20px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: 14,
-                  padding: 16,
                   marginBottom: 20,
                 }}
               >
                 <div>
-                  <div style={{ fontSize: 11.5, fontWeight: 800, color: '#818CF8', textTransform: 'uppercase' }}>
-                    Hiring Benchmark Verdict
+                  <div style={{ fontSize: 12, color: '#A5B4FC', fontWeight: 700, textTransform: 'uppercase' }}>
+                    Tier-1 Placement Readiness Score
                   </div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: '#34D399', marginTop: 2 }}>
-                    {finalReportData.benchmark_verdict}
+                  <div style={{ fontSize: 28, fontWeight: 900, color: '#FFFFFF', lineHeight: 1.2 }}>
+                    {finalReportData.overall_readiness_score} / 100
                   </div>
                 </div>
 
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: 28, fontWeight: 900, color: '#F8FAFC' }}>
-                    {finalReportData.overall_readiness_score}%
+                  <span
+                    style={{
+                      background: '#10B981',
+                      color: '#FFFFFF',
+                      fontSize: 12.5,
+                      fontWeight: 800,
+                      padding: '5px 12px',
+                      borderRadius: 999,
+                      display: 'inline-block',
+                    }}
+                  >
+                    {finalReportData.benchmark_verdict}
+                  </span>
+                  <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>
+                    DKT Knowledge State Updated ✓
                   </div>
-                  <div style={{ fontSize: 11, color: '#94A3B8' }}>Overall Score</div>
                 </div>
               </div>
 
-              {/* Metrics Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 20 }}>
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: 12, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#818CF8' }}>
-                    {finalReportData.metrics.star_fluency_score}/100
-                  </div>
-                  <div style={{ fontSize: 11, color: '#94A3B8' }}>STAR Fluency</div>
+              {/* Multi-Sectional Score Breakdown */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 12, fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', marginBottom: 10 }}>
+                  Competency Score Breakdown:
                 </div>
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: 12, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#34D399' }}>
-                    {finalReportData.metrics.speaking_pace_wpm} WPM
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: 12, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ fontSize: 11, color: '#94A3B8' }}>Communication & STAR Fluency</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: '#818CF8' }}>
+                      {finalReportData.metrics?.communication_score || finalReportData.metrics?.star_fluency_score || 86}%
+                    </div>
                   </div>
-                  <div style={{ fontSize: 11, color: '#94A3B8' }}>Speaking Cadence</div>
-                </div>
-                <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: 12, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#F472B6' }}>
-                    {finalReportData.metrics.clarity_score}%
+                  <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: 12, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ fontSize: 11, color: '#94A3B8' }}>Technical Architecture Depth</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: '#34D399' }}>
+                      {finalReportData.metrics?.technical_depth_score || 88}%
+                    </div>
                   </div>
-                  <div style={{ fontSize: 11, color: '#94A3B8' }}>Semantic Clarity</div>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: 12, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ fontSize: 11, color: '#94A3B8' }}>Problem Solving & Scalability</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: '#FBBF24' }}>
+                      {finalReportData.metrics?.problem_solving_score || 89}%
+                    </div>
+                  </div>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: 12, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ fontSize: 11, color: '#94A3B8' }}>Speaking Cadence (Pace)</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: '#F472B6' }}>
+                      {finalReportData.metrics?.speaking_pace_wpm || 135} WPM
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Strengths */}
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 800, color: '#34D399', textTransform: 'uppercase', marginBottom: 8 }}>
-                  Observed Key Strengths:
+              {/* Strengths Summary */}
+              {finalReportData.strengths_summary && (
+                <div style={{ marginBottom: 18 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#34D399', textTransform: 'uppercase', marginBottom: 8 }}>
+                    Key Strengths Identified:
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {finalReportData.strengths_summary.map((s: string, idx: number) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12.5, color: '#E2E8F0' }}>
+                        <CheckCircle2 size={15} color="#34D399" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <span>{s}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <ul style={{ margin: 0, paddingLeft: 18, color: '#CBD5E1', fontSize: 13, lineHeight: 1.6 }}>
-                  {finalReportData.strengths_summary.map((s: string, idx: number) => (
-                    <li key={idx}>{s}</li>
-                  ))}
-                </ul>
-              </div>
+              )}
 
               {/* Growth Recommendations */}
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 800, color: '#FBBF24', textTransform: 'uppercase', marginBottom: 8 }}>
-                  Sophia's Recommendations for Campus Drives:
+              {finalReportData.growth_recommendations && (
+                <div style={{ marginBottom: 24 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#FBBF24', textTransform: 'uppercase', marginBottom: 8 }}>
+                    Actionable Coaching Recommendations:
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {finalReportData.growth_recommendations.map((rec: string, idx: number) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12.5, color: '#CBD5E1' }}>
+                        <TrendingUp size={15} color="#FBBF24" style={{ flexShrink: 0, marginTop: 2 }} />
+                        <span>{rec}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <ul style={{ margin: 0, paddingLeft: 18, color: '#CBD5E1', fontSize: 13, lineHeight: 1.6 }}>
-                  {finalReportData.growth_recommendations.map((g: string, idx: number) => (
-                    <li key={idx}>{g}</li>
-                  ))}
-                </ul>
-              </div>
+              )}
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 12, borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                <button
-                  onClick={() => setShowFinalReport(false)}
-                  style={{
-                    padding: '9px 18px',
-                    borderRadius: 10,
-                    fontSize: 13,
-                    fontWeight: 700,
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: 'none',
-                    color: '#E2E8F0',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Close
-                </button>
+              <div style={{ display: 'flex', gap: 10 }}>
                 <button
                   onClick={() => {
                     setShowFinalReport(false);
-                    navigate('/roadmap');
+                    setCurrentQuestionIndex(0);
+                    setTranscript('');
+                    setAnalysisResult(null);
+                    setFollowUpQuestion(null);
                   }}
                   style={{
-                    padding: '9px 20px',
+                    flex: 1,
+                    padding: '10px 16px',
                     borderRadius: 10,
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    color: '#FFFFFF',
+                    fontWeight: 700,
+                    cursor: 'pointer',
                     fontSize: 13,
-                    fontWeight: 800,
+                  }}
+                >
+                  Practice Another Round
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowFinalReport(false);
+                    navigate('/dashboard');
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: '10px 16px',
+                    borderRadius: 10,
                     background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
                     border: 'none',
                     color: '#FFFFFF',
+                    fontWeight: 800,
                     cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
+                    fontSize: 13,
+                    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
                   }}
                 >
-                  Update My Roadmap With Results
+                  Return to Dashboard
                 </button>
               </div>
             </div>

@@ -29,6 +29,7 @@ interface NavItemConfig {
   label: string;
   path: string;
   icon: LucideIcon;
+  tourTarget?: string;
 }
 
 export const AppSidebar: React.FC = () => {
@@ -37,15 +38,15 @@ export const AppSidebar: React.FC = () => {
 
   // Full CAREEROS student navigation menu in exact sequential order
   const navItems: NavItemConfig[] = [
-    { id: 'dashboard', label: 'Student Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { id: 'dashboard', label: 'Student Dashboard', path: '/dashboard', icon: LayoutDashboard, tourTarget: 'dashboard' },
     { id: 'resume', label: 'AI Resume Builder', path: '/resume-builder', icon: FileText },
     { id: 'onboarding', label: 'Student Onboarding', path: '/onboarding', icon: UserCheck },
     { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
-    { id: 'placement', label: 'AI Placement', path: '/placement', icon: Sparkles },
-    { id: 'career-roadmap', label: 'AI Roadmap', path: '/career-roadmap', icon: Map },
-    { id: 'practice', label: 'Coding & Aptitude', path: '/practice', icon: Code2 },
+    { id: 'placement', label: 'AI Placement', path: '/placement', icon: Sparkles, tourTarget: 'assessment' },
+    { id: 'career-roadmap', label: 'AI Roadmap', path: '/career-roadmap', icon: Map, tourTarget: 'roadmap' },
+    { id: 'practice', label: 'Coding & Aptitude', path: '/practice', icon: Code2, tourTarget: 'practice' },
     { id: 'opportunities', label: 'Opportunity & Smart Calendar', path: '/opportunities', icon: Calendar },
-    { id: 'interview-studio', label: 'AI Interview Studio', path: '/interview-studio', icon: Mic },
+    { id: 'interview-studio', label: 'AI Interview Studio', path: '/interview-studio', icon: Mic, tourTarget: 'interview-studio' },
   ];
 
   const isCurrentActive = (item: NavItemConfig): boolean => {
@@ -90,6 +91,7 @@ export const AppSidebar: React.FC = () => {
                   aria-label={item.label}
                   aria-current={active ? 'page' : undefined}
                   type="button"
+                  data-tour={item.tourTarget}
                 >
                   <Icon size={20} strokeWidth={active ? 2.5 : 2} />
                 </SidebarMenuButton>
@@ -108,6 +110,7 @@ export const AppSidebar: React.FC = () => {
           aria-label="My Profile"
           aria-current={location.pathname === '/profile' ? 'page' : undefined}
           type="button"
+          data-tour="profile"
         >
           <User size={20} strokeWidth={location.pathname === '/profile' ? 2.5 : 2} />
         </SidebarMenuButton>

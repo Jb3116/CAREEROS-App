@@ -10,7 +10,7 @@ import {
 } from '../ai/interview-service.mjs';
 
 describe('AI Interview Studio & Sophia Recruiter Suite', () => {
-  test('1. Three Working Interview Modes Pool Segregation', () => {
+  test('1. Three Working Interview Modes Pool Segregation & Rubrics', () => {
     assert.ok(INTERVIEW_MODE_POOLS.star, 'STAR Behavioral pool must exist');
     assert.ok(INTERVIEW_MODE_POOLS.technical, 'Technical Architecture pool must exist');
     assert.ok(INTERVIEW_MODE_POOLS.hr, 'HR / Cultural pool must exist');
@@ -26,6 +26,11 @@ describe('AI Interview Studio & Sophia Recruiter Suite', () => {
 
     assert.notDeepEqual(starQuestions, techQuestions, 'STAR and Technical questions must be completely different');
     assert.notDeepEqual(techQuestions, hrQuestions, 'Technical and HR questions must be completely different');
+
+    // Verify rubric checklist keys are distinct
+    assert.ok(INTERVIEW_MODE_POOLS.star.questions[0].rubric.situation);
+    assert.ok(INTERVIEW_MODE_POOLS.technical.questions[0].rubric.architecture);
+    assert.ok(INTERVIEW_MODE_POOLS.hr.questions[0].rubric.research);
   });
 
   test('2. Start Interview Session API Payload Structure', async () => {
@@ -54,7 +59,7 @@ describe('AI Interview Studio & Sophia Recruiter Suite', () => {
     assert.equal(qOverflow.current_question_index, 3);
   });
 
-  test('4. Real Candidate Spoken Transcript Analysis Logic', async () => {
+  test('4. Real Candidate Spoken Transcript Analysis & WPM Calculation', async () => {
     const sampleTranscript =
       'In our high-traffic flash sale service, Redis cache experienced a 100% CPU spike due to un-indexed N+1 queries. I analyzed the slowlog and engineered an in-memory LRU cache with probabilistic early expiration (XFetch), which reduced cache query latency by 74% and normalized p99 latency to 28ms.';
 
@@ -97,7 +102,7 @@ describe('AI Interview Studio & Sophia Recruiter Suite', () => {
     assert.ok(followUp.intent.length > 5, 'Intent must explain why follow-up was selected');
   });
 
-  test('7. Comprehensive Final Evaluation Report & Metrics', async () => {
+  test('7. Comprehensive Final Evaluation Report & Real Metrics (No Fake Eye Contact)', async () => {
     const mockResponses = [
       { question_id: 'star-1', overall_score: 88, transcript: 'Redis slowlog fix with XFetch caching' },
       { question_id: 'star-2', overall_score: 84, transcript: 'Benchmark data presented for technical consensus' },
@@ -112,7 +117,11 @@ describe('AI Interview Studio & Sophia Recruiter Suite', () => {
     assert.equal(report.student_id, 'stu_eval_1');
     assert.equal(report.overall_readiness_score, 86);
     assert.ok(report.benchmark_verdict.includes('Strong Hire'));
-    assert.ok(report.metrics.star_fluency_score === 86);
+    assert.equal(report.metrics.star_fluency_score, 86);
+    assert.ok(report.metrics.communication_score >= 80);
+    assert.ok(report.metrics.technical_depth_score >= 80);
+    assert.ok(report.metrics.problem_solving_score >= 80);
+    assert.equal(report.metrics.eye_contact_score_percent, undefined, 'Eye contact percentage must not be fabricated');
     assert.ok(report.strengths_summary.length > 0);
     assert.ok(report.growth_recommendations.length > 0);
   });
