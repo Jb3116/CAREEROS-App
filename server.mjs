@@ -10,7 +10,10 @@ const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; cha
 const vite = production ? null : await createViteServer({ server: { middlewareMode: true }, appType: 'spa' })
 
 const server = http.createServer(async (request, response) => {
-  if (request.url?.startsWith('/api/')) return handleApi(request, response)
+  if (request.url?.startsWith('/api/')) {
+    const { handleApi } = await import(`./server/api.mjs?t=${Date.now()}`);
+    return handleApi(request, response);
+  }
   if (vite) return vite.middlewares(request, response, () => { response.statusCode = 404; response.end('Not found') })
   const pathname = request.url === '/' ? '/index.html' : request.url.split('?')[0]
   const file = normalize(join(process.cwd(), 'dist', pathname))

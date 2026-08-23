@@ -1,0 +1,21 @@
+{
+  "roc_auc": 0.6405,
+  "log_loss": 0.6571,
+  "accuracy": 0.6184,
+  "precision": 0.6399,
+  "recall": 0.8063,
+  "f1_score": 0.7135,
+  "confusion_matrix": {
+    "tp": 1299,
+    "fp": 731,
+    "fn": 312,
+    "tn": 391
+  },
+  "dataset_size": 13423,
+  "total_students": 250,
+  "train_students_count": 200,
+  "val_students_count": 50,
+  "validation_pairs_evaluated": 2733,
+  "epochs": 20,
+  "trained_at": "2026-08-23T09:47:03.737Z"
+}

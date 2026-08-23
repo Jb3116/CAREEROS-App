@@ -157,6 +157,20 @@ export const PracticeView: React.FC = () => {
           memory: '27.4 MB (Better than 94.6% memory allocation)',
           output: `Language Target: ${selectedLang.toUpperCase()}\nTestcase 1: Passed [Input: root = [1,2,3], Expected: 6, Output: 6]\nTestcase 2: Passed [Input: root = [-10,9,20,null,null,15,7], Expected: 42, Output: 42]\nTestcase 3: Passed [Input: root = [-3], Expected: -3, Output: -3]\n\nAll Proctored Testcases Executed Successfully! ✨`,
         });
+
+        // Telemetry event ingestion to DKT API
+        fetch('/api/ai/student-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            student_id: 's123',
+            skill: 'binary_trees',
+            activity: 'practice_problem',
+            correct: true,
+            difficulty: 'hard',
+            timestamp: new Date().toISOString(),
+          }),
+        }).catch(() => {});
       }
     }, 550);
   };
@@ -522,6 +536,18 @@ export const PracticeView: React.FC = () => {
                     onClick={() => {
                       setAptitudeAnswer(opt.id);
                       setShowAptitudeExplanation(true);
+                      fetch('/api/ai/student-event', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          student_id: 's123',
+                          skill: 'probability',
+                          activity: 'aptitude_quiz',
+                          correct: opt.id === 1,
+                          difficulty: 'medium',
+                          timestamp: new Date().toISOString(),
+                        }),
+                      }).catch(() => {});
                     }}
                     style={{
                       padding: '12px 16px',

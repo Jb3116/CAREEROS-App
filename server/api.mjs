@@ -1,4 +1,33 @@
-// Server API handlers for CAREEROS Student Dashboard
+// Server API handlers for CAREEROS Student Dashboard & AI DKT Intelligence
+
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { DKTInference, trainDKT, SKILL_MAP } from '../ai/dkt-engine.mjs';
+
+const DATA_DIR = join(process.cwd(), 'data');
+const EVENTS_FILE = join(DATA_DIR, 'student_events.json');
+
+function getStudentEvents() {
+  if (!existsSync(EVENTS_FILE)) {
+    return [];
+  }
+  try {
+    return JSON.parse(readFileSync(EVENTS_FILE, 'utf-8'));
+  } catch (err) {
+    console.error('Error reading student events:', err);
+    return [];
+  }
+}
+
+function saveStudentEvent(event) {
+  if (!existsSync(DATA_DIR)) {
+    mkdirSync(DATA_DIR, { recursive: true });
+  }
+  const events = getStudentEvents();
+  events.push(event);
+  writeFileSync(EVENTS_FILE, JSON.stringify(events, null, 2), 'utf-8');
+  return event;
+}
 
 export async function handleApi(request, response) {
   const url = new URL(request.url, `http://${request.headers.host}`);
@@ -15,14 +44,28 @@ export async function handleApi(request, response) {
     return;
   }
 
-  if (pathname === '/api/student/dashboard') {
+  // ---------------- 1. Student Dashboard API ----------------
+  if (pathname === '/api/student/dashboard' && request.method === 'GET') {
+    const studentId = url.searchParams.get('student_id') || 's123';
+    const allEvents = getStudentEvents().filter((e) => e.student_id === studentId);
+    
+    // Get real-time DKT prediction
+    const dktResult = DKTInference.predict(allEvents, studentId);
+
+    const defaultSkills = [
+      { id: 's1', name: 'Coding', percentage: 72, level: 'Advanced', category: 'coding', targetPercentage: 85 },
+      { id: 's2', name: 'Aptitude', percentage: 81, level: 'Master', category: 'aptitude', targetPercentage: 85 },
+      { id: 's3', name: 'Communication', percentage: 64, level: 'Intermediate', category: 'communication', targetPercentage: 80 },
+    ];
+
     const data = {
       profile: {
+        id: studentId,
         name: 'Alex Chen',
         college: 'Vellore Institute of Technology',
         year: 'CS @ 3rd Year',
         streakDays: 5,
-        readinessScore: 78,
+        readinessScore: dktResult.status === 'ready' ? dktResult.readiness_score : 78,
         atsScore: 91,
       },
       tasks: [
@@ -31,11 +74,12 @@ export async function handleApi(request, response) {
         { id: 't3', title: '2 Tree Problems', completed: false, tag: 'Pending' },
         { id: 't4', title: 'Interview Practice', completed: false, tag: 'Pending' },
       ],
-      skills: [
-        { name: 'Coding', percentage: 72, category: 'coding' },
-        { name: 'Aptitude', percentage: 81, category: 'aptitude' },
-        { name: 'Communication', percentage: 64, category: 'communication' },
-      ],
+      skills: dktResult.status === 'ready' ? [
+        { id: 's1', name: 'Coding', percentage: dktResult.category_mastery.coding, level: dktResult.category_mastery.coding >= 85 ? 'Master' : 'Advanced', category: 'coding', targetPercentage: 85 },
+        { id: 's2', name: 'Aptitude', percentage: dktResult.category_mastery.aptitude, level: dktResult.category_mastery.aptitude >= 85 ? 'Master' : 'Advanced', category: 'aptitude', targetPercentage: 85 },
+        { id: 's3', name: 'Communication', percentage: dktResult.category_mastery.communication, level: dktResult.category_mastery.communication >= 85 ? 'Master' : 'Intermediate', category: 'communication', targetPercentage: 80 },
+      ] : defaultSkills,
+      dkt_intelligence: dktResult,
       deadline: {
         title: 'SWE Coding Assessment',
         company: 'Google Campus Drive',
@@ -49,8 +93,115 @@ export async function handleApi(request, response) {
         deadlineDays: 5,
       },
     };
+
     response.writeHead(200);
     response.end(JSON.stringify(data));
+    return;
+  }
+
+  // ---------------- 2. Student Event Ingestion API ----------------
+  // POST /api/ai/student-event
+  if (pathname === '/api/ai/student-event' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => {
+      body += chunk;
+    });
+
+    request.on('end', () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+
+        // Field validations
+        if (!payload.student_id || typeof payload.student_id !== 'string') {
+          response.writeHead(400);
+          response.end(JSON.stringify({ error: 'Missing or invalid student_id parameter.' }));
+          return;
+        }
+
+        if (!payload.skill || typeof payload.skill !== 'string') {
+          response.writeHead(400);
+          response.end(JSON.stringify({ error: 'Missing or invalid skill parameter.' }));
+          return;
+        }
+
+        if (payload.correct === undefined || (typeof payload.correct !== 'boolean' && typeof payload.correct !== 'number')) {
+          response.writeHead(400);
+          response.end(JSON.stringify({ error: 'Missing or invalid correct boolean parameter.' }));
+          return;
+        }
+
+        const newEvent = {
+          student_id: payload.student_id,
+          skill: payload.skill,
+          activity: payload.activity || 'practice_problem',
+          correct: Boolean(payload.correct),
+          difficulty: payload.difficulty || 'medium',
+          timestamp: payload.timestamp || new Date().toISOString(),
+        };
+
+        saveStudentEvent(newEvent);
+
+        // Fetch updated DKT skill prediction
+        const history = getStudentEvents().filter((e) => e.student_id === payload.student_id);
+        const prediction = DKTInference.predict(history, payload.student_id);
+
+        response.writeHead(200);
+        response.end(
+          JSON.stringify({
+            success: true,
+            message: 'Student event recorded successfully.',
+            event: newEvent,
+            updated_skill_prediction: prediction,
+          })
+        );
+      } catch (err) {
+        response.writeHead(400);
+        response.end(JSON.stringify({ error: 'Invalid JSON payload.', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  // ---------------- 3. DKT Skill Profile Inference API ----------------
+  // GET /api/ai/skill-profile/:student_id or GET /api/ai/skill-profile?student_id=s123
+  if (pathname.startsWith('/api/ai/skill-profile') && request.method === 'GET') {
+    const parts = pathname.split('/');
+    let studentId = parts[4] || url.searchParams.get('student_id') || 's123';
+
+    if (!studentId || studentId.trim() === '') {
+      response.writeHead(400);
+      response.end(JSON.stringify({ error: 'Missing student_id' }));
+      return;
+    }
+
+    const history = getStudentEvents().filter((e) => e.student_id === studentId);
+    const prediction = DKTInference.predict(history, studentId);
+
+    response.writeHead(200);
+    response.end(JSON.stringify(prediction));
+    return;
+  }
+
+  // ---------------- 4. DKT Model Training API ----------------
+  // POST /api/ai/train-dkt
+  if (pathname === '/api/ai/train-dkt' && request.method === 'POST') {
+    try {
+      const devDataPath = join(DATA_DIR, 'development_interactions.json');
+      let dataset = [];
+      if (existsSync(devDataPath)) {
+        dataset = JSON.parse(readFileSync(devDataPath, 'utf-8'));
+      }
+      // Merge with live recorded events
+      const liveEvents = getStudentEvents();
+      dataset = dataset.concat(liveEvents);
+
+      const trainResult = trainDKT(dataset);
+      response.writeHead(200);
+      response.end(JSON.stringify({ success: true, metrics: trainResult.metrics }));
+    } catch (err) {
+      response.writeHead(500);
+      response.end(JSON.stringify({ error: 'Training failed', details: err.message }));
+    }
     return;
   }
 

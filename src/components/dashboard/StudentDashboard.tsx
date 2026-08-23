@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CareerReadinessCard } from './CareerReadinessCard';
 import { TodaysPlanCard } from './TodaysPlanCard';
 import { SkillMasteryCard } from './SkillMasteryCard';
@@ -19,6 +19,10 @@ import {
 } from '../../types/dashboard';
 
 export const StudentDashboard: React.FC = () => {
+  const [readinessScore, setReadinessScore] = useState<number>(78);
+  const [dktStatus, setDktStatus] = useState<'ready' | 'not_trained' | 'loading'>('loading');
+  const [recommendedSkillFocus, setRecommendedSkillFocus] = useState<string>('Binary Trees & Path Sums');
+
   // State for daily plan checklist
   const [tasks, setTasks] = useState<PlanTask[]>([
     {
@@ -52,7 +56,7 @@ export const StudentDashboard: React.FC = () => {
   ]);
 
   // State for skills
-  const skills: SkillMasteryItem[] = [
+  const [skills, setSkills] = useState<SkillMasteryItem[]>([
     {
       id: 's1',
       name: 'Coding',
@@ -77,7 +81,7 @@ export const StudentDashboard: React.FC = () => {
       category: 'communication',
       targetPercentage: 80,
     },
-  ];
+  ]);
 
   // State for upcoming deadline
   const deadline: DeadlineItem = {
@@ -106,6 +110,58 @@ export const StudentDashboard: React.FC = () => {
   const [modalContent, setModalContent] = useState<ModalContentType>(null);
   const [activeCategoryTab, setActiveCategoryTab] = useState<CategoryTabId | null>(null);
 
+  // Fetch live AI DKT skill profile on mount
+  useEffect(() => {
+    async function loadDktProfile() {
+      try {
+        const res = await fetch('/api/ai/skill-profile/s123');
+        if (!res.ok) throw new Error('API request failed');
+        const data = await res.json();
+
+        if (data.status === 'ready' && data.category_mastery) {
+          setDktStatus('ready');
+          setReadinessScore(data.readiness_score || 78);
+          if (data.recommended_focus?.skill_name) {
+            setRecommendedSkillFocus(data.recommended_focus.skill_name);
+          }
+
+          setSkills([
+            {
+              id: 's1',
+              name: 'Coding',
+              percentage: data.category_mastery.coding,
+              level: data.category_mastery.coding >= 85 ? 'Master' : data.category_mastery.coding >= 70 ? 'Advanced' : 'Intermediate',
+              category: 'coding',
+              targetPercentage: 85,
+            },
+            {
+              id: 's2',
+              name: 'Aptitude',
+              percentage: data.category_mastery.aptitude,
+              level: data.category_mastery.aptitude >= 85 ? 'Master' : data.category_mastery.aptitude >= 70 ? 'Advanced' : 'Intermediate',
+              category: 'aptitude',
+              targetPercentage: 85,
+            },
+            {
+              id: 's3',
+              name: 'Communication',
+              percentage: data.category_mastery.communication,
+              level: data.category_mastery.communication >= 85 ? 'Master' : data.category_mastery.communication >= 70 ? 'Advanced' : 'Intermediate',
+              category: 'communication',
+              targetPercentage: 80,
+            },
+          ]);
+        } else if (data.status === 'not_trained') {
+          setDktStatus('not_trained');
+        }
+      } catch (err) {
+        console.warn('Live DKT service connection status:', err);
+      }
+    }
+
+    loadDktProfile();
+  }, []);
+
   // Toggle task completion
   const handleToggleTask = (id: string) => {
     setTasks((prev) =>
@@ -126,8 +182,8 @@ export const StudentDashboard: React.FC = () => {
       {/* Row 1: Top Metrics Grid */}
       <section className="metrics-grid" aria-label="Key Performance Metrics">
         <CareerReadinessCard
-          score={78}
-          onViewDetails={() => setModalContent({ type: 'readiness_breakdown', score: 78 })}
+          score={readinessScore}
+          onViewDetails={() => setModalContent({ type: 'readiness_breakdown', score: readinessScore })}
         />
         <TodaysPlanCard
           tasks={tasks}
@@ -139,7 +195,8 @@ export const StudentDashboard: React.FC = () => {
         />
         <SkillMasteryCard
           skills={skills}
-          onViewSkills={() => setModalContent({ type: 'readiness_breakdown', score: 78 })}
+          isUntrained={dktStatus === 'not_trained'}
+          onViewSkills={() => setModalContent({ type: 'readiness_breakdown', score: readinessScore })}
         />
       </section>
 
@@ -161,8 +218,16 @@ export const StudentDashboard: React.FC = () => {
 
       {/* Row 3: AI Intelligence Banner */}
       <AiUpdateBanner
-        message="Your roadmap has been updated based on your performance."
-        subMessage="AI detected consistent aptitude accuracy and scheduled 2 tree problems for the SWE Coding Assessment."
+        message={
+          dktStatus === 'not_trained'
+            ? 'AI skill analysis is being prepared.'
+            : 'Your roadmap has been updated based on your performance.'
+        }
+        subMessage={
+          dktStatus === 'not_trained'
+            ? 'Deep Knowledge Tracing neural models are calibrating your baseline competencies.'
+            : `AI detected consistent accuracy and prioritized ${recommendedSkillFocus} for upcoming placement rounds.`
+        }
         onViewRoadmap={() =>
           setModalContent({
             type: 'insight_detail',
@@ -199,3 +264,5 @@ export const StudentDashboard: React.FC = () => {
     </main>
   );
 };
+
+export default StudentDashboard;
