@@ -308,3 +308,35 @@ export function getTimeBasedGreeting(
     period,
   };
 }
+
+/**
+ * Load student events scoped by studentId or local ledger
+ */
+export function getStudentEvents(studentId?: string): StudentEvent[] {
+  if (typeof localStorage === 'undefined') return [];
+  try {
+    if (studentId) {
+      const cleanId = String(studentId).replace(/[^a-zA-Z0-9_-]/g, '_');
+      const scopedStr = localStorage.getItem(`careeros_events_${cleanId}`);
+      if (scopedStr) {
+        const parsed = JSON.parse(scopedStr);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    }
+    const genericStr = localStorage.getItem('careeros_local_events');
+    if (genericStr) {
+      const parsed = JSON.parse(genericStr);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch {}
+  return [];
+}
+
+/**
+ * Calculate the true current streak for a student
+ */
+export function getStudentStreak(studentId?: string): number {
+  const events = getStudentEvents(studentId);
+  return calculateRealStreak(events).currentStreak;
+}
+
