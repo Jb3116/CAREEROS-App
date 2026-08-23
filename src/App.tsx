@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
+
+// Student Layout & Components
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { StudentDashboard } from './components/dashboard/StudentDashboard';
 import { RoadmapView } from './components/roadmap/RoadmapView';
@@ -14,16 +16,20 @@ import { InterviewStudioPage } from './pages/InterviewStudioPage';
 import { ProfileView } from './components/profile/ProfileView';
 import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 
+// College Admin Layout & Components
+import { AdminLayout } from './components/layout/AdminLayout';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
+
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public & Unified Auth / Login (with Student & College Admin toggle) */}
+        {/* Public & Unified Auth / Login (with Student & College Admin role switcher) */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
 
-        {/* Authenticated Student Application with Unified Permanent Sidebar & Header Layout */}
+        {/* Authenticated Student Experience (Protected by DashboardLayout) */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<StudentDashboard />} />
           <Route path="/roadmap" element={<RoadmapView />} />
@@ -35,6 +41,15 @@ export const App: React.FC = () => {
           <Route path="/practice" element={<PracticeView />} />
           <Route path="/profile" element={<ProfileView />} />
           <Route path="/resume-builder" element={<ResumeBuilderPage />} />
+        </Route>
+
+        {/* Authenticated College Admin & TPO Experience (Protected by AdminLayout) */}
+        <Route element={<AdminLayout />}>
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/students" element={<AdminDashboardPage />} />
+          <Route path="/admin/drives" element={<AdminDashboardPage />} />
+          <Route path="/admin/analytics" element={<AdminDashboardPage />} />
+          <Route path="/admin/settings" element={<AdminDashboardPage />} />
         </Route>
 
         {/* Fallback / Catch-all */}

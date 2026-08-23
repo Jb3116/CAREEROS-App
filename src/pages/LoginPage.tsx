@@ -79,7 +79,7 @@ export const LoginPage: React.FC = () => {
         text: 'Institutional 2FA verified. Launching University Administration Dashboard...',
       });
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/admin/dashboard');
       }, 500);
     }, 500);
   };
