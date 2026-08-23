@@ -14,10 +14,30 @@ import {
   ChevronUp,
   ShieldCheck,
   Zap,
+  Layout,
+  Search,
 } from 'lucide-react';
+
+interface ExperienceItem {
+  id: string;
+  role: string;
+  company: string;
+  location: string;
+  duration: string;
+  bullets: string[];
+}
+
+interface ProjectItem {
+  id: string;
+  title: string;
+  tech: string;
+  link: string;
+  bullets: string[];
+}
 
 export const ResumeBuilderPage: React.FC = () => {
   const navigate = useNavigate();
+  const [template, setTemplate] = useState<'classic' | 'modern' | 'minimal'>('modern');
 
   // Resume State Data
   const [resumeData, setResumeData] = useState({
@@ -56,7 +76,7 @@ export const ResumeBuilderPage: React.FC = () => {
           'Integrated GitHub Actions CI/CD pipeline, reducing deployment release cycles from 45 minutes to 6 minutes.',
         ],
       },
-    ],
+    ] as ExperienceItem[],
     projects: [
       {
         id: 'p1',
@@ -78,7 +98,7 @@ export const ResumeBuilderPage: React.FC = () => {
           'Benchmarked write throughput surpassing 18,000 ops/sec with sub-millisecond p99 consistency latency.',
         ],
       },
-    ],
+    ] as ProjectItem[],
     achievements: [
       'Solved 350+ Data Structures & Algorithm problems on LeetCode (Rating: 1880+ Top 6%).',
       'Winner, Smart India Hackathon 2025 (Campus Round - AI Track).',
@@ -110,6 +130,43 @@ export const ResumeBuilderPage: React.FC = () => {
     alert('✨ AI Resume Summary enhanced with high-impact action verbs and quantified engineering metrics!');
   };
 
+  const addExperience = () => {
+    const newExp: ExperienceItem = {
+      id: `exp-${Date.now()}`,
+      role: 'Full Stack Developer Intern',
+      company: 'TechCorp Solutions',
+      location: 'Bangalore / Remote',
+      duration: 'Jan 2025 - Apr 2025',
+      bullets: ['Developed responsive web interfaces in React and optimized backend API response time.'],
+    };
+    setResumeData((prev) => ({ ...prev, experiences: [...prev.experiences, newExp] }));
+  };
+
+  const deleteExperience = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      experiences: prev.experiences.filter((e) => e.id !== id),
+    }));
+  };
+
+  const addProject = () => {
+    const newProj: ProjectItem = {
+      id: `proj-${Date.now()}`,
+      title: 'Real-Time Collaborative Code Editor',
+      tech: 'React, WebSockets, Node.js, Monaco Editor',
+      link: 'github.com/alexchen-dev/collab-code',
+      bullets: ['Enabled multi-user concurrent editing with operational transformation algorithms.'],
+    };
+    setResumeData((prev) => ({ ...prev, projects: [...prev.projects, newProj] }));
+  };
+
+  const deleteProject = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: prev.projects.filter((p) => p.id !== id),
+    }));
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -138,11 +195,25 @@ export const ResumeBuilderPage: React.FC = () => {
 
           <div className="resume-ats-badge">
             <CheckCircle2 size={16} />
-            <span>91% ATS Optimized • Tier 1 Standard</span>
+            <span>91% ATS Optimized • Tier 1 Ready</span>
           </div>
         </div>
 
         <div className="resume-topbar-actions">
+          {/* Template Selector */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 10, padding: 4 }}>
+            <Layout size={14} color="#64748B" style={{ marginLeft: 6 }} />
+            <select
+              value={template}
+              onChange={(e) => setTemplate(e.target.value as any)}
+              style={{ background: 'transparent', border: 'none', fontSize: 12.5, fontWeight: 700, color: '#1E293B', outline: 'none', cursor: 'pointer' }}
+            >
+              <option value="modern">Modern Tech Standard</option>
+              <option value="classic">Classic Ivy League</option>
+              <option value="minimal">Minimal Single-Column</option>
+            </select>
+          </div>
+
           <button className="resume-btn-ai" onClick={handleAiEnhance} title="AI Auto-Enhance Resume">
             <Sparkles size={16} />
             <span>AI Enhance</span>
@@ -195,7 +266,7 @@ export const ResumeBuilderPage: React.FC = () => {
                   />
                 </div>
                 <div className="resume-field-group">
-                  <label className="resume-field-label">LinkedIn & GitHub URLs</label>
+                  <label className="resume-field-label">LinkedIn & GitHub Handles</label>
                   <input
                     type="text"
                     className="resume-input"
@@ -263,6 +334,20 @@ export const ResumeBuilderPage: React.FC = () => {
                     }
                   />
                 </div>
+                <div className="resume-field-group">
+                  <label className="resume-field-label">Relevant Coursework</label>
+                  <input
+                    type="text"
+                    className="resume-input"
+                    value={resumeData.education.coursework}
+                    onChange={(e) =>
+                      setResumeData({
+                        ...resumeData,
+                        education: { ...resumeData.education, coursework: e.target.value },
+                      })
+                    }
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -276,7 +361,7 @@ export const ResumeBuilderPage: React.FC = () => {
             {openSections.skills && (
               <div className="resume-accordion-body">
                 <div className="resume-field-group">
-                  <label className="resume-field-label">Languages</label>
+                  <label className="resume-field-label">Programming Languages</label>
                   <input
                     type="text"
                     className="resume-input"
@@ -304,7 +389,7 @@ export const ResumeBuilderPage: React.FC = () => {
                   />
                 </div>
                 <div className="resume-field-group">
-                  <label className="resume-field-label">Tools, Cloud & Databases</label>
+                  <label className="resume-field-label">Developer Tools, Cloud & Databases</label>
                   <input
                     type="text"
                     className="resume-input"
@@ -317,6 +402,154 @@ export const ResumeBuilderPage: React.FC = () => {
                     }
                   />
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* Section 5: Experience */}
+          <div className="resume-section-accordion">
+            <button className="resume-accordion-header" onClick={() => toggleSection('experience')}>
+              <span>5. Work Experience & Internships</span>
+              {openSections.experience ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
+            {openSections.experience && (
+              <div className="resume-accordion-body">
+                {resumeData.experiences.map((exp, idx) => (
+                  <div key={exp.id} style={{ background: '#F8FAFC', padding: 12, borderRadius: 10, border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ fontSize: 13, color: '#0F172A' }}>Position #{idx + 1}</strong>
+                      <button
+                        type="button"
+                        onClick={() => deleteExperience(exp.id)}
+                        style={{ color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer' }}
+                        title="Delete Experience"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      className="resume-input"
+                      placeholder="Role (e.g. Software Engineering Intern)"
+                      value={exp.role}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setResumeData((prev) => ({
+                          ...prev,
+                          experiences: prev.experiences.map((item) => (item.id === exp.id ? { ...item, role: val } : item)),
+                        }));
+                      }}
+                    />
+                    <input
+                      type="text"
+                      className="resume-input"
+                      placeholder="Company (e.g. CloudScale Technologies)"
+                      value={exp.company}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setResumeData((prev) => ({
+                          ...prev,
+                          experiences: prev.experiences.map((item) => (item.id === exp.id ? { ...item, company: val } : item)),
+                        }));
+                      }}
+                    />
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addExperience}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    padding: 8,
+                    borderRadius: 8,
+                    background: '#EEF2FF',
+                    border: '1px dashed #4F46E5',
+                    color: '#4F46E5',
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Plus size={14} />
+                  <span>Add Work Experience</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Section 6: Projects */}
+          <div className="resume-section-accordion">
+            <button className="resume-accordion-header" onClick={() => toggleSection('projects')}>
+              <span>6. Technical Projects</span>
+              {openSections.projects ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
+            {openSections.projects && (
+              <div className="resume-accordion-body">
+                {resumeData.projects.map((proj, idx) => (
+                  <div key={proj.id} style={{ background: '#F8FAFC', padding: 12, borderRadius: 10, border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ fontSize: 13, color: '#0F172A' }}>Project #{idx + 1}</strong>
+                      <button
+                        type="button"
+                        onClick={() => deleteProject(proj.id)}
+                        style={{ color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer' }}
+                        title="Delete Project"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      className="resume-input"
+                      placeholder="Project Title"
+                      value={proj.title}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setResumeData((prev) => ({
+                          ...prev,
+                          projects: prev.projects.map((item) => (item.id === proj.id ? { ...item, title: val } : item)),
+                        }));
+                      }}
+                    />
+                    <input
+                      type="text"
+                      className="resume-input"
+                      placeholder="Tech Stack (e.g. React, Node.js, Docker)"
+                      value={proj.tech}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setResumeData((prev) => ({
+                          ...prev,
+                          projects: prev.projects.map((item) => (item.id === proj.id ? { ...item, tech: val } : item)),
+                        }));
+                      }}
+                    />
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addProject}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    padding: 8,
+                    borderRadius: 8,
+                    background: '#EEF2FF',
+                    border: '1px dashed #4F46E5',
+                    color: '#4F46E5',
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Plus size={14} />
+                  <span>Add Project</span>
+                </button>
               </div>
             )}
           </div>
