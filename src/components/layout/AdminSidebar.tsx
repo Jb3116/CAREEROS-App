@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
+  CalendarCheck,
   Megaphone,
   Briefcase,
   Building2,
@@ -32,6 +33,12 @@ export const AdminSidebar: React.FC = () => {
       label: 'Admin Dashboard',
       path: '/admin/dashboard',
       icon: LayoutDashboard,
+    },
+    {
+      id: 'opportunities',
+      label: 'Opportunity Manager',
+      path: '/admin/opportunities',
+      icon: CalendarCheck,
     },
     {
       id: 'announcements',
