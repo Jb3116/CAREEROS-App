@@ -10,6 +10,7 @@
     "start": "node server.mjs --production",
     "create-admin": "node server/create-admin.mjs",
     "train:dkt": "node train_dkt.mjs",
+    "test": "node --test tests/*_test.mjs tests/*_verification.mjs tests/*_suite.mjs",
     "test:dkt": "node --test tests/dkt_test.mjs",
     "test:ai": "node --test tests/dkt_test.mjs",
     "evaluate:ai": "node train_dkt.mjs"
