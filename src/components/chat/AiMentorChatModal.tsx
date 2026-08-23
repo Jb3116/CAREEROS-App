@@ -344,7 +344,30 @@ export const AiMentorChatModal: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <button
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('careeros-start-tour'));
+                  setIsOpen(false);
+                }}
+                style={{
+                  background: 'rgba(99, 102, 241, 0.2)',
+                  border: '1px solid rgba(99, 102, 241, 0.4)',
+                  color: '#C7D2FE',
+                  padding: '4px 8px',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                }}
+                title="Replay AI Website Tour"
+              >
+                <Sparkles size={13} color="#818CF8" />
+                <span>Replay Tour</span>
+              </button>
               <button
                 onClick={handleResetChat}
                 style={{

@@ -3,20 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { Target, TrendingUp, Info, ArrowRight } from 'lucide-react';
 
 interface CareerReadinessCardProps {
-  score: number;
+  score?: number | null;
   onViewDetails?: () => void;
 }
 
 export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
-  score = 78,
+  score = null,
   onViewDetails,
 }) => {
   const navigate = useNavigate();
 
+  const isAssessed = typeof score === 'number' && score > 0;
+  const displayScore = isAssessed ? score : 0;
+
   // SVG Donut calculation
   const radius = 65;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (score / 100) * circumference;
+  const strokeDashoffset = isAssessed
+    ? circumference - (displayScore / 100) * circumference
+    : circumference;
 
   return (
     <div className="dash-card">
@@ -63,13 +68,27 @@ export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
               style={{
                 strokeDasharray: circumference,
                 strokeDashoffset: strokeDashoffset,
+                stroke: isAssessed ? 'url(#readinessGradient)' : '#E2E8F0',
               }}
             />
           </svg>
 
           <div className="gauge-center-content">
-            <span className="gauge-value">{score}%</span>
-            <span className="gauge-label">Placement Ready</span>
+            {isAssessed ? (
+              <>
+                <span className="gauge-value">{score}%</span>
+                <span className="gauge-label">Placement Ready</span>
+              </>
+            ) : (
+              <>
+                <span className="gauge-value" style={{ fontSize: 15, fontWeight: 800, color: '#64748B' }}>
+                  Not assessed
+                </span>
+                <span className="gauge-label" style={{ fontSize: 11, color: '#94A3B8' }}>
+                  Take Assessment
+                </span>
+              </>
+            )}
           </div>
         </div>
 
@@ -80,7 +99,7 @@ export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
           style={{ cursor: 'pointer', border: 'none' }}
         >
           <TrendingUp size={14} />
-          <span>Take Assessment</span>
+          <span>{isAssessed ? 'Review Assessment' : 'Take Assessment'}</span>
         </button>
       </div>
     </div>

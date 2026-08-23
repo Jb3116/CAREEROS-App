@@ -6,22 +6,13 @@ import { DetailModal, ModalContentType } from '../dashboard/DetailModal';
 import { AiMentorChatModal } from '../chat/AiMentorChatModal';
 import { AiWebsiteTour } from '../tour/AiWebsiteTour';
 import { StudentProfile } from '../../types/dashboard';
+import { useStudentProfile } from '../../utils/userProfile';
 
 export const DashboardLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [modalContent, setModalContent] = useState<ModalContentType>(null);
-
-  const studentProfile: StudentProfile = {
-    name: 'Alex Chen',
-    role: 'Student',
-    college: 'Vellore Institute of Technology',
-    year: 'CS @ 3rd Year',
-    avatarText: 'AC',
-    streakDays: 5,
-    readinessScore: 78,
-    atsScore: 91,
-  };
+  const studentProfile = useStudentProfile();
 
   const handleOpenProfile = () => {
     navigate('/profile');

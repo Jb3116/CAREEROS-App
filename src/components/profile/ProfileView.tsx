@@ -1,7 +1,10 @@
 import React from 'react';
 import { User, GraduationCap, Award, CheckCircle2, Flame, MapPin, Mail, Globe, Code2, ExternalLink } from 'lucide-react';
+import { useStudentProfile } from '../../utils/userProfile';
 
 export const ProfileView: React.FC = () => {
+  const profile = useStudentProfile();
+
   return (
     <div style={{ padding: '24px 36px', maxWidth: 900, margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Profile Header Card */}
@@ -33,22 +36,22 @@ export const ProfileView: React.FC = () => {
             boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
           }}
         >
-          AC
+          {profile.avatarText || 'ST'}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 900 }}>Alex Chen</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 900 }}>{profile.name}</h1>
             <span style={{ fontSize: 11.5, background: '#10B981', color: '#FFF', padding: '2px 8px', borderRadius: 999, fontWeight: 700 }}>
               Verified Student
             </span>
           </div>
 
           <div style={{ fontSize: 13.5, color: '#C7D2FE' }}>
-            B.Tech Computer Science & Engineering • 3rd Year (Class of 2027)
+            {profile.degree || 'B.Tech Engineering'} &bull; {profile.currentYear || profile.year} {profile.gradYear ? `(Class of ${profile.gradYear})` : ''}
           </div>
           <div style={{ fontSize: 13, color: '#C7D2FE' }}>
-            Vellore Institute of Technology, Vellore • CGPA: 8.9 / 10.0
+            {profile.college} &bull; CGPA: {profile.cgpa || '8.9'} / 10.0
           </div>
         </div>
 

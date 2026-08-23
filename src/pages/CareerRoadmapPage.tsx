@@ -4,20 +4,11 @@ import { Sidebar } from '../components/layout/Sidebar';
 import { Header } from '../components/layout/Header';
 import { RoadmapView } from '../components/roadmap/RoadmapView';
 import { StudentProfile } from '../types/dashboard';
+import { useStudentProfile } from '../utils/userProfile';
 
 export const CareerRoadmapPage: React.FC = () => {
   const navigate = useNavigate();
-
-  const studentProfile: StudentProfile = {
-    name: 'Alex Chen',
-    role: 'Student',
-    college: 'Vellore Institute of Technology',
-    year: 'CS @ 3rd Year',
-    avatarText: 'AC',
-    streakDays: 5,
-    readinessScore: 78,
-    atsScore: 91,
-  };
+  const studentProfile = useStudentProfile();
 
   return (
     <div className="app-container">

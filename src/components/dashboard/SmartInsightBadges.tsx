@@ -3,42 +3,59 @@ import { useNavigate } from 'react-router-dom';
 import { GitFork, AlertTriangle, Sparkles, FileCheck, ArrowUpRight } from 'lucide-react';
 import { SmartInsight } from '../../types/dashboard';
 
+import { useStudentProfile } from '../../utils/userProfile';
+import { hasAssessmentRecord } from '../../utils/assessmentValidation';
+import { getStudentAtsScore } from '../../utils/resumeVersioning';
+
 interface SmartInsightBadgesProps {
   onSelectInsight?: (insight: SmartInsight) => void;
 }
 
 export const SmartInsightBadges: React.FC<SmartInsightBadgesProps> = ({ onSelectInsight }) => {
   const navigate = useNavigate();
+  const profile = useStudentProfile();
+  const studentId = profile.email || 'student';
+  const isAssessed = hasAssessmentRecord(studentId);
+  const atsScore = getStudentAtsScore(studentId);
 
   const insights: (SmartInsight & { path: string })[] = [
     {
       id: 'i1',
-      title: 'AI Roadmap Updated',
-      description: 'Syllabus tailored to upcoming deadline',
+      title: isAssessed ? 'AI Roadmap Active' : 'Diagnostic Test Required',
+      description: isAssessed
+        ? 'Personalized syllabus tailored to target engineering roles'
+        : 'Take assessment to calculate competencies and unlock roadmap',
       type: 'roadmap',
       iconType: 'purple',
-      path: '/career-roadmap',
+      path: isAssessed ? '/career-roadmap' : '/assessment',
     },
     {
       id: 'i2',
-      title: 'Skill Gap Detected',
-      description: 'Recommended: Graphs & Dynamic Programming module',
+      title: isAssessed ? 'Target Skill Focus' : 'Practice Arena',
+      description: isAssessed
+        ? 'Recommended: Tree Algorithms & Asymptotic Optimization'
+        : 'Explore practice challenges in the interactive coding arena',
       type: 'gap',
       iconType: 'amber',
       path: '/practice',
     },
     {
       id: 'i3',
-      title: 'New Opportunity Match',
-      description: 'Goldman Sachs SWE Internship • 94% match',
+      title: 'Opportunity Match',
+      description: 'Goldman Sachs SWE Internship • Tier-1 Campus Drive',
       type: 'opportunity',
       iconType: 'green',
       path: '/opportunities',
     },
     {
       id: 'i4',
-      title: 'Resume ATS: 91%',
-      description: 'Verified & ready for placement drive upload',
+      title: atsScore > 0 ? `Resume ATS: ${atsScore}%` : 'Resume ATS: 0%',
+      description:
+        atsScore >= 80
+          ? 'Verified & ready for placement drive upload'
+          : atsScore > 0
+          ? 'Optimization recommended for company screening'
+          : 'Upload or build resume to compute ATS compatibility',
       type: 'ats',
       iconType: 'blue',
       path: '/resume-builder',
@@ -62,8 +79,9 @@ export const SmartInsightBadges: React.FC<SmartInsightBadgesProps> = ({ onSelect
   const handleInsightClick = (item: typeof insights[0]) => {
     if (onSelectInsight) {
       onSelectInsight(item);
+    } else {
+      navigate(item.path);
     }
-    navigate(item.path);
   };
 
   return (

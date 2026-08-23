@@ -17,15 +17,27 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { StudentProfile } from '../../types/dashboard';
+import { StreakCalendar } from '../common/StreakCalendar';
+import { useStudentProfile } from '../../utils/userProfile';
 
 interface HeaderProps {
-  profile: StudentProfile;
+  profile?: StudentProfile;
   onOpenProfile?: () => void;
   onOpenNotifications?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ profile }) => {
   const navigate = useNavigate();
+  const globalProfile = useStudentProfile();
+  const activeProfile = {
+    ...globalProfile,
+    ...profile,
+    name: profile?.name && profile.name !== 'Alex Chen' ? profile.name : globalProfile.name,
+    college: profile?.college && profile.college !== 'Vellore Institute of Technology' ? profile.college : globalProfile.college,
+    year: profile?.year && profile.year !== 'CS @ 3rd Year' ? profile.year : (globalProfile.currentYear || globalProfile.year),
+    avatarText: globalProfile.avatarText,
+  };
+
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -52,8 +64,11 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
     {
       id: 'n3',
       title: 'Daily Streak Milestone',
-      desc: 'You reached a 5-day continuous learning streak! +50 XP bonus added.',
-      time: 'Yesterday',
+      desc:
+        activeProfile.streakDays > 0
+          ? `You have an active ${activeProfile.streakDays}-day learning streak!`
+          : 'Start your daily learning streak today by solving 1 challenge!',
+      time: 'Today',
       read: true,
       targetPath: '/practice',
     },
@@ -85,12 +100,25 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
     navigate(targetPath);
   };
 
+  // Calculate dynamic greeting (Morning / Afternoon / Evening / Night)
+  const hour = new Date().getHours();
+  let timeGreeting = 'Good Morning';
+  if (hour >= 12 && hour < 17) {
+    timeGreeting = 'Good Afternoon';
+  } else if (hour >= 17 && hour < 22) {
+    timeGreeting = 'Good Evening';
+  } else if (hour >= 22 || hour < 5) {
+    timeGreeting = 'Good Night';
+  }
+
+  const firstName = activeProfile.name.trim().split(' ')[0] || 'Champ';
+
   return (
     <header className="header" role="banner">
       {/* Welcome Title */}
       <div className="header-welcome">
         <div className="header-title-row">
-          <h1 className="header-title">Morning Champ 👋</h1>
+          <h1 className="header-title">{timeGreeting}, {firstName} 👋</h1>
         </div>
         <p className="header-subtitle">Let's make today count.</p>
       </div>
@@ -117,7 +145,11 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
           title="Start or review Placement Assessment"
         >
           <ClipboardCheck size={14} />
-          <span>Assessment (78%)</span>
+          <span>
+            {activeProfile.readinessScore > 0
+              ? `Assessment (${activeProfile.readinessScore}%)`
+              : 'Diagnostic Assessment'}
+          </span>
         </button>
 
         <button
@@ -142,16 +174,12 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
           <span>Roadmap v3.2</span>
         </button>
 
-        {/* Streak Badge */}
-        <div
-          className="streak-badge"
-          onClick={() => navigate('/practice')}
-          title="5 Days Consecutive Practice - Click to solve daily question"
-          style={{ cursor: 'pointer' }}
-        >
-          <Flame size={16} fill="#EA580C" strokeWidth={0} />
-          <span>{profile.streakDays} Day Streak</span>
-        </div>
+        {/* Duolingo-Style Streak Calendar Badge */}
+        <StreakCalendar
+          compact
+          streakDays={activeProfile.streakDays}
+          onOpenPractice={() => navigate('/practice')}
+        />
 
         {/* ---------------- Notifications Popover ---------------- */}
         <div style={{ position: 'relative' }} ref={notifRef}>
@@ -263,10 +291,10 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
             tabIndex={0}
             style={{ cursor: 'pointer' }}
           >
-            <div className="user-avatar">{profile.avatarText}</div>
+            <div className="user-avatar">{activeProfile.avatarText}</div>
             <div className="user-info">
-              <span className="user-name">{profile.name}</span>
-              <span className="user-role">{profile.year}</span>
+              <span className="user-name">{activeProfile.name}</span>
+              <span className="user-role">{activeProfile.year}</span>
             </div>
             <ChevronDown size={14} color="#94A3B8" />
           </div>
@@ -291,8 +319,8 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
               }}
             >
               <div style={{ padding: '8px 10px', borderBottom: '1px solid #F1F5F9', marginBottom: 4 }}>
-                <div style={{ fontSize: 13.5, fontWeight: 900, color: '#0F172A' }}>{profile.name}</div>
-                <div style={{ fontSize: 11.5, color: '#64748B' }}>{profile.college}</div>
+                <div style={{ fontSize: 13.5, fontWeight: 900, color: '#0F172A' }}>{activeProfile.name}</div>
+                <div style={{ fontSize: 11.5, color: '#64748B' }}>{activeProfile.college}</div>
               </div>
 
               <button
@@ -371,6 +399,7 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
               <button
                 onClick={() => {
                   setShowProfileMenu(false);
+                  localStorage.removeItem('careeros_auth_user');
                   navigate('/login');
                 }}
                 style={{

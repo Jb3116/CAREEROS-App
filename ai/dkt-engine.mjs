@@ -454,7 +454,8 @@ export class DKTInference {
       }
     }
 
-    const forwardRes = model.forward(inputIndices);
+    const isZeroState = studentHistory.length === 0;
+    const forwardRes = isZeroState ? { lastPredictions: new Array(NUM_SKILLS).fill(0) } : model.forward(inputIndices);
     const rawMastery = forwardRes.lastPredictions;
 
     // Build skill intelligence breakdown
@@ -464,18 +465,18 @@ export class DKTInference {
     let minMasteryVal = 2.0;
 
     for (const [skillKey, skillIdx] of Object.entries(SKILL_MAP)) {
-      const prob = rawMastery[skillIdx];
-      const percentage = Math.round(prob * 100);
+      const prob = rawMastery[skillIdx] || 0;
+      const percentage = isZeroState ? 0 : Math.round(prob * 100);
       const category = SKILL_CATEGORIES[skillKey] || 'coding';
       const attempts = skillAttempts[skillKey] || 0;
       const corrects = skillCorrects[skillKey] || 0;
       const accuracy = attempts > 0 ? Math.round((corrects / attempts) * 100) : null;
 
-      let level = 'Intermediate';
+      let level = 'Needs Practice';
       if (percentage >= 85) level = 'Master';
       else if (percentage >= 70) level = 'Advanced';
       else if (percentage >= 50) level = 'Intermediate';
-      else level = 'Needs Practice';
+      else level = isZeroState ? 'Beginner' : 'Needs Practice';
 
       skillsList.push({
         id: skillKey,
@@ -501,14 +502,16 @@ export class DKTInference {
     }
 
     const categoryMastery = {
-      coding: Math.round(categorySums.coding.sum / (categorySums.coding.count || 1)),
-      aptitude: Math.round(categorySums.aptitude.sum / (categorySums.aptitude.count || 1)),
-      communication: Math.round(categorySums.communication.sum / (categorySums.communication.count || 1)),
+      coding: isZeroState ? 0 : Math.round(categorySums.coding.sum / (categorySums.coding.count || 1)),
+      aptitude: isZeroState ? 0 : Math.round(categorySums.aptitude.sum / (categorySums.aptitude.count || 1)),
+      communication: isZeroState ? 0 : Math.round(categorySums.communication.sum / (categorySums.communication.count || 1)),
     };
 
-    const readinessScore = Math.round(
-      categoryMastery.coding * 0.5 + categoryMastery.aptitude * 0.3 + categoryMastery.communication * 0.2
-    );
+    const readinessScore = isZeroState
+      ? 0
+      : Math.round(
+          categoryMastery.coding * 0.5 + categoryMastery.aptitude * 0.3 + categoryMastery.communication * 0.2
+        );
 
     let metrics = {};
     try {

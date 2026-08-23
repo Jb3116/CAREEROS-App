@@ -21,6 +21,14 @@ import {
   Check,
 } from 'lucide-react';
 
+import { useStudentProfile } from '../../utils/userProfile';
+import {
+  hasAssessmentRecord,
+  getUserRoadmap,
+  saveUserRoadmap,
+  getAssessmentRecord,
+} from '../../utils/assessmentValidation';
+
 interface Milestone {
   id: string;
   title: string;
@@ -47,153 +55,28 @@ interface RoadmapPhase {
 
 export const RoadmapView: React.FC = () => {
   const navigate = useNavigate();
+  const profile = useStudentProfile();
+  const studentId = profile.email || 'student';
+  const isAssessed = hasAssessmentRecord(studentId);
+
   const [filterStatus, setFilterStatus] = useState<'all' | 'in-progress' | 'completed' | 'upcoming'>('all');
   const [activeModalMilestone, setActiveModalMilestone] = useState<Milestone | null>(null);
   const [activeWhySkillModal, setActiveWhySkillModal] = useState<Milestone | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [roadmapData, setRoadmapData] = useState<any>(null);
-  const [completedMilestones, setCompletedMilestones] = useState<Set<string>>(new Set(['m1-1']));
+  const [completedMilestones, setCompletedMilestones] = useState<Set<string>>(new Set());
 
-  const [phases, setPhases] = useState<RoadmapPhase[]>([
-    {
-      id: 'phase-1',
-      phaseNumber: 1,
-      title: 'Diagnostic Baseline & Core Foundations',
-      subtitle: 'Complexity Analysis, Linear Data Structures & Algorithmic Patterns',
-      status: 'completed',
-      milestones: [
-        {
-          id: 'm1-1',
-          title: 'Year-Aware Initial Diagnostic Assessment',
-          description: 'Calibrated diagnostic benchmark covering Coding & Aptitude with cold-start estimation.',
-          status: 'completed',
-          difficulty: 'Intermediate',
-          topics: ['Diagnostic Coding Test', 'Quantitative Aptitude Test', 'Baseline Score: 78%'],
-          skill_id: 'algorithms',
-          whyThisSkill: 'Establishes cold-start diagnostic baseline for knowledge tracing algorithms.',
-        },
-        {
-          id: 'm1-2',
-          title: 'Time & Space Complexity Analysis',
-          description: 'Big-O notation, master theorem, asymptotic bounds, and recurrence relations.',
-          status: 'completed',
-          difficulty: 'Beginner',
-          topics: ['Recurrence Relations', 'Space Complexity in Recursion', 'Iterative vs Recursive Tradeoffs'],
-          skill_id: 'algorithms',
-          whyThisSkill: 'Essential foundation for analyzing algorithmic efficiency in technical interviews.',
-        },
-        {
-          id: 'm1-3',
-          title: 'Arrays, Two Pointers & Sliding Window',
-          description: 'Classic two-pointer techniques, fast/slow pointers, and fixed/dynamic sliding window algorithms.',
-          status: 'completed',
-          difficulty: 'Intermediate',
-          topics: ['3Sum / 4Sum Patterns', 'Longest Substring Without Repeating Characters', 'Minimum Window Substring'],
-          skill_id: 'data_structures',
-          whyThisSkill: 'Fundamental pattern tested in over 40% of preliminary screening assessments.',
-        },
-      ],
-    },
-    {
-      id: 'phase-2',
-      phaseNumber: 2,
-      title: 'Hierarchical Structures & Non-Linear Algorithms',
-      subtitle: 'Binary Trees, Graphs, Dynamic Programming & Shortest Paths',
-      status: 'active',
-      milestones: [
-        {
-          id: 'm2-1',
-          title: 'Binary Trees, BST & LCA',
-          description: 'Tree traversals (Inorder, Preorder, Postorder, Zigzag), Lowest Common Ancestor, and Path Sums.',
-          status: 'in-progress',
-          difficulty: 'Advanced',
-          topics: ['Binary Tree Maximum Path Sum', 'Lowest Common Ancestor in BST', 'Construct Tree from Traversals'],
-          skill_id: 'data_structures',
-          isPriority: true,
-          whyThisSkill: 'Trees are the #1 most tested topic at Google, Amazon, and Goldman Sachs campus rounds.',
-        },
-        {
-          id: 'm2-2',
-          title: 'Dynamic Programming & Memoization Patterns',
-          description: 'State transitions, 1D/2D DP grids, Knapsack, and Longest Common Subsequence.',
-          status: 'upcoming',
-          difficulty: 'Advanced',
-          topics: ['Top-down Memoization vs Bottom-up Tabulation', '0/1 Knapsack & Subset Sum', 'Coin Change & Edit Distance'],
-          skill_id: 'algorithms',
-          isPriority: true,
-          whyThisSkill: 'DP separates top-tier candidates. Tested in 65% of SDE 1 online assessments.',
-        },
-      ],
-    },
-    {
-      id: 'phase-3',
-      phaseNumber: 3,
-      title: 'Systems Engineering, Databases & Concurrency',
-      subtitle: 'SQL Indexing, ACID Guarantees, OS Paging & Multithreading',
-      status: 'upcoming',
-      milestones: [
-        {
-          id: 'm3-1',
-          title: 'Relational Schema Optimization & Complex SQL',
-          description: 'Window functions, indexing strategies, ACID guarantees, and CTE pipelines.',
-          status: 'upcoming',
-          difficulty: 'Intermediate',
-          topics: ['Window Functions', 'B+ Tree Indexing Strategies', 'ACID Transactions & Isolation Levels'],
-          skill_id: 'sql',
-          whyThisSkill: 'Essential for backend engineering and full-stack technical screening rounds.',
-        },
-        {
-          id: 'm3-2',
-          title: 'Operating Systems & Concurrency Patterns',
-          description: 'Multithreading, mutex/semaphore synchronization, deadlocks, and virtual memory paging.',
-          status: 'upcoming',
-          difficulty: 'Intermediate',
-          topics: ['Thread Synchronization & Mutexes', 'Deadlock Detection & Prevention', 'Virtual Memory & Page Faults'],
-          skill_id: 'operating_systems',
-          whyThisSkill: 'Crucial for core CS technical interviews at Goldman Sachs and Cisco.',
-        },
-      ],
-    },
-    {
-      id: 'phase-4',
-      phaseNumber: 4,
-      title: 'Placement Mock Diagnoses & Interview Mastery',
-      subtitle: 'Timed Proctored Assessments, STAR Behavioral & System Design',
-      status: 'upcoming',
-      milestones: [
-        {
-          id: 'm4-1',
-          title: 'Full-Length Timed Campus Placement Assessment',
-          description: 'Proctored 90-minute diagnosis simulation with 2 Coding challenges + 15 Aptitude questions.',
-          status: 'upcoming',
-          difficulty: 'Advanced',
-          topics: ['Timed Coding Assessment', 'Sectional Cutoff Simulation', 'DKT Score Re-calibration'],
-          skill_id: 'aptitude',
-          isPriority: true,
-          whyThisSkill: 'Calibrates real-time exam stamina and validates readiness score under time pressure.',
-        },
-        {
-          id: 'm4-2',
-          title: 'STAR Behavioral Leadership & Technical Architecture Round',
-          description: 'Structured response preparation using Situation, Task, Action, Result framework.',
-          status: 'upcoming',
-          difficulty: 'Intermediate',
-          topics: ['STAR Behavioral Method', 'System Design Storytelling', 'Leadership Principles'],
-          skill_id: 'communication',
-          whyThisSkill: 'Final manager rounds assess culture fit, communication clarity, and problem decomposition.',
-        },
-      ],
-    },
-  ]);
+  const [phases, setPhases] = useState<RoadmapPhase[]>([]);
 
   const fetchAdaptiveRoadmap = async (isRegen = false) => {
+    if (!isAssessed) return;
     if (isRegen) setIsRegenerating(true);
     try {
       const response = await fetch('/api/ai/roadmap', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          student_id: 's123',
+          student_id: studentId,
           target_career: 'swe',
           completed_milestones: Array.from(completedMilestones),
           regenerate: isRegen,
@@ -204,6 +87,7 @@ export const RoadmapView: React.FC = () => {
       if (data.status === 'success' && data.phases) {
         setRoadmapData(data);
         setPhases(data.phases);
+        saveUserRoadmap(data.phases, studentId);
       }
     } catch (err) {
       console.warn('Roadmap API notice:', err);
@@ -215,8 +99,19 @@ export const RoadmapView: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!isAssessed) {
+      setPhases([]);
+      return;
+    }
+
+    const saved = getUserRoadmap(studentId);
+    if (saved && Array.isArray(saved) && saved.length > 0) {
+      setPhases(saved);
+      return;
+    }
+
     fetchAdaptiveRoadmap(false);
-  }, []);
+  }, [studentId, isAssessed]);
 
   const toggleMilestone = (phaseId: string, milestoneId: string) => {
     const nextCompleted = new Set(completedMilestones);
@@ -227,19 +122,21 @@ export const RoadmapView: React.FC = () => {
     }
     setCompletedMilestones(nextCompleted);
 
-    setPhases((prevPhases) =>
-      prevPhases.map((p) => {
+    setPhases((prevPhases) => {
+      const updated = prevPhases.map((p) => {
         if (p.id !== phaseId) return p;
         return {
           ...p,
           milestones: p.milestones.map((m) => {
             if (m.id !== milestoneId) return m;
-            const newStatus = m.status === 'completed' ? 'in-progress' : 'completed';
+            const newStatus: 'completed' | 'in-progress' = m.status === 'completed' ? 'in-progress' : 'completed';
             return { ...m, status: newStatus };
           }),
         };
-      })
-    );
+      });
+      saveUserRoadmap(updated, studentId);
+      return updated;
+    });
   };
 
   const totalMilestones = phases.reduce((acc, p) => acc + p.milestones.length, 0);
@@ -247,7 +144,148 @@ export const RoadmapView: React.FC = () => {
     (acc, p) => acc + p.milestones.filter((m) => m.status === 'completed').length,
     0
   );
-  const percentMastered = Math.round((completedCount / (totalMilestones || 1)) * 100);
+  const percentMastered = totalMilestones > 0 ? Math.round((completedCount / totalMilestones) * 100) : 0;
+
+  // ---------------- GATED STATE: User has not completed assessment ----------------
+  if (!isAssessed) {
+    return (
+      <div className="roadmap-page-container">
+        {/* Header Bar */}
+        <div className="roadmap-header-card" style={{ marginBottom: 24 }}>
+          <div className="roadmap-header-top">
+            <div className="roadmap-header-title-group">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ padding: '8px', background: '#EEF2FF', borderRadius: 10, color: '#4F46E5' }}>
+                  <Sparkles size={24} />
+                </div>
+                <div>
+                  <h1 style={{ fontSize: 24, fontWeight: 900, color: '#0F172A', margin: 0 }}>
+                    Adaptive AI Career Roadmap
+                  </h1>
+                  <p style={{ fontSize: 13.5, color: '#64748B', margin: '4px 0 0 0' }}>
+                    Target Role: <strong>{profile.targetRoles?.[0] || 'Software Development Engineer (SDE)'}</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 14px',
+                borderRadius: 999,
+                background: '#FEF3C7',
+                color: '#D97706',
+                fontWeight: 800,
+                fontSize: 12.5,
+              }}
+            >
+              <Lock size={14} />
+              <span>Assessment Required</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Hero Gated Card */}
+        <div
+          style={{
+            background: '#FFFFFF',
+            borderRadius: 20,
+            border: '1.5px dashed #CBD5E1',
+            padding: '40px 28px',
+            textAlign: 'center',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 20,
+          }}
+        >
+          <div
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 18,
+              background: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)',
+              color: '#4F46E5',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 8px 20px rgba(79, 70, 229, 0.15)',
+            }}
+          >
+            <Lock size={30} />
+          </div>
+
+          <div style={{ maxWidth: 560 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 900, color: '#0F172A', margin: '0 0 8px 0' }}>
+              Diagnostic Assessment Required to Unlock Roadmap
+            </h2>
+            <p style={{ fontSize: 14, color: '#64748B', lineHeight: 1.6, margin: 0 }}>
+              Your dynamic learning roadmap is custom-built from verified performance benchmarks. Complete the 15-minute diagnostic test to isolate skill gaps, calibrate Deep Knowledge Tracing neural models, and generate your placement sprint.
+            </p>
+          </div>
+
+          {/* 4-Phase Curriculum Preview Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: 16,
+              width: '100%',
+              maxWidth: 920,
+              marginTop: 10,
+              textAlign: 'left',
+            }}
+          >
+            <div style={{ background: '#F8FAFC', padding: 18, borderRadius: 14, border: '1px solid #E2E8F0' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#4F46E5', textTransform: 'uppercase' }}>Phase 1</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#1E293B', marginTop: 4 }}>Diagnostic Baseline &amp; Foundations</div>
+              <div style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>Complexity analysis, linear structures, and initial test calibration.</div>
+            </div>
+            <div style={{ background: '#F8FAFC', padding: 18, borderRadius: 14, border: '1px solid #E2E8F0' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#4F46E5', textTransform: 'uppercase' }}>Phase 2</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#1E293B', marginTop: 4 }}>Targeted Skill Gap Remediation</div>
+              <div style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>Binary Trees, Dynamic Programming, Graphs &amp; Aptitude speed.</div>
+            </div>
+            <div style={{ background: '#F8FAFC', padding: 18, borderRadius: 14, border: '1px solid #E2E8F0' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#4F46E5', textTransform: 'uppercase' }}>Phase 3</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#1E293B', marginTop: 4 }}>Systems Engineering &amp; SQL</div>
+              <div style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>B+ trees, concurrency, database indexing, and backend architecture.</div>
+            </div>
+            <div style={{ background: '#F8FAFC', padding: 18, borderRadius: 14, border: '1px solid #E2E8F0' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: '#4F46E5', textTransform: 'uppercase' }}>Phase 4</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#1E293B', marginTop: 4 }}>Mock Placement Diagnoses</div>
+              <div style={{ fontSize: 12, color: '#64748B', marginTop: 4 }}>Timed proctored assessments, STAR behavioral rounds &amp; campus drives.</div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => navigate('/assessment')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              background: 'linear-gradient(135deg, #4F46E5, #3730A3)',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: 12,
+              padding: '14px 28px',
+              fontSize: 14.5,
+              fontWeight: 800,
+              cursor: 'pointer',
+              boxShadow: '0 8px 24px rgba(79, 70, 229, 0.35)',
+              marginTop: 10,
+            }}
+          >
+            <span>Take Diagnostic Assessment</span>
+            <ArrowRight size={16} />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="roadmap-page-container">

@@ -10,6 +10,7 @@ import {
   Code2,
   Calendar,
   Mic,
+  MessageSquare,
   User,
   Activity,
   LucideIcon,
@@ -49,7 +50,14 @@ export const AppSidebar: React.FC = () => {
     },
     { id: 'resume', label: 'AI Resume Builder', path: '/resume-builder', icon: FileText },
     { id: 'onboarding', label: 'Student Onboarding', path: '/onboarding', icon: UserCheck },
-    { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
+    {
+      id: 'learning',
+      label: 'Learning Hub',
+      path: '/learning',
+      icon: BookOpen,
+      tourId: 'learning',
+      tourTarget: 'learning',
+    },
     {
       id: 'placement',
       label: 'AI Placement',
@@ -89,6 +97,18 @@ export const AppSidebar: React.FC = () => {
       icon: Mic,
       tourId: 'interview',
       tourTarget: 'interview-studio',
+    },
+    {
+      id: 'communication',
+      label: 'Global Language Hub',
+      path: '/communication',
+      icon: MessageSquare,
+    },
+    {
+      id: 'speaking-studio',
+      label: 'AI Speaking Studio',
+      path: '/speaking',
+      icon: Sparkles,
     },
   ];
 

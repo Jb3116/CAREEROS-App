@@ -11,23 +11,13 @@ import { CommunicationView } from '../components/communication/CommunicationView
 import { SettingsView } from '../components/settings/SettingsView';
 import { ProfileView } from '../components/profile/ProfileView';
 import { NavTabId, StudentProfile } from '../types/dashboard';
+import { useStudentProfile } from '../utils/userProfile';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<NavTabId>('dashboard');
   const [modalContent, setModalContent] = useState<ModalContentType>(null);
-
-  // Student Profile Info
-  const studentProfile: StudentProfile = {
-    name: 'Alex Chen',
-    role: 'Student',
-    college: 'Vellore Institute of Technology',
-    year: 'CS @ 3rd Year',
-    avatarText: 'AC',
-    streakDays: 5,
-    readinessScore: 78,
-    atsScore: 91,
-  };
+  const studentProfile = useStudentProfile();
 
   const handleOpenProfile = () => {
     setActiveTab('profile');

@@ -80,12 +80,24 @@ export const SkillMasteryCard: React.FC<SkillMasteryCardProps> = ({
                   {getIcon(skill.category)}
                   {skill.name}
                 </span>
-                <span className="skill-pct">{skill.percentage}%</span>
+                <span
+                  className="skill-pct"
+                  style={{
+                    color: skill.percentage === null ? '#94A3B8' : undefined,
+                    fontWeight: skill.percentage === null ? 600 : 800,
+                    fontSize: skill.percentage === null ? 12 : 13,
+                  }}
+                >
+                  {skill.percentage === null ? 'Not assessed' : `${skill.percentage}%`}
+                </span>
               </div>
               <div className="skill-bar-track">
                 <div
                   className={`skill-bar-fill ${skill.category}`}
-                  style={{ width: `${skill.percentage}%` }}
+                  style={{
+                    width: skill.percentage === null ? '0%' : `${skill.percentage}%`,
+                    opacity: skill.percentage === null ? 0.3 : 1,
+                  }}
                 />
               </div>
             </div>

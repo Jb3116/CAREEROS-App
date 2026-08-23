@@ -30,7 +30,7 @@ export interface PlanTask {
 export interface SkillMasteryItem {
   id: string;
   name: string;
-  percentage: number;
+  percentage: number | null;
   level: string;
   category: 'coding' | 'aptitude' | 'communication';
   targetPercentage: number;
@@ -68,11 +68,25 @@ export interface SmartInsight {
 
 export interface StudentProfile {
   name: string;
+  email?: string;
   role: string;
   college: string;
+  degree?: string;
   year: string;
+  currentYear?: string;
+  gradYear?: string;
+  cgpa?: string;
+  rollNumber?: string;
+  targetRoles?: string[];
+  targetCompanyTypes?: string[];
+  primaryLanguages?: string[];
   avatarText: string;
   streakDays: number;
   readinessScore: number;
+  careerReadiness?: number | null;
   atsScore: number;
+  assessmentStatus?: 'not_started' | 'in_progress' | 'completed_empty' | 'completed';
+  assessmentCompleted?: boolean;
+  roadmap?: any;
+  resume?: any;
 }

@@ -21,9 +21,11 @@ import {
   Star,
   Users,
 } from 'lucide-react';
+import { useStudentProfile } from '../utils/userProfile';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const profile = useStudentProfile();
 
   return (
     <div className="home-page-container">
@@ -98,7 +100,7 @@ export const HomePage: React.FC = () => {
               </div>
               <div className="home-showcase-tab-bar">
                 <Activity size={14} color="#6366F1" />
-                <span>CAREEROS Student Intelligence Engine • Alex Chen (VIT CS)</span>
+                <span>CAREEROS Student Intelligence Engine • {profile.name} ({profile.college ? profile.college.split(',')[0] : 'Engineering'})</span>
               </div>
               <div style={{ color: '#10B981', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />

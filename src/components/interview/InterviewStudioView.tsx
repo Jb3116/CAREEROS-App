@@ -35,6 +35,7 @@ import {
   Flame,
   Bot,
 } from 'lucide-react';
+import { useStudentProfile } from '../../utils/userProfile';
 
 export interface QuestionItem {
   id: string;
@@ -272,6 +273,7 @@ export const INTERVIEW_POOLS: Record<string, QuestionPool> = {
 
 export const InterviewStudioView: React.FC = () => {
   const navigate = useNavigate();
+  const profile = useStudentProfile();
   const [selectedRound, setSelectedRound] = useState<'star' | 'technical' | 'hr'>('star');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -658,7 +660,7 @@ export const InterviewStudioView: React.FC = () => {
   };
 
   return (
-    <div className="interview-page-container" data-tour="interview-studio">
+    <div className="interview-page-container" data-tour="interview-studio" data-tour-id="interview">
       {/* ---------------- Studio Header & Benchmark Banner ---------------- */}
       <section className="interview-header-card" aria-label="Interview Studio Header">
         <div className="interview-header-top">
@@ -999,7 +1001,7 @@ export const InterviewStudioView: React.FC = () => {
                 }}
               />
               <span style={{ fontSize: 13.5, fontWeight: 800, color: '#0F172A' }}>
-                Candidate Live Studio • Alex Chen
+                Candidate Live Studio • {profile.name}
               </span>
             </div>
             <span

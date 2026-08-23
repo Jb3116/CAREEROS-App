@@ -23,6 +23,7 @@ import {
   Send,
   X,
 } from 'lucide-react';
+import { useStudentProfile } from '../../utils/userProfile';
 
 interface DriveItem {
   id: string;
@@ -43,6 +44,7 @@ interface DriveItem {
 
 export const OpportunitiesView: React.FC = () => {
   const navigate = useNavigate();
+  const profile = useStudentProfile();
   const [activeTab, setActiveTab] = useState<'drives' | 'calendar' | 'pipeline'>('drives');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -185,7 +187,7 @@ export const OpportunitiesView: React.FC = () => {
       )}
 
       {/* ---------------- Top Hero Stats Banner ---------------- */}
-      <section className="opp-header-card" aria-label="Opportunities Summary">
+      <section className="opp-header-card" data-tour-id="opportunities" data-tour="opportunities" aria-label="Opportunities Summary">
         <div className="opp-header-top">
           <div className="opp-header-title-group">
             <h1>
@@ -193,7 +195,7 @@ export const OpportunitiesView: React.FC = () => {
               <span>Opportunities & Smart Placement Calendar</span>
             </h1>
             <p>
-              AI-calibrated campus drives, ATS resume matching scores, and real-time assessment schedules for <strong>Alex Chen</strong>.
+              AI-calibrated campus drives, ATS resume matching scores, and real-time assessment schedules for <strong>{profile.name}</strong>.
             </p>
           </div>
 

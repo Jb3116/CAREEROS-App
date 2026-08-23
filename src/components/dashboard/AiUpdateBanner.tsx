@@ -5,12 +5,14 @@ import { Sparkles, ArrowRight } from 'lucide-react';
 interface AiUpdateBannerProps {
   message?: string;
   subMessage?: string;
+  buttonText?: string;
   onViewRoadmap?: () => void;
 }
 
 export const AiUpdateBanner: React.FC<AiUpdateBannerProps> = ({
   message = 'Your roadmap has been updated based on your performance.',
   subMessage = 'AI detected high aptitude mastery and dynamically rescheduled 2 graph problems for your upcoming coding round.',
+  buttonText = 'View Roadmap',
   onViewRoadmap,
 }) => {
   const navigate = useNavigate();
@@ -35,8 +37,8 @@ export const AiUpdateBanner: React.FC<AiUpdateBannerProps> = ({
         </div>
       </div>
 
-      <button className="ai-banner-btn" onClick={handleRoadmapClick} title="Open AI Career Roadmap">
-        <span>View Roadmap</span>
+      <button className="ai-banner-btn" onClick={handleRoadmapClick} title={buttonText}>
+        <span>{buttonText}</span>
         <ArrowRight size={14} />
       </button>
     </div>

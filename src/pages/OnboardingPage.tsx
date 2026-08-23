@@ -19,24 +19,34 @@ import {
   ChevronRight,
   Award,
   Calendar,
+  Cpu,
+  Layers,
 } from 'lucide-react';
+import { getStudentProfile, saveStudentProfile } from '../utils/userProfile';
 
 export const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Form State
+  // Form State initialized from existing user profile if present
+  const existingProfile = getStudentProfile();
   const [formData, setFormData] = useState({
-    fullName: 'Alex Chen',
-    college: 'Vellore Institute of Technology, Vellore',
-    degree: 'B.Tech in Computer Science & Engineering',
-    currentYear: '3rd Year (Cohort 2027)',
-    gradYear: '2027',
-    cgpa: '8.9',
-    rollNumber: '23BCE1042',
-    targetRoles: ['Software Development Engineer', 'Full Stack Developer'],
-    targetCompanyTypes: ['Tier-1 Product Companies (FAANG & High Tier)', 'High-Growth Tech Startups'],
-    primaryLanguages: ['C++', 'Python', 'TypeScript', 'SQL'],
+    fullName: existingProfile.name || '',
+    college: existingProfile.college || 'Vellore Institute of Technology, Chennai',
+    degree: existingProfile.degree || 'B.Tech in Computer Science & Engineering',
+    currentYear: existingProfile.currentYear || '3rd Year',
+    gradYear: existingProfile.gradYear || '2027',
+    cgpa: existingProfile.cgpa || '8.9',
+    rollNumber: existingProfile.rollNumber || '23BCE1042',
+    targetRoles: existingProfile.targetRoles && existingProfile.targetRoles.length > 0
+      ? existingProfile.targetRoles
+      : ['Software Development Engineer', 'Full Stack Developer'],
+    targetCompanyTypes: existingProfile.targetCompanyTypes && existingProfile.targetCompanyTypes.length > 0
+      ? existingProfile.targetCompanyTypes
+      : ['Tier-1 Product Companies (FAANG & High Tier)', 'High-Growth Tech Startups'],
+    primaryLanguages: existingProfile.primaryLanguages && existingProfile.primaryLanguages.length > 0
+      ? existingProfile.primaryLanguages
+      : ['C++', 'Python', 'TypeScript', 'SQL'],
     frameworks: ['React', 'Node.js', 'PostgreSQL', 'Docker'],
     dsaLevel: 'Intermediate (150+ LeetCode solved - Trees, Graphs, DP)',
     weeklyHours: '10 - 15 Hours / Week (Recommended)',
@@ -76,6 +86,21 @@ export const OnboardingPage: React.FC = () => {
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
+      // Save all inputted details to the global user profile and state
+      saveStudentProfile({
+        name: formData.fullName || 'Student',
+        college: formData.college,
+        degree: formData.degree,
+        year: formData.currentYear,
+        currentYear: formData.currentYear,
+        gradYear: formData.gradYear,
+        cgpa: formData.cgpa,
+        rollNumber: formData.rollNumber,
+        targetRoles: formData.targetRoles,
+        targetCompanyTypes: formData.targetCompanyTypes,
+        primaryLanguages: formData.primaryLanguages,
+      });
+
       navigate('/assessment');
     }
   };
@@ -187,19 +212,14 @@ export const OnboardingPage: React.FC = () => {
 
               <div className="onboard-field">
                 <label className="onboard-label">College / University</label>
-                <select
-                  className="onboard-select"
+                <input
+                  type="text"
+                  className="onboard-input"
                   value={formData.college}
                   onChange={(e) => setFormData({ ...formData, college: e.target.value })}
-                >
-                  <option>Vellore Institute of Technology, Vellore</option>
-                  <option>IIT Bombay</option>
-                  <option>BITS Pilani</option>
-                  <option>NIT Trichy</option>
-                  <option>IIIT Hyderabad</option>
-                  <option>Delhi Technological University</option>
-                  <option>Other Engineering College</option>
-                </select>
+                  placeholder="e.g. Vellore Institute of Technology, Chennai"
+                  required
+                />
               </div>
 
               <div className="onboard-grid-2">
@@ -220,10 +240,10 @@ export const OnboardingPage: React.FC = () => {
                     value={formData.currentYear}
                     onChange={(e) => setFormData({ ...formData, currentYear: e.target.value })}
                   >
-                    <option>1st Year (Class of 2029)</option>
-                    <option>2nd Year (Class of 2028)</option>
-                    <option>3rd Year (Cohort 2027)</option>
-                    <option>4th Year / Final (Class of 2026)</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
                   </select>
                 </div>
               </div>
@@ -275,6 +295,7 @@ export const OnboardingPage: React.FC = () => {
                     'Backend / Cloud Engineer',
                     'Data Scientist / AI Engineer',
                     'DevOps & Site Reliability',
+                    'EEE Core Jobs',
                   ].map((role) => {
                     const isSelected = formData.targetRoles.includes(role);
                     return (
@@ -425,27 +446,89 @@ export const OnboardingPage: React.FC = () => {
         {currentStep === 5 && (
           <>
             <div className="onboard-card-header">
-              <h1 className="onboard-card-title">Step 5: Calibration Complete! Ready for Diagnostic Benchmark 🚀</h1>
+              <h1 className="onboard-card-title">Step 5: Dynamic AI Calibration & Synthesis 🚀</h1>
               <p className="onboard-card-desc">
-                We have synthesized your profile. Take the diagnostic benchmark to unlock your personalized roadmap.
+                Synthesizing personalized diagnostic curriculum and benchmarks for <strong>{formData.fullName || 'Student'}</strong>.
               </p>
             </div>
 
+            {/* Dynamic AI Calibration Live Feed */}
+            <div style={{ background: '#F8FAFC', border: '1.5px solid #E2E8F0', borderRadius: 14, padding: 18, marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#4F46E5', fontWeight: 800, fontSize: 13 }}>
+                <Sparkles size={16} className="animate-spin" />
+                <span>AI Calibration Feed (Live Synthesis):</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12.5, color: '#334155' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle2 size={14} color="#10B981" />
+                  <span>Analyzing <strong>{formData.currentYear}</strong> curriculum for <strong>{formData.college || 'your institution'}</strong>...</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle2 size={14} color="#10B981" />
+                  <span>
+                    Calibrating <strong>{formData.targetRoles.length > 0 ? formData.targetRoles.join(' & ') : 'Engineering'}</strong> roadmap for <strong>{formData.fullName || 'Student'}</strong>...
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle2 size={14} color="#10B981" />
+                  <span>Configuring <strong>{formData.degree || 'Engineering'}</strong> core modules &amp; interview benchmarks...</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle2 size={14} color="#10B981" />
+                  <span>
+                    Synthesized targets for <strong>{formData.primaryLanguages.join(', ')}</strong> ({formData.weeklyHours.split('(')[0]}).
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <div className="onboard-summary-box">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Sparkles size={22} color="#F59E0B" />
-                  <span style={{ fontSize: 16, fontWeight: 800 }}>Student Intelligence Profile Initialized</span>
+                  <div style={{ width: 42, height: 42, borderRadius: '50%', background: '#4F46E5', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 16 }}>
+                    {(formData.fullName ? formData.fullName.slice(0, 2) : 'ST').toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: '#FFFFFF' }}>{formData.fullName || 'Student Profile'}</div>
+                    <div style={{ fontSize: 12, color: '#C7D2FE' }}>
+                      {formData.college} &bull; {formData.currentYear}
+                    </div>
+                  </div>
                 </div>
                 <span style={{ background: '#10B981', color: '#FFF', fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 999 }}>
-                  Online & Ready
+                  Online &amp; Calibrated
                 </span>
               </div>
 
-              <div className="onboard-summary-stats">
+              {/* Dynamic Target Tracks */}
+              <div style={{ marginTop: 12 }}>
+                <div style={{ fontSize: 11.5, color: '#C7D2FE', fontWeight: 700, marginBottom: 6 }}>
+                  Calibrated Target Roles &amp; Career Tracks:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {formData.targetRoles.map((role) => (
+                    <span
+                      key={role}
+                      style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        color: '#FFFFFF',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        padding: '3px 9px',
+                        borderRadius: 6,
+                        border: '1px solid rgba(255,255,255,0.2)',
+                      }}
+                    >
+                      ✓ {role}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="onboard-summary-stats" style={{ marginTop: 14 }}>
                 <div className="onboard-summary-stat-card">
                   <div style={{ fontSize: 24, fontWeight: 900, color: '#FFFFFF' }}>78%</div>
-                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>Estimated Readiness</div>
+                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>{formData.currentYear} Readiness</div>
                 </div>
                 <div className="onboard-summary-stat-card">
                   <div style={{ fontSize: 24, fontWeight: 900, color: '#34D399' }}>91%</div>
@@ -453,12 +536,12 @@ export const OnboardingPage: React.FC = () => {
                 </div>
                 <div className="onboard-summary-stat-card">
                   <div style={{ fontSize: 24, fontWeight: 900, color: '#FBBF24' }}>94%</div>
-                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>Goldman Sachs Match</div>
+                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>Target Match</div>
                 </div>
               </div>
 
-              <div style={{ background: 'rgba(255,255,255,0.08)', padding: 14, borderRadius: 12, fontSize: 13, lineHeight: 1.5, color: '#E0E7FF' }}>
-                💡 <strong>Next Step:</strong> Start your <em>Diagnostic Placement Assessment</em> to baseline your coding speed and CS core knowledge under real interview test conditions.
+              <div style={{ background: 'rgba(255,255,255,0.08)', padding: 12, borderRadius: 10, fontSize: 12.5, lineHeight: 1.5, color: '#E0E7FF', marginTop: 14 }}>
+                💡 <strong>Next Step:</strong> Start your <em>Diagnostic Placement Assessment</em> to baseline your coding speed and CS / Core knowledge under real interview test conditions.
               </div>
             </div>
           </>

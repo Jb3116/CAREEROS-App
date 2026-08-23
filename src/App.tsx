@@ -15,6 +15,8 @@ import { OpportunitiesView } from './components/opportunities/OpportunitiesView'
 import { InterviewStudioPage } from './pages/InterviewStudioPage';
 import { ProfileView } from './components/profile/ProfileView';
 import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
+import { CommunicationPage } from './pages/CommunicationPage';
+import { SpeakingStudioPage } from './pages/SpeakingStudioPage';
 
 // College Admin Layout & Components
 import { AdminLayout } from './components/layout/AdminLayout';
@@ -29,13 +31,29 @@ import { AdminStudentsPage } from './pages/AdminStudentsPage';
 import { AdminAnalyticsPage } from './pages/AdminAnalyticsPage';
 import { AdminSettingsPage } from './pages/AdminSettingsPage';
 
+const RootRouteHandler: React.FC = () => {
+  const authUser = typeof window !== 'undefined' ? localStorage.getItem('careeros_auth_user') : null;
+  if (authUser) {
+    try {
+      const parsed = JSON.parse(authUser);
+      if (parsed.role === 'admin') {
+        return <Navigate to="/admin/dashboard" replace />;
+      }
+    } catch (e) {}
+    return <Navigate to="/dashboard" replace />;
+  }
+  return <Navigate to="/login" replace />;
+};
+
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public & Unified Auth / Login (with Student & College Admin role switcher) */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
+        {/* Root URL: Routes unauthenticated to /login, authenticated to /dashboard */}
+        <Route path="/" element={<RootRouteHandler />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage defaultSignUp={false} />} />
+        <Route path="/signup" element={<LoginPage defaultSignUp={true} />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
 
         {/* Authenticated Student Experience (Protected by DashboardLayout) */}
@@ -50,6 +68,9 @@ export const App: React.FC = () => {
           <Route path="/practice" element={<PracticeView />} />
           <Route path="/opportunities" element={<OpportunitiesView />} />
           <Route path="/interview-studio" element={<InterviewStudioPage />} />
+          <Route path="/communication" element={<CommunicationPage />} />
+          <Route path="/speaking" element={<SpeakingStudioPage />} />
+          <Route path="/speaking-studio" element={<SpeakingStudioPage />} />
           <Route path="/profile" element={<ProfileView />} />
         </Route>
 
