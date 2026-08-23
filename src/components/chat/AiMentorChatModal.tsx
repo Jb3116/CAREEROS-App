@@ -229,6 +229,7 @@ export const AiMentorChatModal: React.FC = () => {
       {!isOpen && (
         <button
           data-tour="ai-mentor"
+          data-tour-id="mentor"
           onClick={() => setIsOpen(true)}
           style={{
             position: 'fixed',

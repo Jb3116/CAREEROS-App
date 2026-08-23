@@ -346,6 +346,31 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
               <button
                 onClick={() => {
                   setShowProfileMenu(false);
+                  localStorage.removeItem('careeros_tour_completed');
+                  window.dispatchEvent(new CustomEvent('careeros-start-tour'));
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#4F46E5',
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                <Sparkles size={15} color="#4F46E5" />
+                <span>Interactive Website Tour</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowProfileMenu(false);
                   navigate('/login');
                 }}
                 style={{

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Bell, Shield, Key, Moon, Sun, Laptop, Save } from 'lucide-react';
+import { Settings, Bell, Shield, Key, Moon, Sun, Laptop, Save, Sparkles } from 'lucide-react';
 
 export const SettingsView: React.FC = () => {
   const [emailAlerts, setEmailAlerts] = useState(true);
@@ -64,17 +64,40 @@ export const SettingsView: React.FC = () => {
       </div>
 
       <div style={{ background: '#FFFFFF', borderRadius: 18, border: '1px solid #E2E8F0', padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', borderBottom: '1px solid #F1F5F9', paddingBottom: 8 }}>
-          Institutional Data Connection
+        <h2 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', borderBottom: '1px solid #F1F5F9', paddingBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Sparkles size={18} color="#4F46E5" />
+          <span>Interactive AI Platform Tour</span>
         </h2>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#1E293B' }}>Vellore Institute of Technology Placement Cell</div>
-            <div style={{ fontSize: 12.5, color: '#059669', fontWeight: 600 }}>Connected & Verified ✓ (Batch of 2027)</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#1E293B' }}>Guided Feature Tour & Onboarding</div>
+            <div style={{ fontSize: 12.5, color: '#64748B' }}>
+              Re-launch the spotlight walkthrough of all 8 core CAREER OS modules.
+            </div>
           </div>
-          <span style={{ fontSize: 12, background: '#EEF2FF', color: '#4F46E5', padding: '4px 10px', borderRadius: 8, fontWeight: 700 }}>
-            Sync Active
-          </span>
+          <button
+            onClick={() => {
+              localStorage.removeItem('careeros_tour_completed');
+              window.dispatchEvent(new CustomEvent('careeros-start-tour'));
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              background: '#EEF2FF',
+              color: '#4F46E5',
+              border: '1px solid #C7D2FE',
+              padding: '8px 16px',
+              borderRadius: 10,
+              fontSize: 13,
+              fontWeight: 800,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Sparkles size={15} />
+            <span>Take Website Tour Again</span>
+          </button>
         </div>
       </div>
 

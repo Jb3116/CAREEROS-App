@@ -5,117 +5,107 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
-  CheckCircle2,
   Compass,
   Code2,
   Mic,
   Map,
   Bot,
-  BarChart3,
+  Briefcase,
   User,
   RotateCcw,
-  HelpCircle,
 } from 'lucide-react';
 
 export interface TourStepItem {
   id: string;
+  tourId: string;
   target: string;
   title: string;
   description: string;
   route: string;
   badge: string;
-  icon: React.ComponentType<{ size?: number; color?: string; className?: string }>;
-  keyFeatures: string[];
+  icon?: React.ComponentType<{ size?: number; color?: string; className?: string }>;
 }
 
 export const INTERACTIVE_TOUR_STEPS: TourStepItem[] = [
   {
     id: 'dashboard',
+    tourId: 'dashboard',
     target: 'dashboard',
-    title: '1. Intelligent Student Dashboard',
-    description:
-      'Your central career mission control. Real-time Deep Knowledge Tracing (DKT) tracks your skill mastery across 10 foundational competencies with hiring readiness benchmarks.',
+    title: 'Student Dashboard',
+    description: 'Your career mission control. Track live DKT skill mastery, readiness scores, and daily tasks.',
     route: '/dashboard',
-    badge: 'Live DKT Knowledge State',
+    badge: 'Live DKT State',
     icon: Compass,
-    keyFeatures: ['Live Readiness Score Gauge', 'Category Mastery Breakdown', 'Target Role Calibration'],
   },
   {
     id: 'assessment',
+    tourId: 'assessment',
     target: 'assessment',
-    title: '2. Diagnostic Assessment Arena',
-    description:
-      'Proctored Tier-1 benchmark evaluation. 22 real coding problems and 32 aptitude questions with real sandbox execution and persistent answer state.',
+    title: 'Diagnostic Assessment',
+    description: 'Proctored Tier-1 benchmark arena with 22 coding challenges and real sandbox execution.',
     route: '/assessment',
-    badge: 'Real V8 Sandbox Execution',
+    badge: 'V8 Sandbox Arena',
     icon: Code2,
-    keyFeatures: ['Isolated VM Sandbox Code Runner', 'Multi-Section Aptitude Arena', 'Real Telemetry Ingestion'],
   },
   {
     id: 'roadmap',
+    tourId: 'roadmap',
     target: 'roadmap',
-    title: '3. Adaptive AI Learning Roadmap',
-    description:
-      'Personalized learning pathway powered by Sentence-BERT skill gap detection. Dynamically prioritizes critical weaknesses to maximize interview readiness.',
+    title: 'Adaptive AI Roadmap',
+    description: 'Personalized pathway powered by Sentence-BERT embeddings, prioritizing critical skill gaps.',
     route: '/career-roadmap',
-    badge: 'Sentence-BERT Skill Gaps',
+    badge: 'Sentence-BERT Engine',
     icon: Map,
-    keyFeatures: ['Real Pretrained Transformer (384-d)', 'Automated Phase Generation', 'Hiring Threshold Calibration'],
   },
   {
     id: 'practice',
+    tourId: 'practice',
     target: 'practice',
-    title: '4. Real-Time Coding Practice',
-    description:
-      'Master data structures and algorithms with real-time test case verification, asymptotic complexity hints, and instant syntax diagnostics.',
+    title: 'Coding & Aptitude Practice',
+    description: 'Master core DSA problems with instant test case verification and complexity feedback.',
     route: '/practice',
-    badge: 'Active Problem Sets',
+    badge: 'Real Testcases',
     icon: Code2,
-    keyFeatures: ['Instant Execution Feedback', 'Zero Mocked Passes', 'Multi-Language Support (Python/JS/Java)'],
   },
   {
-    id: 'interview-studio',
-    target: 'interview-studio',
-    title: '5. AI Interview Studio & Speech Coach',
-    description:
-      'Simulate high-stakes mock interviews with Sophia (Senior AI Recruiter). Real camera feed, live microphone speech-to-text, and intelligent conversational follow-ups.',
+    id: 'interview',
+    tourId: 'interview',
+    target: 'interview',
+    title: 'AI Interview Studio',
+    description: 'Simulate high-stakes mock interviews with Sophia AI featuring speech transcription and voice prompts.',
     route: '/interview-studio',
-    badge: 'Webcam + Mic Speech AI',
+    badge: 'Voice & Speech AI',
     icon: Mic,
-    keyFeatures: ['STAR Behavioral & Tech Modes', 'Web Speech API Transcription', 'Dynamic Gemini Follow-up Questions'],
   },
   {
-    id: 'ai-mentor',
-    target: 'ai-mentor',
-    title: '6. Floating AI Career Mentor',
-    description:
-      'Your 24/7 personalized AI career copilot. Ask questions, get real-time DKT insights, request mock drills, or navigate anywhere across CAREER OS seamlessly.',
+    id: 'mentor',
+    tourId: 'mentor',
+    target: 'mentor',
+    title: 'AI Career Mentor',
+    description: 'Your 24/7 copilot for instant interview drills, skill gap insights, and platform guidance.',
     route: '/dashboard',
-    badge: 'Conversational AI Copilot',
+    badge: '24/7 AI Copilot',
     icon: Bot,
-    keyFeatures: ['Multi-turn Career Mentorship', 'Real DKT Telemetry Ingestion', 'Instant Navigation Shortcuts'],
   },
   {
-    id: 'analytics',
-    target: 'analytics',
-    title: '7. Skill Growth & Telemetry Analytics',
-    description:
-      'Comprehensive performance analytics, learning curve trajectories, and time-series skill progression mapped directly to campus placement standards.',
-    route: '/dashboard',
-    badge: 'Time-Series Progression',
-    icon: BarChart3,
-    keyFeatures: ['Historical Knowledge Curves', 'Sectional Accuracy Trends', 'Placement Readiness Milestones'],
+    id: 'opportunities',
+    tourId: 'opportunities',
+    target: 'opportunities',
+    title: 'Placement Drives & Calendar',
+    description: 'Explore campus hiring drives and internship openings with semantic skill-match scoring.',
+    route: '/opportunities',
+    badge: 'Campus Drives',
+    icon: Briefcase,
   },
   {
     id: 'profile',
+    tourId: 'profile',
     target: 'profile',
-    title: '8. Student Profile & Readiness Calibration',
-    description:
-      'Manage your academic credentials, verified skills, target company preferences, and overall placement readiness index.',
+    title: 'Profile & ATS Calibration',
+    description: 'Calibrate your target roles, verified competencies, and ATS resume compatibility.',
     route: '/profile',
-    badge: 'Student Identity & ATS',
+    badge: 'Student Identity',
     icon: User,
-    keyFeatures: ['ATS Compatibility Score', 'Campus Drive Registration', 'Target Company Calibration'],
   },
 ];
 
@@ -140,31 +130,54 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
 
   const currentStep = INTERACTIVE_TOUR_STEPS[currentStepIndex];
 
-  // Check initial tour launch or listen to custom triggers
+  // Auto-launch on first visit if not completed/skipped
   useEffect(() => {
-    const isCompleted = localStorage.getItem('careeros_onboarding_completed');
-    if (!isCompleted) {
-      // Auto-start for first-time visitors
-      setIsVisible(true);
-    }
+    const tourStatus =
+      localStorage.getItem('careeros_tour_completed') ||
+      localStorage.getItem('careeros_onboarding_completed');
 
+    if (!tourStatus) {
+      // Delay slightly for initial dashboard render
+      const launchTimer = setTimeout(() => {
+        setIsVisible(true);
+      }, 600);
+      return () => clearTimeout(launchTimer);
+    }
+  }, []);
+
+  // Listen for manual re-launch events
+  useEffect(() => {
     const handleCustomStart = () => {
       setCurrentStepIndex(0);
       setIsVisible(true);
+      const firstRoute = INTERACTIVE_TOUR_STEPS[0].route;
+      if (location.pathname !== firstRoute) {
+        navigate(firstRoute);
+      }
     };
 
     window.addEventListener('careeros-start-tour', handleCustomStart);
     return () => {
       window.removeEventListener('careeros-start-tour', handleCustomStart);
     };
-  }, []);
+  }, [location.pathname, navigate]);
 
-  // Update Target Element Bounding Box
+  // Find DOM Target Element by data-tour-id or data-tour
   const updateTargetRect = useCallback(() => {
     if (!isVisible || !currentStep) return;
 
-    const selector = `[data-tour="${currentStep.target}"]`;
-    const el = document.querySelector(selector);
+    const selectors = [
+      `[data-tour-id="${currentStep.tourId}"]`,
+      `[data-tour="${currentStep.target}"]`,
+      `[data-tour="${currentStep.id}"]`,
+      `[data-tour-id="${currentStep.id}"]`,
+    ];
+
+    let el: Element | null = null;
+    for (const sel of selectors) {
+      el = document.querySelector(sel);
+      if (el) break;
+    }
 
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
@@ -182,11 +195,11 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
     }
   }, [isVisible, currentStep]);
 
-  // Update rect on step change, route change, resize, and scroll
+  // Re-calculate target rect on route changes, resize, or scroll
   useEffect(() => {
     if (!isVisible) return;
 
-    const timer = setTimeout(updateTargetRect, 200);
+    const timer = setTimeout(updateTargetRect, 220);
     window.addEventListener('resize', updateTargetRect);
     window.addEventListener('scroll', updateTargetRect, true);
 
@@ -197,7 +210,8 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
     };
   }, [currentStepIndex, location.pathname, isVisible, updateTargetRect]);
 
-  const handleNext = () => {
+  // Navigation handlers
+  const handleNext = useCallback(() => {
     if (currentStepIndex < INTERACTIVE_TOUR_STEPS.length - 1) {
       const nextIndex = currentStepIndex + 1;
       setCurrentStepIndex(nextIndex);
@@ -208,9 +222,9 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
     } else {
       handleComplete();
     }
-  };
+  }, [currentStepIndex, location.pathname, navigate]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (currentStepIndex > 0) {
       const prevIndex = currentStepIndex - 1;
       setCurrentStepIndex(prevIndex);
@@ -219,411 +233,297 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
         navigate(prevRoute);
       }
     }
-  };
-
-  const handleJumpToStep = (index: number) => {
-    setCurrentStepIndex(index);
-    const targetRoute = INTERACTIVE_TOUR_STEPS[index].route;
-    if (location.pathname !== targetRoute) {
-      navigate(targetRoute);
-    }
-  };
-
-  const handleRestart = () => {
-    setCurrentStepIndex(0);
-    const firstRoute = INTERACTIVE_TOUR_STEPS[0].route;
-    if (location.pathname !== firstRoute) {
-      navigate(firstRoute);
-    }
-  };
+  }, [currentStepIndex, location.pathname, navigate]);
 
   const handleComplete = () => {
+    localStorage.setItem('careeros_tour_completed', 'true');
     localStorage.setItem('careeros_onboarding_completed', 'true');
     setIsVisible(false);
     if (onClose) onClose();
   };
 
+  const handleSkip = useCallback(() => {
+    localStorage.setItem('careeros_tour_completed', 'skipped');
+    localStorage.setItem('careeros_onboarding_completed', 'true');
+    setIsVisible(false);
+    if (onClose) onClose();
+  }, [onClose]);
+
+  // Keyboard navigation & accessibility (Escape, ArrowRight, ArrowLeft, Enter)
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleSkip();
+      } else if (e.key === 'ArrowRight' || (e.key === 'Enter' && !e.shiftKey)) {
+        e.preventDefault();
+        handleNext();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        handlePrev();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isVisible, handleNext, handlePrev, handleSkip]);
+
   if (!isVisible || !currentStep) return null;
 
-  const IconComponent = currentStep.icon;
+  // Calculate compact tooltip coordinates (280-320px width)
+  const getTooltipStyle = (): React.CSSProperties => {
+    const tooltipWidth = 300;
+    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
 
-  // Calculate Popover Position relative to targetRect with viewport boundary protection
-  const getPopoverStyle = (): React.CSSProperties => {
     if (!targetRect || !isElementFound) {
-      // Centered fallback modal
+      // Centered compact fallback
       return {
         position: 'fixed',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '90%',
-        maxWidth: 540,
+        width: `${tooltipWidth}px`,
         zIndex: 10002,
       };
     }
 
-    const margin = 16;
-    const popoverWidth = 460;
-    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
-    const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
-
+    const margin = 14;
     let left = targetRect.left + targetRect.width + margin;
     let top = targetRect.top;
 
-    // If target is too far right (or floating widget), place popover to the left of element
-    if (left + popoverWidth > windowWidth - 20) {
-      left = targetRect.left - popoverWidth - margin;
+    // If overflowing right (or target is in right panel/floating), place to the left
+    if (left + tooltipWidth > windowWidth - 16) {
+      left = targetRect.left - tooltipWidth - margin;
     }
 
-    // If it still overflows left, center horizontally
-    if (left < 20) {
-      left = Math.max(20, (windowWidth - popoverWidth) / 2);
+    // If still overflowing left, place below
+    if (left < 16) {
+      left = Math.max(16, targetRect.left);
       top = targetRect.top + targetRect.height + margin;
     }
 
-    // If overflowing bottom, shift upward
-    if (top + 400 > windowHeight - 20) {
-      top = Math.max(20, windowHeight - 440);
-    }
-
-    // Ensure within bounds
-    top = Math.max(20, Math.min(top, windowHeight - 420));
-    left = Math.max(20, Math.min(left, windowWidth - popoverWidth - 20));
+    // Clamp inside viewport
+    left = Math.max(16, Math.min(left, windowWidth - tooltipWidth - 16));
+    top = Math.max(16, Math.min(top, windowHeight - 220));
 
     return {
       position: 'fixed',
       top: `${top}px`,
       left: `${left}px`,
-      width: `${popoverWidth}px`,
+      width: `${tooltipWidth}px`,
       zIndex: 10002,
-      transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
     };
   };
 
+  const IconComponent = currentStep.icon || Sparkles;
+
   return (
     <>
-      {/* ---------------- 1. Dimmed Spotlight Backdrop Layer ---------------- */}
+      {/* ---------------- 1. Semi-Transparent Dark SaaS Overlay ---------------- */}
       <div
         className="tour-backdrop-overlay"
         style={{
           position: 'fixed',
           inset: 0,
           zIndex: 10000,
-          background: 'rgba(15, 23, 42, 0.78)',
-          backdropFilter: 'blur(3px)',
-          transition: 'all 0.3s ease',
-          pointerEvents: 'auto',
+          background: 'rgba(15, 23, 42, 0.62)',
+          backdropFilter: 'blur(2px)',
+          transition: 'opacity 0.2s ease',
         }}
-        onClick={handleComplete}
+        onClick={handleSkip}
+        aria-hidden="true"
       />
 
-      {/* ---------------- 2. Animated Spotlight Glow Ring ---------------- */}
+      {/* ---------------- 2. Spotlight Cutout & Glowing Ring ---------------- */}
       {targetRect && isElementFound && (
         <div
           className="tour-spotlight-ring"
           style={{
             position: 'fixed',
-            top: targetRect.top - 6,
-            left: targetRect.left - 6,
-            width: targetRect.width + 12,
-            height: targetRect.height + 12,
-            borderRadius: 14,
-            border: '2.5px solid #818CF8',
+            top: targetRect.top - 4,
+            left: targetRect.left - 4,
+            width: targetRect.width + 8,
+            height: targetRect.height + 8,
+            borderRadius: 12,
+            border: '2px solid #818CF8',
             boxShadow:
-              '0 0 0 4px rgba(99, 102, 241, 0.35), 0 0 35px rgba(99, 102, 241, 0.8), inset 0 0 15px rgba(99, 102, 241, 0.25)',
+              '0 0 0 3px rgba(99, 102, 241, 0.35), 0 0 25px rgba(99, 102, 241, 0.7), inset 0 0 8px rgba(99, 102, 241, 0.25)',
             zIndex: 10001,
             pointerEvents: 'none',
             animation: 'tourPulseGlow 2s infinite ease-in-out',
-            transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+            transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         />
       )}
 
-      {/* ---------------- 3. Anchored Contextual AI Explanation Bubble ---------------- */}
-      <div style={getPopoverStyle()}>
+      {/* ---------------- 3. Compact SaaS Tooltip (280-320px) ---------------- */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Website Tour: ${currentStep.title}`}
+        style={getTooltipStyle()}
+      >
         <div
           style={{
-            background: 'linear-gradient(155deg, #1E293B 0%, #0F172A 100%)',
-            border: '1.5px solid rgba(99, 102, 241, 0.45)',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 30px rgba(99, 102, 241, 0.3)',
-            borderRadius: 20,
-            overflow: 'hidden',
-            animation: 'tourFadeIn 0.25s ease-out',
+            background: '#0F172A',
+            border: '1.5px solid rgba(99, 102, 241, 0.5)',
+            boxShadow: '0 20px 35px -8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(99, 102, 241, 0.25)',
+            borderRadius: 14,
+            padding: '16px 18px',
             color: '#FFFFFF',
+            animation: 'tourFadeIn 0.2s ease-out',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
           }}
         >
-          {/* Header Banner */}
-          <div
-            style={{
-              background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 50%, #7C3AED 100%)',
-              padding: '16px 20px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 10,
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backdropFilter: 'blur(4px)',
-                }}
-              >
-                <Sparkles size={18} color="#FDE047" />
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontSize: 10.5,
-                    fontWeight: 800,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                    color: '#E0E7FF',
-                  }}
-                >
-                  Interactive AI Platform Tour
-                </div>
-                <div style={{ fontSize: 15, fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
-                  Sophia • AI Career Guide
-                </div>
-              </div>
-            </div>
-
+          {/* Top Row: Step Count Pill + Close Button */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <button
-                onClick={handleRestart}
-                title="Restart Tour"
-                aria-label="Restart Tour"
+              <span
                 style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  border: 'none',
-                  borderRadius: 8,
-                  width: 28,
-                  height: 28,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#FFFFFF',
-                  cursor: 'pointer',
-                  transition: 'background 0.15s ease',
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  color: '#C7D2FE',
+                  background: 'rgba(99, 102, 241, 0.25)',
+                  padding: '2px 8px',
+                  borderRadius: 999,
+                  border: '1px solid rgba(99, 102, 241, 0.35)',
                 }}
               >
-                <RotateCcw size={14} />
-              </button>
-
-              <button
-                onClick={handleComplete}
-                title="Close Tour"
-                aria-label="Close Tour"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  border: 'none',
-                  borderRadius: 8,
-                  width: 28,
-                  height: 28,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#FFFFFF',
-                  cursor: 'pointer',
-                  transition: 'background 0.15s ease',
-                }}
-              >
-                <X size={16} />
-              </button>
-            </div>
-          </div>
-
-          {/* Content Body */}
-          <div style={{ padding: '20px 22px' }}>
-            {/* Step Badge & Step Counter */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 12,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div
-                  style={{
-                    width: 30,
-                    height: 30,
-                    borderRadius: 8,
-                    background: 'rgba(99, 102, 241, 0.2)',
-                    border: '1px solid rgba(99, 102, 241, 0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#A5B4FC',
-                  }}
-                >
-                  <IconComponent size={16} />
-                </div>
-                <span
-                  style={{
-                    fontSize: 11.5,
-                    fontWeight: 700,
-                    background: 'rgba(99, 102, 241, 0.25)',
-                    color: '#C7D2FE',
-                    padding: '3px 9px',
-                    borderRadius: 999,
-                    border: '1px solid rgba(99, 102, 241, 0.35)',
-                  }}
-                >
-                  {currentStep.badge}
-                </span>
-              </div>
-
-              <span style={{ fontSize: 11.5, fontWeight: 800, color: '#94A3B8' }}>
-                Step {currentStepIndex + 1} of {INTERACTIVE_TOUR_STEPS.length}
+                {currentStepIndex + 1} of {INTERACTIVE_TOUR_STEPS.length}
+              </span>
+              <span style={{ fontSize: 10.5, color: '#94A3B8', fontWeight: 600 }}>
+                {currentStep.badge}
               </span>
             </div>
 
-            {/* Title & Description */}
-            <h3 style={{ fontSize: 16, fontWeight: 800, color: '#F8FAFC', marginBottom: 8, lineHeight: 1.3 }}>
-              {currentStep.title}
-            </h3>
-            <p style={{ fontSize: 12.8, color: '#CBD5E1', lineHeight: 1.55, marginBottom: 16 }}>
-              {currentStep.description}
-            </p>
-
-            {/* Feature Highlights Grid */}
-            <div style={{ marginBottom: 18 }}>
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 800,
-                  color: '#94A3B8',
-                  textTransform: 'uppercase',
-                  marginBottom: 6,
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Key System Capabilities:
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 6 }}>
-                {currentStep.keyFeatures.map((feat, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      fontSize: 11,
-                      color: '#E2E8F0',
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      padding: '5px 8px',
-                      borderRadius: 6,
-                      border: '1px solid rgba(255, 255, 255, 0.06)',
-                    }}
-                  >
-                    <CheckCircle2 size={12} color="#34D399" />
-                    <span>{feat}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Progress Dots */}
-            <div
+            <button
+              onClick={handleSkip}
+              title="Close tour (Esc)"
+              aria-label="Close tour"
               style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#94A3B8',
+                cursor: 'pointer',
+                padding: 2,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 5,
-                marginBottom: 16,
+                borderRadius: 4,
+                transition: 'color 0.15s ease',
               }}
             >
-              {INTERACTIVE_TOUR_STEPS.map((step, idx) => (
-                <button
-                  key={step.id}
-                  onClick={() => handleJumpToStep(idx)}
-                  aria-label={`Jump to ${step.title}`}
-                  style={{
-                    width: idx === currentStepIndex ? 20 : 6,
-                    height: 6,
-                    borderRadius: 999,
-                    background: idx === currentStepIndex ? '#818CF8' : 'rgba(148, 163, 184, 0.3)',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                    transition: 'all 0.2s ease',
-                  }}
-                />
-              ))}
-            </div>
+              <X size={15} />
+            </button>
+          </div>
 
-            {/* Action Navigation Buttons */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+          {/* Title & Short Punchy Copy */}
+          <div>
+            <h4
+              style={{
+                fontSize: 14.5,
+                fontWeight: 800,
+                color: '#F8FAFC',
+                margin: '0 0 4px 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <IconComponent size={15} color="#818CF8" />
+              <span>{currentStep.title}</span>
+            </h4>
+            <p
+              style={{
+                fontSize: 12.2,
+                color: '#CBD5E1',
+                lineHeight: 1.45,
+                margin: 0,
+              }}
+            >
+              {currentStep.description}
+            </p>
+          </div>
+
+          {/* Action Navigation Buttons */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingTop: 8,
+              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+              marginTop: 2,
+            }}
+          >
+            <button
+              onClick={handlePrev}
+              disabled={currentStepIndex === 0}
+              aria-label="Previous step"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 3,
+                padding: '5px 10px',
+                borderRadius: 7,
+                fontSize: 11.5,
+                fontWeight: 700,
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: currentStepIndex === 0 ? '#475569' : '#CBD5E1',
+                cursor: currentStepIndex === 0 ? 'not-allowed' : 'pointer',
+              }}
+            >
+              <ChevronLeft size={13} />
+              <span>Back</span>
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <button
-                onClick={handlePrev}
-                disabled={currentStepIndex === 0}
+                onClick={handleSkip}
+                aria-label="Skip tour"
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  padding: '8px 14px',
-                  borderRadius: 9,
-                  fontSize: 12,
-                  fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: currentStepIndex === 0 ? '#64748B' : '#CBD5E1',
-                  cursor: currentStepIndex === 0 ? 'not-allowed' : 'pointer',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#94A3B8',
+                  fontSize: 11.5,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  padding: '4px 6px',
                 }}
               >
-                <ChevronLeft size={14} />
-                <span>Back</span>
+                Skip
               </button>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <button
-                  onClick={handleComplete}
-                  style={{
-                    padding: '8px 12px',
-                    borderRadius: 9,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#94A3B8',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Skip Tour
-                </button>
-
-                <button
-                  onClick={handleNext}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '8px 18px',
-                    borderRadius: 9,
-                    fontSize: 12.5,
-                    fontWeight: 800,
-                    background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-                    border: 'none',
-                    color: '#FFFFFF',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
-                  }}
-                >
-                  <span>
-                    {currentStepIndex === INTERACTIVE_TOUR_STEPS.length - 1 ? 'Finish Tour' : 'Next Step'}
-                  </span>
-                  <ChevronRight size={14} />
-                </button>
-              </div>
+              <button
+                onClick={handleNext}
+                aria-label={currentStepIndex === INTERACTIVE_TOUR_STEPS.length - 1 ? 'Finish tour' : 'Next step'}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '5px 14px',
+                  borderRadius: 7,
+                  fontSize: 12,
+                  fontWeight: 800,
+                  background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                  border: 'none',
+                  color: '#FFFFFF',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(99, 102, 241, 0.4)',
+                }}
+              >
+                <span>
+                  {currentStepIndex === INTERACTIVE_TOUR_STEPS.length - 1 ? 'Finish' : 'Next'}
+                </span>
+                <ChevronRight size={13} />
+              </button>
             </div>
           </div>
         </div>

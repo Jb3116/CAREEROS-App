@@ -1,87 +1,79 @@
 /**
  * CAREEROS - AI Website Tour Steps Data Definition
- * Covers all 8 critical application zones with stable data-tour attributes
+ * Compact, punchy 1-2 sentence tour configurations with stable data-tour-id selectors
  */
 
 export const TOUR_STEPS = [
   {
     id: 'dashboard',
+    tourId: 'dashboard',
     target: 'dashboard',
-    title: '1. Intelligent Student Dashboard',
-    description:
-      'Your central career mission control. Real-time Deep Knowledge Tracing (DKT) tracks your skill mastery across 10 foundational competencies with hiring readiness benchmarks.',
+    title: 'Student Dashboard',
+    description: 'Your career mission control. Track live DKT skill mastery, readiness scores, and daily tasks.',
     route: '/dashboard',
-    badge: 'Live DKT Knowledge State',
-    keyFeatures: ['Live Readiness Score Gauge', 'Category Mastery Breakdown', 'Target Role Calibration'],
+    badge: 'Live DKT State',
   },
   {
     id: 'assessment',
+    tourId: 'assessment',
     target: 'assessment',
-    title: '2. Diagnostic Assessment Arena',
-    description:
-      'Proctored Tier-1 benchmark evaluation. 22 real coding problems and 32 aptitude questions with real sandbox execution and persistent answer state.',
+    title: 'Diagnostic Assessment',
+    description: 'Proctored Tier-1 benchmark arena with 22 coding challenges and real sandbox execution.',
     route: '/assessment',
-    badge: 'Real V8 Sandbox Execution',
-    keyFeatures: ['Isolated VM Sandbox Code Runner', 'Multi-Section Aptitude Arena', 'Real Telemetry Ingestion'],
+    badge: 'V8 Sandbox Arena',
   },
   {
     id: 'roadmap',
+    tourId: 'roadmap',
     target: 'roadmap',
-    title: '3. Adaptive AI Learning Roadmap',
-    description:
-      'Personalized learning pathway powered by Sentence-BERT skill gap detection. Dynamically prioritizes critical weaknesses to maximize interview readiness.',
+    title: 'Adaptive AI Roadmap',
+    description: 'Personalized pathway powered by Sentence-BERT embeddings, prioritizing critical skill gaps.',
     route: '/career-roadmap',
-    badge: 'Sentence-BERT Skill Gaps',
-    keyFeatures: ['Real Pretrained Transformer (384-d)', 'Automated Phase Generation', 'Hiring Threshold Calibration'],
+    badge: 'Sentence-BERT Engine',
   },
   {
     id: 'practice',
+    tourId: 'practice',
     target: 'practice',
-    title: '4. Real-Time Coding Practice',
-    description:
-      'Master data structures and algorithms with real-time test case verification, asymptotic complexity hints, and instant syntax diagnostics.',
+    title: 'Coding & Aptitude Practice',
+    description: 'Master core DSA problems with instant test case verification and complexity feedback.',
     route: '/practice',
-    badge: 'Active Problem Sets',
-    keyFeatures: ['Instant Execution Feedback', 'Zero Mocked Passes', 'Multi-Language Support (Python/JS/Java)'],
+    badge: 'Real Testcases',
   },
   {
-    id: 'interview-studio',
-    target: 'interview-studio',
-    title: '5. AI Interview Studio & Speech Coach',
-    description:
-      'Simulate high-stakes mock interviews with Sophia (Senior AI Recruiter). Real camera feed, live microphone speech-to-text, and intelligent conversational follow-ups.',
+    id: 'interview',
+    tourId: 'interview',
+    target: 'interview',
+    title: 'AI Interview Studio',
+    description: 'Simulate high-stakes mock interviews with Sophia AI featuring speech transcription and voice prompts.',
     route: '/interview-studio',
-    badge: 'Webcam + Mic Speech AI',
-    keyFeatures: ['STAR Behavioral & Tech Modes', 'Web Speech API Transcription', 'Dynamic Gemini Follow-up Questions'],
+    badge: 'Voice & Speech AI',
   },
   {
-    id: 'ai-mentor',
-    target: 'ai-mentor',
-    title: '6. Floating AI Career Mentor',
-    description:
-      'Your 24/7 personalized AI career copilot. Ask questions, get real-time DKT insights, request mock drills, or navigate anywhere across CAREER OS seamlessly.',
+    id: 'mentor',
+    tourId: 'mentor',
+    target: 'mentor',
+    title: 'AI Career Mentor',
+    description: 'Your 24/7 copilot for instant interview drills, skill gap insights, and platform guidance.',
     route: '/dashboard',
-    badge: 'Conversational AI Copilot',
-    keyFeatures: ['Multi-turn Career Mentorship', 'Real DKT Telemetry Ingestion', 'Instant Navigation Shortcuts'],
+    badge: '24/7 AI Copilot',
   },
   {
-    id: 'analytics',
-    target: 'analytics',
-    title: '7. Skill Growth & Telemetry Analytics',
-    description:
-      'Comprehensive performance analytics, learning curve trajectories, and time-series skill progression mapped directly to campus placement standards.',
-    route: '/dashboard',
-    badge: 'Time-Series Progression',
-    keyFeatures: ['Historical Knowledge Curves', 'Sectional Accuracy Trends', 'Placement Readiness Milestones'],
+    id: 'opportunities',
+    tourId: 'opportunities',
+    target: 'opportunities',
+    title: 'Placement Drives & Calendar',
+    description: 'Explore campus hiring drives and internship openings with semantic skill-match scoring.',
+    route: '/opportunities',
+    badge: 'Campus Drives',
   },
   {
     id: 'profile',
+    tourId: 'profile',
     target: 'profile',
-    title: '8. Student Profile & Readiness Calibration',
-    description:
-      'Manage your academic credentials, verified skills, target company preferences, and overall placement readiness index.',
+    title: 'Profile & ATS Calibration',
+    description: 'Calibrate your target roles, verified competencies, and ATS resume compatibility.',
     route: '/profile',
-    badge: 'Student Identity & ATS',
-    keyFeatures: ['ATS Compatibility Score', 'Campus Drive Registration', 'Target Company Calibration'],
+    badge: 'Student Identity',
   },
 ];

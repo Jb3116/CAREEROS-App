@@ -29,6 +29,7 @@ interface NavItemConfig {
   label: string;
   path: string;
   icon: LucideIcon;
+  tourId?: string;
   tourTarget?: string;
 }
 
@@ -38,15 +39,57 @@ export const AppSidebar: React.FC = () => {
 
   // Full CAREEROS student navigation menu in exact sequential order
   const navItems: NavItemConfig[] = [
-    { id: 'dashboard', label: 'Student Dashboard', path: '/dashboard', icon: LayoutDashboard, tourTarget: 'dashboard' },
+    {
+      id: 'dashboard',
+      label: 'Student Dashboard',
+      path: '/dashboard',
+      icon: LayoutDashboard,
+      tourId: 'dashboard',
+      tourTarget: 'dashboard',
+    },
     { id: 'resume', label: 'AI Resume Builder', path: '/resume-builder', icon: FileText },
     { id: 'onboarding', label: 'Student Onboarding', path: '/onboarding', icon: UserCheck },
     { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
-    { id: 'placement', label: 'AI Placement', path: '/placement', icon: Sparkles, tourTarget: 'assessment' },
-    { id: 'career-roadmap', label: 'AI Roadmap', path: '/career-roadmap', icon: Map, tourTarget: 'roadmap' },
-    { id: 'practice', label: 'Coding & Aptitude', path: '/practice', icon: Code2, tourTarget: 'practice' },
-    { id: 'opportunities', label: 'Opportunity & Smart Calendar', path: '/opportunities', icon: Calendar },
-    { id: 'interview-studio', label: 'AI Interview Studio', path: '/interview-studio', icon: Mic, tourTarget: 'interview-studio' },
+    {
+      id: 'placement',
+      label: 'AI Placement',
+      path: '/placement',
+      icon: Sparkles,
+      tourId: 'assessment',
+      tourTarget: 'assessment',
+    },
+    {
+      id: 'career-roadmap',
+      label: 'AI Roadmap',
+      path: '/career-roadmap',
+      icon: Map,
+      tourId: 'roadmap',
+      tourTarget: 'roadmap',
+    },
+    {
+      id: 'practice',
+      label: 'Coding & Aptitude',
+      path: '/practice',
+      icon: Code2,
+      tourId: 'practice',
+      tourTarget: 'practice',
+    },
+    {
+      id: 'opportunities',
+      label: 'Opportunity & Smart Calendar',
+      path: '/opportunities',
+      icon: Calendar,
+      tourId: 'opportunities',
+      tourTarget: 'opportunities',
+    },
+    {
+      id: 'interview-studio',
+      label: 'AI Interview Studio',
+      path: '/interview-studio',
+      icon: Mic,
+      tourId: 'interview',
+      tourTarget: 'interview-studio',
+    },
   ];
 
   const isCurrentActive = (item: NavItemConfig): boolean => {
@@ -92,6 +135,7 @@ export const AppSidebar: React.FC = () => {
                   aria-current={active ? 'page' : undefined}
                   type="button"
                   data-tour={item.tourTarget}
+                  data-tour-id={item.tourId}
                 >
                   <Icon size={20} strokeWidth={active ? 2.5 : 2} />
                 </SidebarMenuButton>
@@ -111,6 +155,7 @@ export const AppSidebar: React.FC = () => {
           aria-current={location.pathname === '/profile' ? 'page' : undefined}
           type="button"
           data-tour="profile"
+          data-tour-id="profile"
         >
           <User size={20} strokeWidth={location.pathname === '/profile' ? 2.5 : 2} />
         </SidebarMenuButton>
