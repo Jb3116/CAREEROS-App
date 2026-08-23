@@ -32,6 +32,7 @@ export const SKILL_SEMANTIC_LEXICON = {
   data_structures: [
     'data structures',
     'dsa',
+    'dsa algorithms',
     'data structures & algorithms',
     'arrays',
     'linked lists',
@@ -49,6 +50,7 @@ export const SKILL_SEMANTIC_LEXICON = {
   algorithms: [
     'algorithms',
     'algo',
+    'dsa algorithms',
     'dynamic programming',
     'dp',
     'greedy algorithms',
@@ -153,6 +155,9 @@ export const SKILL_SEMANTIC_LEXICON = {
   machine_learning: [
     'machine learning',
     'ml',
+    'predictive modelling',
+    'predictive modeling',
+    'predictive',
     'supervised learning',
     'unsupervised learning',
     'deep learning',
@@ -285,14 +290,20 @@ export function createSemanticVector(text, dim = 384) {
   }
 
   // Token semantic matching projection
+  const words = normText.split(/[\s,+/&_-]+/);
   for (const [skillKey, keywords] of Object.entries(SKILL_SEMANTIC_LEXICON)) {
-    for (const kw of keywords) {
-      if (normText === kw || normText.includes(kw) || kw.includes(normText)) {
-        const skillIdx = SKILL_MAP[skillKey] || 0;
-        const offset = (skillIdx * 32) % dim;
-        for (let j = 0; j < 32; j++) {
-          vector[(offset + j) % dim] += 3.5;
-        }
+    const hasMatch = keywords.some(
+      (kw) =>
+        normText === kw ||
+        normText.includes(kw) ||
+        kw.includes(normText) ||
+        words.some((w) => w.length > 2 && (kw === w || kw.startsWith(w) || w.startsWith(kw)))
+    );
+    if (hasMatch) {
+      const skillIdx = SKILL_MAP[skillKey] || 0;
+      const offset = (skillIdx * 32) % dim;
+      for (let j = 0; j < 32; j++) {
+        vector[(offset + j) % dim] += 5.0;
       }
     }
   }
@@ -321,6 +332,18 @@ export function computeCosineSimilarity(vecA, vecB) {
   return Math.min(1.0, Math.max(0.0, dotProduct));
 }
 
+// Precomputed Lexicon Vector Cache
+const PRECOMPUTED_LEXICON_VECTORS = [];
+for (const [skillKey, keywords] of Object.entries(SKILL_SEMANTIC_LEXICON)) {
+  for (const kw of keywords) {
+    PRECOMPUTED_LEXICON_VECTORS.push({
+      skillKey,
+      kw,
+      vec: createSemanticVector(kw),
+    });
+  }
+}
+
 /**
  * Match a raw query term (e.g. 'ML', 'AsyncIO', 'B+ Trees', 'TCP/IP') against known skill concepts
  */
@@ -339,19 +362,16 @@ export function matchSkillSemantics(queryText) {
     }
   }
 
-  // 2. Dense Cosine Similarity
+  // 2. Precomputed Dense Cosine Similarity
   const queryVec = createSemanticVector(queryText);
   let bestSkill = null;
   let bestSim = -1.0;
 
-  for (const [skillKey, keywords] of Object.entries(SKILL_SEMANTIC_LEXICON)) {
-    for (const kw of keywords) {
-      const kwVec = createSemanticVector(kw);
-      const sim = computeCosineSimilarity(queryVec, kwVec);
-      if (sim > bestSim) {
-        bestSim = sim;
-        bestSkill = skillKey;
-      }
+  for (const item of PRECOMPUTED_LEXICON_VECTORS) {
+    const sim = computeCosineSimilarity(queryVec, item.vec);
+    if (sim > bestSim) {
+      bestSim = sim;
+      bestSkill = item.skillKey;
     }
   }
 
