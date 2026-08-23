@@ -19,6 +19,7 @@
 @import './announcements.css';
 @import './admin-drives.css';
 @import './admin-students.css';
+@import './admin-companies.css';
 
 :root {
   /* Brand Colors */

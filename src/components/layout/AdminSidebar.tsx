@@ -3,9 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Megaphone,
+  Briefcase,
+  Building2,
   Sliders,
   Users,
-  Building2,
   BarChart3,
   Settings,
   LogOut,
@@ -24,7 +25,7 @@ export const AdminSidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Navigation Items for College Admin & TPO Placement Command Center
+  // Master Navigation Items for College Admin & TPO Placement Command Center
   const navItems: AdminNavItem[] = [
     {
       id: 'dashboard',
@@ -39,10 +40,16 @@ export const AdminSidebar: React.FC = () => {
       icon: Megaphone,
     },
     {
-      id: 'control',
-      label: 'Placement Control Center',
-      path: '/admin/control',
-      icon: Sliders,
+      id: 'companies',
+      label: 'Company Registry',
+      path: '/admin/companies',
+      icon: Briefcase,
+    },
+    {
+      id: 'drives',
+      label: 'Campus Placement Drives',
+      path: '/admin/drives',
+      icon: Building2,
     },
     {
       id: 'students',
@@ -51,10 +58,10 @@ export const AdminSidebar: React.FC = () => {
       icon: Users,
     },
     {
-      id: 'drives',
-      label: 'Campus Placement Drives',
-      path: '/admin/drives',
-      icon: Building2,
+      id: 'control',
+      label: 'Placement Control Center',
+      path: '/admin/control',
+      icon: Sliders,
     },
     {
       id: 'analytics',

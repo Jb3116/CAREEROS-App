@@ -20,6 +20,7 @@ import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { AdminAnnouncementsPage } from './pages/AdminAnnouncementsPage';
+import { AdminCompaniesPage } from './pages/AdminCompaniesPage';
 import { AdminDrivesPage } from './pages/AdminDrivesPage';
 import { AdminStudentsPage } from './pages/AdminStudentsPage';
 import { AdminAnalyticsPage } from './pages/AdminAnalyticsPage';
@@ -52,6 +53,7 @@ export const App: React.FC = () => {
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />
+          <Route path="/admin/companies" element={<AdminCompaniesPage />} />
           <Route path="/admin/drives" element={<AdminDrivesPage />} />
           <Route path="/admin/students" element={<AdminStudentsPage />} />
           <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
