@@ -76,7 +76,7 @@ export const OnboardingPage: React.FC = () => {
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      navigate('/dashboard');
+      navigate('/assessment');
     }
   };
 
@@ -92,7 +92,7 @@ export const OnboardingPage: React.FC = () => {
     { num: 2, label: 'Career Goals', icon: Target },
     { num: 3, label: 'Tech Stack', icon: Code2 },
     { num: 4, label: 'Study Routine', icon: Clock },
-    { num: 5, label: 'AI Roadmap', icon: Rocket },
+    { num: 5, label: 'AI Calibration', icon: Rocket },
   ];
 
   return (
@@ -111,8 +111,8 @@ export const OnboardingPage: React.FC = () => {
             <span style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>
               Step {currentStep} of {steps.length}
             </span>
-            <button className="onboard-skip-btn" onClick={() => navigate('/dashboard')}>
-              Skip to Dashboard →
+            <button className="onboard-skip-btn" onClick={() => navigate('/assessment')}>
+              Skip to Assessment →
             </button>
           </div>
         </div>
@@ -425,9 +425,9 @@ export const OnboardingPage: React.FC = () => {
         {currentStep === 5 && (
           <>
             <div className="onboard-card-header">
-              <h1 className="onboard-card-title">Step 5: Your Personalized AI CareerOS is Ready! 🚀</h1>
+              <h1 className="onboard-card-title">Step 5: Calibration Complete! Ready for Diagnostic Benchmark 🚀</h1>
               <p className="onboard-card-desc">
-                We have synthesized your profile, target role requirements, and learning velocity into an actionable roadmap.
+                We have synthesized your profile. Take the diagnostic benchmark to unlock your personalized roadmap.
               </p>
             </div>
 
@@ -435,17 +435,17 @@ export const OnboardingPage: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <Sparkles size={22} color="#F59E0B" />
-                  <span style={{ fontSize: 16, fontWeight: 800 }}>Student Intelligence Profile Activated</span>
+                  <span style={{ fontSize: 16, fontWeight: 800 }}>Student Intelligence Profile Initialized</span>
                 </div>
                 <span style={{ background: '#10B981', color: '#FFF', fontSize: 12, fontWeight: 700, padding: '3px 10px', borderRadius: 999 }}>
-                  Online & Calibrated
+                  Online & Ready
                 </span>
               </div>
 
               <div className="onboard-summary-stats">
                 <div className="onboard-summary-stat-card">
                   <div style={{ fontSize: 24, fontWeight: 900, color: '#FFFFFF' }}>78%</div>
-                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>Baseline Readiness</div>
+                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>Estimated Readiness</div>
                 </div>
                 <div className="onboard-summary-stat-card">
                   <div style={{ fontSize: 24, fontWeight: 900, color: '#34D399' }}>91%</div>
@@ -458,7 +458,7 @@ export const OnboardingPage: React.FC = () => {
               </div>
 
               <div style={{ background: 'rgba(255,255,255,0.08)', padding: 14, borderRadius: 12, fontSize: 13, lineHeight: 1.5, color: '#E0E7FF' }}>
-                💡 <strong>High-Yield Priority:</strong> Complete the <em>2 Tree Problems</em> module in your Practice Arena to bridge the detected Binary Search Tree mastery gap before the upcoming Google Campus Assessment.
+                💡 <strong>Next Step:</strong> Start your <em>Diagnostic Placement Assessment</em> to baseline your coding speed and CS core knowledge under real interview test conditions.
               </div>
             </div>
           </>
@@ -476,7 +476,7 @@ export const OnboardingPage: React.FC = () => {
           )}
 
           <button type="button" className="onboard-btn-next" onClick={nextStep}>
-            <span>{currentStep === 5 ? 'Launch Student Dashboard 🚀' : 'Continue Next →'}</span>
+            <span>{currentStep === 5 ? 'Start Diagnostic Assessment 🚀' : 'Continue Next →'}</span>
             <ArrowRight size={16} />
           </button>
         </div>

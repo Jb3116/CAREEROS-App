@@ -1,0 +1,227 @@
+/* ==========================================================================
+   CAREEROS - Coding & Aptitude Practice Dashboard Stylesheet
+   Pixel-Perfect Interactive Arena & Speed Simulator
+   ========================================================================== */
+
+.practice-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 32px 36px 64px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+   Practice Hero Header & Stats Banner
+   -------------------------------------------------------------------------- */
+.practice-header-card {
+  background: linear-gradient(135deg, #101528 0%, #1E253F 55%, #293556 100%);
+  border-radius: 20px;
+  padding: 28px 32px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.practice-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.practice-header-title-group h1 {
+  font-size: 24px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  color: #FFFFFF;
+}
+
+.practice-header-title-group p {
+  font-size: 13.5px;
+  color: #CBD5E1;
+  line-height: 1.5;
+}
+
+.practice-streak-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(234, 88, 12, 0.2);
+  border: 1px solid rgba(234, 88, 12, 0.4);
+  color: #FB923C;
+  font-size: 12.5px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.practice-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.practice-stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.practice-stat-val {
+  font-size: 24px;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+}
+
+.practice-stat-lbl {
+  font-size: 12px;
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Practice Mode Switcher Tabs
+   -------------------------------------------------------------------------- */
+.practice-mode-tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #E2E8F0;
+  padding-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.practice-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.practice-mode-btn.active {
+  background: #4F46E5;
+  color: #FFFFFF;
+  border: 1.5px solid #4F46E5;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.practice-mode-btn.inactive {
+  background: #FFFFFF;
+  color: #475569;
+  border: 1px solid #CBD5E1;
+}
+
+.practice-mode-btn.inactive:hover {
+  background: #EEF2FF;
+  border-color: #C7D2FE;
+  color: #4F46E5;
+}
+
+/* --------------------------------------------------------------------------
+   Coding Arena Workspace (Split-Pane)
+   -------------------------------------------------------------------------- */
+.practice-workspace-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 20px;
+  min-height: 560px;
+}
+
+.practice-problem-pane {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 24px 28px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.practice-editor-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.practice-editor-box {
+  background: #080C14;
+  border: 1px solid #1E293B;
+  border-radius: 18px;
+  padding: 18px 22px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+}
+
+.practice-editor-textarea {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #F1F5F9;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13.5px;
+  line-height: 1.6;
+  outline: none;
+  resize: none;
+  min-height: 320px;
+}
+
+/* --------------------------------------------------------------------------
+   Aptitude Practice Cards
+   -------------------------------------------------------------------------- */
+.practice-aptitude-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.practice-aptitude-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.practice-aptitude-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.08);
+  border-color: #CBD5E1;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .practice-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}

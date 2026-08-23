@@ -2,50 +2,36 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
-import { DashboardPage } from './pages/DashboardPage';
 import { OnboardingPage } from './pages/OnboardingPage';
-import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
+import { DashboardLayout } from './components/layout/DashboardLayout';
+import { StudentDashboard } from './components/dashboard/StudentDashboard';
+import { RoadmapView } from './components/roadmap/RoadmapView';
+import { AssessmentView } from './components/assessment/AssessmentView';
 import { LearningPage } from './pages/LearningPage';
-import { RoadmapPage } from './pages/RoadmapPage';
-import { CareerRoadmapPage } from './pages/CareerRoadmapPage';
-import { AssessmentPage } from './pages/AssessmentPage';
-import { PracticePage } from './pages/PracticePage';
-import { ProfilePage } from './pages/ProfilePage';
+import { PracticeView } from './components/practice/PracticeView';
+import { ProfileView } from './components/profile/ProfileView';
+import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Landing / Home Page */}
+        {/* Public & Onboarding Entry Points */}
         <Route path="/" element={<HomePage />} />
-
-        {/* Auth / Login Page */}
         <Route path="/login" element={<LoginPage />} />
-
-        {/* Student Onboarding (5-step guided wizard) */}
         <Route path="/onboarding" element={<OnboardingPage />} />
 
-        {/* Student Dashboard Page */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-
-        {/* Placement Assessment Suite */}
-        <Route path="/assessment" element={<AssessmentPage />} />
-
-        {/* Career Roadmap Pages */}
-        <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
-        <Route path="/roadmap" element={<RoadmapPage />} />
-
-        {/* Learning Hub & Handbooks */}
-        <Route path="/learning" element={<LearningPage />} />
-
-        {/* Practice & Coding Arena */}
-        <Route path="/practice" element={<PracticePage />} />
-
-        {/* ATS Resume Builder */}
-        <Route path="/resume-builder" element={<ResumeBuilderPage />} />
-
-        {/* Student Profile & Skill Intelligence */}
-        <Route path="/profile" element={<ProfilePage />} />
+        {/* Authenticated Application with Unified Permanent Sidebar & Header Layout */}
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<StudentDashboard />} />
+          <Route path="/roadmap" element={<RoadmapView />} />
+          <Route path="/career-roadmap" element={<RoadmapView />} />
+          <Route path="/assessment" element={<AssessmentView />} />
+          <Route path="/learning" element={<LearningPage />} />
+          <Route path="/practice" element={<PracticeView />} />
+          <Route path="/profile" element={<ProfileView />} />
+          <Route path="/resume-builder" element={<ResumeBuilderPage />} />
+        </Route>
 
         {/* Fallback / Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />

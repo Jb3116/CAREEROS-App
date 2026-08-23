@@ -25,26 +25,22 @@ interface NavItemConfig {
   icon: LucideIcon;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ activeTab }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Navigation Items matching Placement Assessment (Clipboard) and Career Roadmap (Map)
+  // Navigation Items matching the CAREEROS full suite
   const navItems: NavItemConfig[] = [
     { id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { id: 'assessment', label: 'Placement Assessment', path: '/assessment', icon: ClipboardCheck },
     { id: 'career-roadmap', label: 'Career Roadmap', path: '/career-roadmap', icon: Map },
+    { id: 'practice', label: 'Aptitude & Coding', path: '/practice', icon: Code2 },
     { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
-    { id: 'practice', label: 'Practice & Coding', path: '/practice', icon: Code2 },
     { id: 'resume', label: 'ATS Resume Builder', path: '/resume-builder', icon: FileText },
   ];
 
   const handleNavClick = (item: NavItemConfig) => {
     navigate(item.path);
-    if (onTabChange) {
-      if (item.id === 'dashboard') onTabChange('dashboard');
-      else if (item.id === 'practice') onTabChange('practice');
-    }
   };
 
   const isCurrentActive = (item: NavItemConfig) => {
@@ -52,6 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
     if (item.id === 'career-roadmap' && (location.pathname === '/career-roadmap' || location.pathname === '/roadmap')) return true;
     if (activeTab) {
       if (activeTab === item.id) return true;
+      if (activeTab === 'practice' && item.id === 'practice') return true;
       if (activeTab === 'roadmap' && item.id === 'career-roadmap') return true;
       if (activeTab === 'learn' && item.id === 'learning') return true;
       if (activeTab === 'resume' && item.id === 'resume') return true;
