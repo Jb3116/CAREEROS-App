@@ -39,10 +39,10 @@ export const HomePage: React.FC = () => {
         <nav aria-label="Main Navigation">
           <ul className="home-nav-links">
             <li><a href="#features" className="home-nav-link">Features</a></li>
-            <li><a href="#roadmap" className="home-nav-link">AI Roadmap</a></li>
-            <li><a href="#practice" className="home-nav-link">Practice Arena</a></li>
-            <li><a href="#opportunities" className="home-nav-link">Opportunities</a></li>
-            <li><a href="#how-it-works" className="home-nav-link">How It Works</a></li>
+            <li><Link to="/roadmap" className="home-nav-link">AI Roadmap</Link></li>
+            <li><Link to="/practice" className="home-nav-link">Practice Arena</Link></li>
+            <li><Link to="/resume-builder" className="home-nav-link">ATS Resume</Link></li>
+            <li><Link to="/learning" className="home-nav-link">Learning Hub</Link></li>
           </ul>
         </nav>
 
@@ -50,8 +50,8 @@ export const HomePage: React.FC = () => {
           <Link to="/login" className="home-btn-ghost">
             Sign In
           </Link>
-          <Link to="/dashboard" className="home-btn-primary">
-            <span>Student Dashboard</span>
+          <Link to="/onboarding" className="home-btn-primary">
+            <span>Get Started</span>
             <ArrowRight size={16} />
           </Link>
         </div>
@@ -77,12 +77,12 @@ export const HomePage: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="home-hero-actions">
-          <Link to="/dashboard" className="home-btn-lg-primary">
-            <span>Launch Student Dashboard</span>
+          <Link to="/onboarding" className="home-btn-lg-primary">
+            <span>Get Started Free</span>
             <ArrowRight size={18} />
           </Link>
-          <Link to="/login" className="home-btn-lg-secondary">
-            <span>Sign In / Create Account</span>
+          <Link to="/dashboard" className="home-btn-lg-secondary">
+            <span>Explore Student Dashboard</span>
           </Link>
         </div>
 
@@ -146,14 +146,16 @@ export const HomePage: React.FC = () => {
                   Closes the Binary Search Tree mastery gap detected in your Google mock assessment.
                 </p>
                 <button
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate('/onboarding')}
                   style={{
-                    background: '#4F46E5',
-                    color: '#FFF',
-                    fontWeight: 700,
-                    fontSize: 12,
-                    padding: '8px 14px',
+                    background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
+                    color: '#FFFFFF',
+                    border: 'none',
                     borderRadius: 8,
+                    padding: '8px 14px',
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -161,45 +163,35 @@ export const HomePage: React.FC = () => {
                     marginTop: 'auto',
                   }}
                 >
-                  <span>Execute in Practice Arena</span>
+                  <span>Start Onboarding Calibration</span>
                   <ArrowRight size={14} />
                 </button>
               </div>
 
-              {/* Card 3: Top Matched Opportunity */}
+              {/* Card 3: Top Opportunity */}
               <div className="home-showcase-card">
                 <div className="home-showcase-card-title">
-                  <span>Top Opportunity Match</span>
-                  <span style={{ fontSize: 11, background: '#ECFDF5', color: '#059669', padding: '2px 8px', borderRadius: 999, fontWeight: 800 }}>
-                    94% MATCH
+                  <span>Top Placement Match</span>
+                  <span style={{ fontSize: 11, background: '#ECFDF5', color: '#059669', padding: '2px 8px', borderRadius: 999, fontWeight: 700 }}>
+                    94% Match
                   </span>
                 </div>
-                <div style={{ fontWeight: 800, fontSize: 15, color: '#0F172A' }}>
-                  Goldman Sachs SWE Intern
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 8, background: '#1E3A8A', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13 }}>
+                    GS
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 13.5, color: '#0F172A' }}>Goldman Sachs</div>
+                    <div style={{ fontSize: 12, color: '#64748B' }}>SWE Intern • Summer 2026</div>
+                  </div>
                 </div>
-                <div style={{ fontSize: 13, color: '#64748B' }}>
-                  ₹1,20,000 / mo • Bangalore / Hybrid
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  {['C++', 'Algorithms', 'SQL', 'System Design'].map((s, i) => (
+                    <span key={i} style={{ fontSize: 11, background: '#F1F5F9', padding: '2px 6px', borderRadius: 4, color: '#475569', fontWeight: 600 }}>
+                      {s}
+                    </span>
+                  ))}
                 </div>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 11, background: '#F1F5F9', padding: '2px 6px', borderRadius: 4, color: '#475569', fontWeight: 600 }}>DSA</span>
-                  <span style={{ fontSize: 11, background: '#F1F5F9', padding: '2px 6px', borderRadius: 4, color: '#475569', fontWeight: 600 }}>C++ / Java</span>
-                  <span style={{ fontSize: 11, background: '#F1F5F9', padding: '2px 6px', borderRadius: 4, color: '#475569', fontWeight: 600 }}>SQL</span>
-                </div>
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  style={{
-                    border: '1px solid #CBD5E1',
-                    color: '#1E293B',
-                    fontWeight: 700,
-                    fontSize: 12,
-                    padding: '7px 12px',
-                    borderRadius: 8,
-                    marginTop: 'auto',
-                    textAlign: 'center',
-                  }}
-                >
-                  View in Opportunities Radar
-                </button>
               </div>
             </div>
           </div>
@@ -207,180 +199,162 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* ---------------- Trust Bar ---------------- */}
-      <section className="home-trust-bar" aria-label="Partner Universities">
-        <h2 className="home-trust-title">Empowering ambitious students across top engineering campuses</h2>
+      <section className="home-trust-bar" aria-label="Trusted by Students and Universities">
+        <p className="home-trust-title">
+          TRUSTED BY STUDENTS AND PLACEMENT CELLS ACROSS TOP INSTITUTIONS
+        </p>
         <div className="home-trust-logos">
-          <div className="home-trust-badge">🎓 Vellore Institute of Technology</div>
-          <div className="home-trust-badge">🏛️ IIT Bombay</div>
-          <div className="home-trust-badge">⚡ BITS Pilani</div>
-          <div className="home-trust-badge">🏢 NIT Trichy</div>
-          <div className="home-trust-badge">🚀 IIIT Hyderabad</div>
-          <div className="home-trust-badge">💡 Delhi Technological University</div>
+          <span>IIT BOMBAY</span>
+          <span>BITS PILANI</span>
+          <span>VIT VELLORE</span>
+          <span>NIT TRICHY</span>
+          <span>IIIT HYDERABAD</span>
+          <span>DTU DELHI</span>
         </div>
       </section>
 
-      {/* ---------------- Core Features Grid ---------------- */}
-      <section className="home-features-section" id="features">
-        <div style={{ textAlign: 'center' }}>
-          <span className="home-section-tag">All-in-One Intelligence</span>
-          <h2 className="home-section-heading">Engineered for your campus-to-offer journey</h2>
-          <p className="home-section-desc" style={{ margin: '0 auto 56px' }}>
-            Traditional prep is fragmented. CAREEROS combines intelligent roadmapping, verified skill mastery, coding assessments, and direct opportunity matching in one cohesive system.
+      {/* ---------------- Features Grid ---------------- */}
+      <section id="features" className="home-features-section">
+        <div className="home-section-header">
+          <span className="home-badge-pill">COMPREHENSIVE CAPABILITIES</span>
+          <h2 className="home-section-title">Everything You Need to Get Hired</h2>
+          <p className="home-section-sub">
+            From cold-start diagnostic benchmarks to campus drive offers, CAREEROS orchestrates your entire preparation cycle.
           </p>
         </div>
 
         <div className="home-features-grid">
           {/* Feature 1 */}
-          <div className="home-feature-card" id="roadmap">
-            <div className="home-feature-icon-wrap purple">
+          <div className="home-feature-card">
+            <div className="home-feature-icon-box purple">
               <Map size={24} />
             </div>
-            <h3 className="home-feature-title">AI-Powered Adaptive Roadmap</h3>
-            <p className="home-feature-text">
-              Say goodbye to generic study plans. Your roadmap dynamically updates with high-yield topics based on assessment outcomes and remaining days before target campus drives.
+            <h3 className="home-feature-title">Adaptive Learning Roadmaps</h3>
+            <p className="home-feature-desc">
+              AI recalculates your study syllabus every time you submit code or complete a practice sprint, prioritizing high-yield gaps.
             </p>
           </div>
 
           {/* Feature 2 */}
-          <div className="home-feature-card" id="practice">
-            <div className="home-feature-icon-wrap blue">
+          <div className="home-feature-card">
+            <div className="home-feature-icon-box blue">
               <Code2 size={24} />
             </div>
             <h3 className="home-feature-title">Coding & Aptitude Practice Arena</h3>
-            <p className="home-feature-text">
-              Multi-language code editor with test cases, timed environments, aptitude question banks, and instant execution feedback calibrated for college assessments.
+            <p className="home-feature-desc">
+              Curated problem sets matching actual interview patterns from Tier 1 tech companies with real-time test case grading.
             </p>
           </div>
 
           {/* Feature 3 */}
           <div className="home-feature-card">
-            <div className="home-feature-icon-wrap green">
-              <BrainCircuit size={24} />
+            <div className="home-feature-icon-box green">
+              <FileCheck2 size={24} />
             </div>
-            <h3 className="home-feature-title">Evidence-Based Skill Mastery</h3>
-            <p className="home-feature-text">
-              Differentiates between self-reported and verified skills. Uses statistical estimators with confidence bounds to pinpoint exact conceptual gaps.
+            <h3 className="home-feature-title">ATS Resume Optimizer</h3>
+            <p className="home-feature-desc">
+              Built-in live A4 ATS resume editor that scores keyword density and formatting against automated job parsers.
             </p>
           </div>
 
           {/* Feature 4 */}
-          <div className="home-feature-card" id="opportunities">
-            <div className="home-feature-icon-wrap amber">
+          <div className="home-feature-card">
+            <div className="home-feature-icon-box orange">
               <Briefcase size={24} />
             </div>
-            <h3 className="home-feature-title">Smart Opportunity Radar</h3>
-            <p className="home-feature-text">
-              Calculates granular skill-match percentages for top internship and placement listings so you know exactly which roles to target and what to review.
+            <h3 className="home-feature-title">Opportunity Matching Radar</h3>
+            <p className="home-feature-desc">
+              Matches your demonstrated skills against verified campus drives, internships, and off-campus openings with percentage compatibility.
             </p>
           </div>
 
           {/* Feature 5 */}
           <div className="home-feature-card">
-            <div className="home-feature-icon-wrap indigo">
-              <FileCheck2 size={24} />
+            <div className="home-feature-icon-box indigo">
+              <MessageSquareCode size={24} />
             </div>
-            <h3 className="home-feature-title">ATS Resume Intelligence</h3>
-            <p className="home-feature-text">
-              Instant ATS score audit (91%+ benchmark), semantic keyword extraction, formatting inspection, and tailored suggestions to bypass recruiter filters.
+            <h3 className="home-feature-title">AI Mock Interview Studio</h3>
+            <p className="home-feature-desc">
+              Camera- and mic-assisted behavioral and technical interview simulation with STAR method evaluation feedback.
             </p>
           </div>
 
           {/* Feature 6 */}
           <div className="home-feature-card">
-            <div className="home-feature-icon-wrap rose">
-              <MessageSquareCode size={24} />
+            <div className="home-feature-icon-box pink">
+              <BrainCircuit size={24} />
             </div>
-            <h3 className="home-feature-title">AI Mock Interview Studio</h3>
-            <p className="home-feature-text">
-              Practice behavioral STAR method scenarios and system design rounds with interactive prompts and structured scoring to build unshakable confidence.
+            <h3 className="home-feature-title">Skill Intelligence Profile</h3>
+            <p className="home-feature-desc">
+              Separates verified, demonstrated competencies from self-reported skills, giving placement officers cryptographic confidence.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ---------------- How It Works Section ---------------- */}
-      <section className="home-workflow-section" id="how-it-works">
-        <div className="home-workflow-wrapper">
-          <div style={{ textAlign: 'center' }}>
-            <span className="home-section-tag">Methodology</span>
-            <h2 className="home-section-heading">How CAREEROS accelerates your preparation</h2>
-            <p className="home-section-desc" style={{ margin: '0 auto' }}>
-              Four structured steps from initial onboarding to placement celebration.
+      {/* ---------------- 4-Step Workflow Section ---------------- */}
+      <section id="how-it-works" className="home-workflow-section">
+        <div className="home-section-header">
+          <span className="home-badge-pill">SIMPLE 4-STEP PROCESS</span>
+          <h2 className="home-section-title">How CAREEROS Accelerates Your Career</h2>
+          <p className="home-section-sub">
+            A guided pipeline engineered to replace scattered resources with structured, measurable progress.
+          </p>
+        </div>
+
+        <div className="home-workflow-steps">
+          {/* Step 1 */}
+          <div className="home-step-card">
+            <div className="home-step-number">1</div>
+            <h3 className="home-step-title">Initial Onboarding & Benchmark</h3>
+            <p className="home-step-desc">
+              Take our year-aware diagnostic assessment to baseline your current DSA, problem-solving, and CS core depth.
             </p>
           </div>
 
-          <div className="home-workflow-steps">
-            <div className="home-workflow-step-card">
-              <div className="home-step-number">1</div>
-              <h3 className="home-step-title">5-Step Career Profile</h3>
-              <p className="home-step-desc">
-                Define your graduation year, college, target role (SWE, Frontend, Data), and weekly prep availability.
-              </p>
-            </div>
+          {/* Step 2 */}
+          <div className="home-step-card">
+            <div className="home-step-number">2</div>
+            <h3 className="home-step-title">AI Calibrated Roadmap</h3>
+            <p className="home-step-desc">
+              Receive a step-by-step milestone schedule calibrated for your specific target companies (e.g. SDE 1 at Google).
+            </p>
+          </div>
 
-            <div className="home-workflow-step-card">
-              <div className="home-step-number">2</div>
-              <h3 className="home-step-title">Initial Diagnostic Test</h3>
-              <p className="home-step-desc">
-                Take a year-aware assessment in Coding, Aptitude, and optional Interview rounds to establish your baseline.
-              </p>
-            </div>
+          {/* Step 3 */}
+          <div className="home-step-card">
+            <div className="home-step-number">3</div>
+            <h3 className="home-step-title">Daily Adaptive Sprints</h3>
+            <p className="home-step-desc">
+              Execute high-yield daily tasks with immediate guidance and watch your readiness score climb past 85%.
+            </p>
+          </div>
 
-            <div className="home-workflow-step-card">
-              <div className="home-step-number">3</div>
-              <h3 className="home-step-title">Daily Adaptive Action</h3>
-              <p className="home-step-desc">
-                Execute your personalized daily plan, maintain your streak, and watch your Readiness Score rise.
-              </p>
-            </div>
-
-            <div className="home-workflow-step-card">
-              <div className="home-step-number">4</div>
-              <h3 className="home-step-title">Matched Job Offers</h3>
-              <p className="home-step-desc">
-                Apply directly to verified internships and campus drives where your match score exceeds 90%.
-              </p>
-            </div>
+          {/* Step 4 */}
+          <div className="home-step-card">
+            <div className="home-step-number">4</div>
+            <h3 className="home-step-title">Interview & Job Placement</h3>
+            <p className="home-step-desc">
+              Apply directly to matched campus drives with an ATS-certified resume and verified skill portfolio.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ---------------- Stats & Impact ---------------- */}
-      <section className="home-stats-section">
-        <div className="home-stats-grid">
-          <div className="home-stat-item">
-            <div className="home-stat-number">94%</div>
-            <div className="home-stat-label">Placement Success Rate</div>
-          </div>
-          <div className="home-stat-item">
-            <div className="home-stat-number">25,000+</div>
-            <div className="home-stat-label">Active Student Learners</div>
-          </div>
-          <div className="home-stat-item">
-            <div className="home-stat-number">500+</div>
-            <div className="home-stat-label">Verified Tech Opportunities</div>
-          </div>
-          <div className="home-stat-item">
-            <div className="home-stat-number">3.2x</div>
-            <div className="home-stat-label">Faster Skill Gap Closure</div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------------- CTA Banner ---------------- */}
+      {/* ---------------- Pre-Footer CTA ---------------- */}
       <section className="home-cta-section">
-        <div className="home-cta-banner">
-          <h2 className="home-cta-title">Ready to launch your high-growth tech career?</h2>
+        <div className="home-cta-box">
+          <h2 className="home-cta-title">Ready to Take Control of Your Career Path?</h2>
           <p className="home-cta-sub">
-            Join thousands of engineering students mastering skills, crushing coding interviews, and landing dream roles.
+            Join thousands of engineering students preparing systematically for tier 1 campus placements.
           </p>
           <div className="home-cta-actions">
-            <Link to="/dashboard" className="home-btn-lg-primary" style={{ background: '#FFFFFF', color: '#4338CA', fontWeight: 800 }}>
-              <span>Open Student Dashboard</span>
+            <Link to="/onboarding" className="home-btn-lg-primary" style={{ background: '#FFFFFF', color: '#4F46E5' }}>
+              <span>Get Started with Onboarding</span>
               <ArrowRight size={18} />
             </Link>
             <Link to="/login" className="home-btn-lg-secondary" style={{ background: 'rgba(255, 255, 255, 0.1)', color: '#FFFFFF', borderColor: 'rgba(255, 255, 255, 0.3)' }}>
-              <span>Sign In / Create Account</span>
+              <span>Sign In to Account</span>
             </Link>
           </div>
         </div>
@@ -408,11 +382,12 @@ export const HomePage: React.FC = () => {
           <div>
             <h3 className="home-footer-col-title">Platform</h3>
             <ul className="home-footer-links">
+              <li><Link to="/onboarding" className="home-footer-link">Student Onboarding Wizard</Link></li>
               <li><Link to="/dashboard" className="home-footer-link">Student Dashboard</Link></li>
+              <li><Link to="/roadmap" className="home-footer-link">Career Roadmap</Link></li>
+              <li><Link to="/practice" className="home-footer-link">Practice Arena</Link></li>
               <li><Link to="/resume-builder" className="home-footer-link">ATS Resume Builder</Link></li>
               <li><Link to="/learning" className="home-footer-link">Learning Hub & Handbooks</Link></li>
-              <li><Link to="/onboarding" className="home-footer-link">Student Onboarding Wizard</Link></li>
-              <li><Link to="/login" className="home-footer-link">Sign In / Register</Link></li>
             </ul>
           </div>
 
