@@ -23,7 +23,20 @@ export const AssessmentView: React.FC = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<'coding' | 'core' | 'aptitude' | 'interview'>('coding');
   const [secondsRemaining, setSecondsRemaining] = useState(5394); // 1 hr 29m 54s
-  const [selectedLanguage, setSelectedLanguage] = useState<'cpp' | 'python' | 'java' | 'typescript'>('cpp');
+
+  // Multi-Language state supporting Python, C++, Java, JavaScript, and CSS
+  const [selectedLang, setSelectedLang] = useState<'python' | 'cpp' | 'java' | 'javascript' | 'css'>('python');
+
+  // Multi-Language Template Dictionary
+  const languageTemplates: Record<'python' | 'cpp' | 'java' | 'javascript' | 'css', string> = {
+    python: `# Python Solution\ndef solve():\n    pass`,
+    cpp: `// C++ Solution\n#include <iostream>\nusing namespace std;\nint main() {\n    return 0;\n}`,
+    java: `// Java Solution\npublic class Solution {\n    public static void main(String[] args) {\n    }\n}`,
+    javascript: `// JavaScript Solution\nfunction solve() {\n}`,
+    css: `/* CSS Solution */\n.element {\n    display: flex;\n}`,
+  };
+
+  const [code, setCode] = useState<string>(languageTemplates.python);
   
   // MCQ Answers
   const [mcqAnswers, setMcqAnswers] = useState<Record<string, number>>({
@@ -31,32 +44,33 @@ export const AssessmentView: React.FC = () => {
     q2: 2, // Mutex vs Semaphore
   });
 
-  // Code state
-  const [code, setCode] = useState(`/**
- * Problem: Binary Tree Maximum Path Sum
- * Language: C++ (GCC 14)
- */
-class Solution {
-private:
-    int maxSum = INT_MIN;
-    int maxGain(TreeNode* root) {
-        if (!root) return 0;
-        int leftGain = max(maxGain(root->left), 0);
-        int rightGain = max(maxGain(root->right), 0);
-        maxSum = max(maxSum, root->val + leftGain + rightGain);
-        return root->val + max(leftGain, rightGain);
-    }
-public:
-    int maxPathSum(TreeNode* root) {
-        maxSum = INT_MIN;
-        maxGain(root);
-        return maxSum;
-    }
-};`);
-
   const [isRunning, setIsRunning] = useState(false);
   const [runOutput, setRunOutput] = useState<string | null>(null);
   const [showResultReport, setShowResultReport] = useState(false);
+
+  // Dynamic Language Switcher Handler
+  const handleLanguageChange = (newLang: 'python' | 'cpp' | 'java' | 'javascript' | 'css') => {
+    setSelectedLang(newLang);
+    setCode(languageTemplates[newLang]);
+    setRunOutput(null);
+  };
+
+  const getFileName = () => {
+    switch (selectedLang) {
+      case 'python':
+        return 'solution.py';
+      case 'cpp':
+        return 'solution.cpp';
+      case 'java':
+        return 'Solution.java';
+      case 'javascript':
+        return 'solution.js';
+      case 'css':
+        return 'styles.css';
+      default:
+        return 'solution.txt';
+    }
+  };
 
   // Timer interval
   useEffect(() => {
@@ -78,7 +92,11 @@ public:
     setRunOutput(null);
     setTimeout(() => {
       setIsRunning(false);
-      setRunOutput('✓ Testcase 1 Passed [root = [1,2,3], Expected: 6, Got: 6]\n✓ Testcase 2 Passed [root = [-10,9,20,null,null,15,7], Expected: 42, Got: 42]\n\nAll Proctored Testcases Executed Successfully in 28ms.');
+      if (selectedLang === 'css') {
+        setRunOutput('✓ CSS Rules Validated Successfully!\n✓ Flexbox & Box Model styling parsed without syntax errors.\nAll proctored visual layout testcases passed.');
+      } else {
+        setRunOutput(`✓ Target Language: ${selectedLang.toUpperCase()}\n✓ Testcase 1 Passed [root = [1,2,3], Expected: 6, Got: 6]\n✓ Testcase 2 Passed [root = [-10,9,20,null,null,15,7], Expected: 42, Got: 42]\n\nAll Proctored Testcases Executed Successfully in 24ms.`);
+      }
     }, 600);
   };
 
@@ -216,47 +234,60 @@ public:
 
           {/* Right: Code Workspace */}
           <div className="assessment-pane-right">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value as any)}
-                style={{
-                  background: '#1E293B',
-                  color: '#FFFFFF',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  padding: '6px 12px',
-                  borderRadius: 8,
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                <option value="cpp">C++ (GCC 14)</option>
-                <option value="python">Python 3.12</option>
-                <option value="java">Java 21</option>
-                <option value="typescript">TypeScript 5.4</option>
-              </select>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FileCode size={16} color="#818CF8" />
+                <span style={{ color: '#E2E8F0', fontSize: 13, fontWeight: 700 }}>
+                  {getFileName()}
+                </span>
+              </div>
 
-              <button
-                onClick={handleRunCode}
-                disabled={isRunning}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  background: 'linear-gradient(135deg, #4F46E5, #4338CA)',
-                  color: '#FFFFFF',
-                  padding: '7px 16px',
-                  borderRadius: 8,
-                  fontWeight: 700,
-                  fontSize: 13,
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
-              >
-                <Play size={14} fill="#FFF" />
-                <span>{isRunning ? 'Compiling...' : 'Run Testcases'}</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {/* Multi-Language Selector Dropdown supporting Python, C++, Java, JS, CSS */}
+                <select
+                  value={selectedLang}
+                  onChange={(e) => handleLanguageChange(e.target.value as any)}
+                  style={{
+                    background: '#1E293B',
+                    color: '#FFFFFF',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    padding: '6px 12px',
+                    borderRadius: 8,
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    outline: 'none',
+                  }}
+                  aria-label="Select Programming Language"
+                >
+                  <option value="python">Python 3.12</option>
+                  <option value="cpp">C++ (GCC 14)</option>
+                  <option value="java">Java 21</option>
+                  <option value="javascript">JavaScript (ES2024)</option>
+                  <option value="css">CSS3 (Styles)</option>
+                </select>
+
+                <button
+                  onClick={handleRunCode}
+                  disabled={isRunning}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    background: 'linear-gradient(135deg, #4F46E5, #4338CA)',
+                    color: '#FFFFFF',
+                    padding: '7px 16px',
+                    borderRadius: 8,
+                    fontWeight: 700,
+                    fontSize: 13,
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Play size={14} fill="#FFF" />
+                  <span>{isRunning ? 'Compiling...' : selectedLang === 'css' ? 'Validate CSS' : 'Run Testcases'}</span>
+                </button>
+              </div>
             </div>
 
             <div className="assessment-code-box">
@@ -264,6 +295,7 @@ public:
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 className="assessment-editor-textarea"
+                placeholder={`Write your ${selectedLang.toUpperCase()} solution here...`}
                 spellCheck={false}
               />
             </div>
@@ -271,7 +303,7 @@ public:
             {/* Run Output */}
             {runOutput && (
               <div style={{ background: '#064E3B', border: '1px solid #059669', padding: 12, borderRadius: 10, color: '#A7F3D0', fontSize: 12, fontFamily: 'monospace' }}>
-                <pre style={{ margin: 0 }}>{runOutput}</pre>
+                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{runOutput}</pre>
               </div>
             )}
           </div>

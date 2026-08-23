@@ -1,19 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GitFork, AlertTriangle, Sparkles, FileCheck, ArrowUpRight } from 'lucide-react';
 import { SmartInsight } from '../../types/dashboard';
 
 interface SmartInsightBadgesProps {
-  onSelectInsight: (insight: SmartInsight) => void;
+  onSelectInsight?: (insight: SmartInsight) => void;
 }
 
 export const SmartInsightBadges: React.FC<SmartInsightBadgesProps> = ({ onSelectInsight }) => {
-  const insights: SmartInsight[] = [
+  const navigate = useNavigate();
+
+  const insights: (SmartInsight & { path: string })[] = [
     {
       id: 'i1',
       title: 'AI Roadmap Updated',
       description: 'Syllabus tailored to upcoming deadline',
       type: 'roadmap',
       iconType: 'purple',
+      path: '/career-roadmap',
     },
     {
       id: 'i2',
@@ -21,6 +25,7 @@ export const SmartInsightBadges: React.FC<SmartInsightBadgesProps> = ({ onSelect
       description: 'Recommended: Graphs & Dynamic Programming module',
       type: 'gap',
       iconType: 'amber',
+      path: '/practice',
     },
     {
       id: 'i3',
@@ -28,6 +33,7 @@ export const SmartInsightBadges: React.FC<SmartInsightBadgesProps> = ({ onSelect
       description: 'Goldman Sachs SWE Internship • 94% match',
       type: 'opportunity',
       iconType: 'green',
+      path: '/opportunities',
     },
     {
       id: 'i4',
@@ -35,6 +41,7 @@ export const SmartInsightBadges: React.FC<SmartInsightBadgesProps> = ({ onSelect
       description: 'Verified & ready for placement drive upload',
       type: 'ats',
       iconType: 'blue',
+      path: '/resume-builder',
     },
   ];
 
@@ -52,15 +59,24 @@ export const SmartInsightBadges: React.FC<SmartInsightBadgesProps> = ({ onSelect
     }
   };
 
+  const handleInsightClick = (item: typeof insights[0]) => {
+    if (onSelectInsight) {
+      onSelectInsight(item);
+    }
+    navigate(item.path);
+  };
+
   return (
     <div className="smart-insights-container" aria-label="AI Career Insights">
       {insights.map((item) => (
         <div
           key={item.id}
           className="insight-pill-card"
-          onClick={() => onSelectInsight(item)}
+          onClick={() => handleInsightClick(item)}
           role="button"
           tabIndex={0}
+          title={`Click to explore ${item.title}`}
+          style={{ cursor: 'pointer' }}
         >
           <div className={`insight-icon-wrap ${item.iconType}`}>
             {renderIcon(item.iconType)}
@@ -75,3 +91,5 @@ export const SmartInsightBadges: React.FC<SmartInsightBadgesProps> = ({ onSelect
     </div>
   );
 };
+
+export default SmartInsightBadges;
