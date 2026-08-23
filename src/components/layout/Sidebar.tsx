@@ -2,12 +2,13 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
-  ClipboardCheck,
+  FileText,
+  UserCheck,
+  BookOpen,
+  Sparkles,
   Map,
   Code2,
-  BookOpen,
-  FileText,
-  Briefcase,
+  Calendar,
   Mic,
   User,
   Activity,
@@ -32,43 +33,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Master navigation list matching the Figma Design hierarchy
+  // Master Student Navigation List in Exact Requested Sequential Order
   const navItems: SidebarNavItem[] = [
     {
       id: 'dashboard',
-      label: 'Dashboard',
+      label: 'Student Dashboard',
       path: '/dashboard',
       icon: LayoutDashboard,
     },
     {
-      id: 'practice',
-      label: 'Aptitude & Coding',
-      path: '/practice',
-      icon: Code2,
+      id: 'resume',
+      label: 'AI Resume Builder',
+      path: '/resume-builder',
+      icon: FileText,
     },
     {
-      id: 'assessment',
-      label: 'Placement Assessment',
-      path: '/assessment',
-      icon: ClipboardCheck,
-    },
-    {
-      id: 'career-roadmap',
-      label: 'Career Roadmap',
-      path: '/career-roadmap',
-      icon: Map,
-    },
-    {
-      id: 'opportunities',
-      label: 'Opportunities & Calendar',
-      path: '/opportunities',
-      icon: Briefcase,
-    },
-    {
-      id: 'interview-studio',
-      label: 'AI Interview Studio',
-      path: '/interview-studio',
-      icon: Mic,
+      id: 'onboarding',
+      label: 'Student Onboarding',
+      path: '/onboarding',
+      icon: UserCheck,
     },
     {
       id: 'learning',
@@ -77,10 +60,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab }) => {
       icon: BookOpen,
     },
     {
-      id: 'resume',
-      label: 'ATS Resume Builder',
-      path: '/resume-builder',
-      icon: FileText,
+      id: 'placement',
+      label: 'AI Placement',
+      path: '/placement',
+      icon: Sparkles,
+    },
+    {
+      id: 'career-roadmap',
+      label: 'AI Roadmap',
+      path: '/career-roadmap',
+      icon: Map,
+    },
+    {
+      id: 'practice',
+      label: 'Coding & Aptitude',
+      path: '/practice',
+      icon: Code2,
+    },
+    {
+      id: 'opportunities',
+      label: 'Opportunity & Smart Calendar',
+      path: '/opportunities',
+      icon: Calendar,
+    },
+    {
+      id: 'interview-studio',
+      label: 'AI Interview Studio',
+      path: '/interview-studio',
+      icon: Mic,
     },
   ];
 
@@ -93,12 +100,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab }) => {
     if (item.id === 'career-roadmap' && (location.pathname === '/career-roadmap' || location.pathname === '/roadmap')) {
       return true;
     }
+    if (item.id === 'placement' && (location.pathname === '/placement' || location.pathname === '/assessment')) {
+      return true;
+    }
     if (activeTab) {
       if (activeTab === item.id) return true;
       if (activeTab === 'practice' && item.id === 'practice') return true;
       if (activeTab === 'roadmap' && item.id === 'career-roadmap') return true;
       if (activeTab === 'learn' && item.id === 'learning') return true;
       if (activeTab === 'resume' && item.id === 'resume') return true;
+      if (activeTab === 'assessment' && item.id === 'placement') return true;
     }
     return false;
   };
@@ -116,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab }) => {
         <Activity size={24} strokeWidth={2.5} />
       </button>
 
-      {/* ---------------- Main Navigation Items ---------------- */}
+      {/* ---------------- Main Navigation Items in Exact Requested Order ---------------- */}
       <nav className="sidebar-nav" aria-label="Sidebar Page Navigation">
         {navItems.map((item) => {
           const Icon = item.icon;

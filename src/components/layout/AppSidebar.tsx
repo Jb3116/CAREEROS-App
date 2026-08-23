@@ -2,13 +2,14 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
-  Code2,
-  ClipboardCheck,
-  Map,
-  Briefcase,
-  Mic,
-  BookOpen,
   FileText,
+  UserCheck,
+  BookOpen,
+  Sparkles,
+  Map,
+  Code2,
+  Calendar,
+  Mic,
   User,
   Activity,
   LucideIcon,
@@ -34,21 +35,25 @@ export const AppSidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Full CAREEROS student navigation menu
+  // Full CAREEROS student navigation menu in exact sequential order
   const navItems: NavItemConfig[] = [
-    { id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { id: 'practice', label: 'Aptitude & Coding', path: '/practice', icon: Code2 },
-    { id: 'assessment', label: 'Placement Assessment', path: '/assessment', icon: ClipboardCheck },
-    { id: 'career-roadmap', label: 'Career Roadmap', path: '/career-roadmap', icon: Map },
-    { id: 'opportunities', label: 'Opportunities & Calendar', path: '/opportunities', icon: Briefcase },
-    { id: 'interview-studio', label: 'AI Interview Studio', path: '/interview-studio', icon: Mic },
+    { id: 'dashboard', label: 'Student Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { id: 'resume', label: 'AI Resume Builder', path: '/resume-builder', icon: FileText },
+    { id: 'onboarding', label: 'Student Onboarding', path: '/onboarding', icon: UserCheck },
     { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
-    { id: 'resume', label: 'Resume Builder', path: '/resume-builder', icon: FileText },
+    { id: 'placement', label: 'AI Placement', path: '/placement', icon: Sparkles },
+    { id: 'career-roadmap', label: 'AI Roadmap', path: '/career-roadmap', icon: Map },
+    { id: 'practice', label: 'Coding & Aptitude', path: '/practice', icon: Code2 },
+    { id: 'opportunities', label: 'Opportunity & Smart Calendar', path: '/opportunities', icon: Calendar },
+    { id: 'interview-studio', label: 'AI Interview Studio', path: '/interview-studio', icon: Mic },
   ];
 
   const isCurrentActive = (item: NavItemConfig): boolean => {
     if (location.pathname === item.path) return true;
     if (item.id === 'career-roadmap' && (location.pathname === '/career-roadmap' || location.pathname === '/roadmap')) {
+      return true;
+    }
+    if (item.id === 'placement' && (location.pathname === '/placement' || location.pathname === '/assessment')) {
       return true;
     }
     return false;
@@ -98,9 +103,9 @@ export const AppSidebar: React.FC = () => {
       <SidebarFooter>
         <SidebarMenuButton
           isActive={location.pathname === '/profile'}
-          tooltip="Profile"
+          tooltip="My Profile"
           onClick={() => navigate('/profile')}
-          aria-label="Profile"
+          aria-label="My Profile"
           aria-current={location.pathname === '/profile' ? 'page' : undefined}
           type="button"
         >

@@ -1,17 +1,14 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  CalendarDays,
-  CalendarCheck,
-  ClipboardCheck,
-  Megaphone,
-  Briefcase,
-  Building2,
   Sliders,
+  Megaphone,
   Users,
+  Building2,
+  Briefcase,
+  ClipboardCheck,
+  CalendarDays,
   BarChart3,
-  Settings,
   LogOut,
   GraduationCap,
   LucideIcon,
@@ -28,61 +25,49 @@ export const AdminSidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Master Navigation Items for College Admin & TPO Placement Command Center
+  // Master Navigation Items for College Admin in Exact Requested Sequence
   const navItems: AdminNavItem[] = [
     {
-      id: 'dashboard',
-      label: 'Admin Dashboard',
-      path: '/admin/dashboard',
-      icon: LayoutDashboard,
-    },
-    {
-      id: 'calendar',
-      label: 'Placement Calendar',
-      path: '/admin/placement-calendar',
-      icon: CalendarDays,
-    },
-    {
-      id: 'opportunities',
-      label: 'Opportunity Manager',
-      path: '/admin/opportunities',
-      icon: CalendarCheck,
-    },
-    {
-      id: 'criteria',
-      label: 'Interview Criteria',
-      path: '/admin/interview-criteria',
-      icon: ClipboardCheck,
+      id: 'control',
+      label: 'Control Center',
+      path: '/admin/control',
+      icon: Sliders,
     },
     {
       id: 'announcements',
-      label: 'Announcements Hub',
+      label: 'Announcement Hub',
       path: '/admin/announcements',
       icon: Megaphone,
+    },
+    {
+      id: 'students',
+      label: 'Student Directory',
+      path: '/admin/students',
+      icon: Users,
     },
     {
       id: 'companies',
       label: 'Company Registry',
       path: '/admin/companies',
-      icon: Briefcase,
-    },
-    {
-      id: 'drives',
-      label: 'Campus Placement Drives',
-      path: '/admin/drives',
       icon: Building2,
     },
     {
-      id: 'students',
-      label: 'Student Cohort Roster',
-      path: '/admin/students',
-      icon: Users,
+      id: 'opportunities',
+      label: 'Opportunity Manager',
+      path: '/admin/opportunities',
+      icon: Briefcase,
     },
     {
-      id: 'control',
-      label: 'Placement Control Center',
-      path: '/admin/control',
-      icon: Sliders,
+      id: 'interview-criteria',
+      label: 'Interview Criteria',
+      path: '/admin/interview-criteria',
+      icon: ClipboardCheck,
+    },
+    {
+      id: 'placement-calendar',
+      label: 'Placement Calendar',
+      path: '/admin/placement-calendar',
+      icon: CalendarDays,
     },
     {
       id: 'analytics',
@@ -90,17 +75,11 @@ export const AdminSidebar: React.FC = () => {
       path: '/admin/analytics',
       icon: BarChart3,
     },
-    {
-      id: 'settings',
-      label: 'Campus TPO Settings',
-      path: '/admin/settings',
-      icon: Settings,
-    },
   ];
 
   const checkIsActive = (item: AdminNavItem) => {
     if (location.pathname === item.path) return true;
-    if (item.id === 'control' && (location.pathname === '/admin/control' || location.pathname === '/admin/settings')) {
+    if (item.id === 'control' && (location.pathname === '/admin/control' || location.pathname === '/admin/settings' || location.pathname === '/admin/dashboard')) {
       return true;
     }
     return false;
@@ -123,7 +102,7 @@ export const AdminSidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Nav List */}
+      {/* Nav List in Exact Requested Order */}
       <nav className="admin-sidebar-nav">
         {navItems.map((item) => {
           const Icon = item.icon;

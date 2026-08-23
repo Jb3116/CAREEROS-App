@@ -41,29 +41,30 @@ export const App: React.FC = () => {
         {/* Authenticated Student Experience (Protected by DashboardLayout) */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<StudentDashboard />} />
-          <Route path="/roadmap" element={<RoadmapView />} />
-          <Route path="/career-roadmap" element={<RoadmapView />} />
+          <Route path="/resume-builder" element={<ResumeBuilderPage />} />
+          <Route path="/learning" element={<LearningPage />} />
+          <Route path="/placement" element={<AssessmentView />} />
           <Route path="/assessment" element={<AssessmentView />} />
+          <Route path="/career-roadmap" element={<RoadmapView />} />
+          <Route path="/roadmap" element={<RoadmapView />} />
+          <Route path="/practice" element={<PracticeView />} />
           <Route path="/opportunities" element={<OpportunitiesView />} />
           <Route path="/interview-studio" element={<InterviewStudioPage />} />
-          <Route path="/learning" element={<LearningPage />} />
-          <Route path="/practice" element={<PracticeView />} />
           <Route path="/profile" element={<ProfileView />} />
-          <Route path="/resume-builder" element={<ResumeBuilderPage />} />
         </Route>
 
         {/* Authenticated College Admin & TPO Experience (Protected by AdminLayout) */}
         <Route element={<AdminLayout />}>
-          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-          <Route path="/admin/placement-calendar" element={<AdminPlacementCalendarPage />} />
+          <Route path="/admin/control" element={<AdminSettingsPage />} />
+          <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />
+          <Route path="/admin/students" element={<AdminStudentsPage />} />
+          <Route path="/admin/companies" element={<AdminCompaniesPage />} />
           <Route path="/admin/opportunities" element={<AdminOpportunityManagerPage />} />
           <Route path="/admin/interview-criteria" element={<AdminInterviewCriteriaPage />} />
-          <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />
-          <Route path="/admin/companies" element={<AdminCompaniesPage />} />
-          <Route path="/admin/drives" element={<AdminDrivesPage />} />
-          <Route path="/admin/students" element={<AdminStudentsPage />} />
+          <Route path="/admin/placement-calendar" element={<AdminPlacementCalendarPage />} />
           <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
-          <Route path="/admin/control" element={<AdminSettingsPage />} />
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/drives" element={<AdminDrivesPage />} />
           <Route path="/admin/settings" element={<AdminSettingsPage />} />
         </Route>
 
