@@ -10,6 +10,7 @@ import { AssessmentView } from './components/assessment/AssessmentView';
 import { LearningPage } from './pages/LearningPage';
 import { PracticeView } from './components/practice/PracticeView';
 import { OpportunitiesView } from './components/opportunities/OpportunitiesView';
+import { InterviewStudioPage } from './pages/InterviewStudioPage';
 import { ProfileView } from './components/profile/ProfileView';
 import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 
@@ -17,18 +18,19 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public & Onboarding Entry Points */}
+        {/* Public & Unified Auth / Login (with Student & College Admin toggle) */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
 
-        {/* Authenticated Application with Unified Permanent Sidebar & Header Layout */}
+        {/* Authenticated Student Application with Unified Permanent Sidebar & Header Layout */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<StudentDashboard />} />
           <Route path="/roadmap" element={<RoadmapView />} />
           <Route path="/career-roadmap" element={<RoadmapView />} />
           <Route path="/assessment" element={<AssessmentView />} />
           <Route path="/opportunities" element={<OpportunitiesView />} />
+          <Route path="/interview-studio" element={<InterviewStudioPage />} />
           <Route path="/learning" element={<LearningPage />} />
           <Route path="/practice" element={<PracticeView />} />
           <Route path="/profile" element={<ProfileView />} />

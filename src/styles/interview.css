@@ -1,0 +1,239 @@
+/* ==========================================================================
+   CAREEROS - AI Interview Studio Stylesheet
+   Real-Time AI Voice/Video STAR Simulation & Speech Analytics
+   ========================================================================== */
+
+.interview-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 32px 36px 64px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+   Studio Header Card
+   -------------------------------------------------------------------------- */
+.interview-header-card {
+  background: linear-gradient(135deg, #101528 0%, #1E253F 55%, #293556 100%);
+  border-radius: 20px;
+  padding: 28px 32px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.interview-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.interview-header-title-group h1 {
+  font-size: 24px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  color: #FFFFFF;
+}
+
+.interview-header-title-group p {
+  font-size: 13.5px;
+  color: #CBD5E1;
+  line-height: 1.5;
+}
+
+.interview-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34D399;
+  font-size: 12.5px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.interview-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.interview-stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.interview-stat-val {
+  font-size: 24px;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+}
+
+.interview-stat-lbl {
+  font-size: 12px;
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Studio Mode Switcher
+   -------------------------------------------------------------------------- */
+.interview-mode-tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #E2E8F0;
+  padding-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.interview-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.interview-mode-btn.active {
+  background: #4F46E5;
+  color: #FFFFFF;
+  border: 1.5px solid #4F46E5;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.interview-mode-btn.inactive {
+  background: #FFFFFF;
+  color: #475569;
+  border: 1px solid #CBD5E1;
+}
+
+.interview-mode-btn.inactive:hover {
+  background: #EEF2FF;
+  border-color: #C7D2FE;
+  color: #4F46E5;
+}
+
+/* --------------------------------------------------------------------------
+   Studio Live Grid Layout
+   -------------------------------------------------------------------------- */
+.interview-workspace-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 24px;
+  min-height: 580px;
+}
+
+.interview-interviewer-card {
+  background: #0F172A;
+  border: 1px solid #1E293B;
+  border-radius: 20px;
+  padding: 24px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+}
+
+.interview-avatar-box {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(180deg, #1E293B 0%, #0B0F19 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.interview-candidate-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.interview-webcam-preview {
+  width: 100%;
+  height: 220px;
+  background: #0B0F19;
+  border-radius: 16px;
+  border: 1.5px solid #4F46E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.25);
+}
+
+.interview-transcript-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.6;
+  min-height: 120px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+/* --------------------------------------------------------------------------
+   STAR Rubric Pills
+   -------------------------------------------------------------------------- */
+.interview-star-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.interview-star-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .interview-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -5,9 +5,10 @@ import {
   Code2,
   ClipboardCheck,
   Map,
+  Briefcase,
+  Mic,
   BookOpen,
   FileText,
-  Briefcase,
   User,
   Activity,
   LucideIcon,
@@ -33,13 +34,14 @@ export const AppSidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Full CAREEROS master navigation items including Opportunities & Smart Calendar
+  // Full CAREEROS student navigation menu
   const navItems: NavItemConfig[] = [
     { id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { id: 'practice', label: 'Aptitude & Coding', path: '/practice', icon: Code2 },
     { id: 'assessment', label: 'Placement Assessment', path: '/assessment', icon: ClipboardCheck },
     { id: 'career-roadmap', label: 'Career Roadmap', path: '/career-roadmap', icon: Map },
     { id: 'opportunities', label: 'Opportunities & Calendar', path: '/opportunities', icon: Briefcase },
+    { id: 'interview-studio', label: 'AI Interview Studio', path: '/interview-studio', icon: Mic },
     { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
     { id: 'resume', label: 'Resume Builder', path: '/resume-builder', icon: FileText },
   ];

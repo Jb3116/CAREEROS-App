@@ -8,6 +8,7 @@ import {
   BookOpen,
   FileText,
   Briefcase,
+  Mic,
   User,
   Activity,
   LucideIcon,
@@ -62,6 +63,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab }) => {
       label: 'Opportunities & Calendar',
       path: '/opportunities',
       icon: Briefcase,
+    },
+    {
+      id: 'interview-studio',
+      label: 'AI Interview Studio',
+      path: '/interview-studio',
+      icon: Mic,
     },
     {
       id: 'learning',

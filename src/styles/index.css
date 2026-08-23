@@ -12,6 +12,8 @@
 @import './assessment.css';
 @import './practice.css';
 @import './opportunities.css';
+@import './interview.css';
+@import './admin.css';
 
 :root {
   /* Brand Colors */
