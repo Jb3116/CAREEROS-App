@@ -1,6 +1,6 @@
 /* ==========================================================================
    CAREEROS - Adaptive Career Roadmap Stylesheet
-   Full Interactive Milestone Engine & Timeline Architecture
+   Full Interactive Milestone Engine & Timeline Architecture (Pixel-Perfect)
    ========================================================================== */
 
 .roadmap-page-container {
@@ -8,25 +8,26 @@
   flex-direction: column;
   gap: 28px;
   padding: 32px 36px 64px;
-  max-width: 1280px;
+  max-width: 1240px;
   margin: 0 auto;
   width: 100%;
-  font-family: var(--font-sans);
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* --------------------------------------------------------------------------
    Roadmap Header & Versioning Banner
    -------------------------------------------------------------------------- */
 .roadmap-header-card {
-  background: linear-gradient(135deg, #101528 0%, #1E253F 60%, #2D3748 100%);
+  background: linear-gradient(135deg, #101528 0%, #1E253F 55%, #293556 100%);
   border-radius: 20px;
   padding: 28px 32px;
   color: #FFFFFF;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
   box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   position: relative;
   overflow: hidden;
 }
@@ -47,11 +48,13 @@
   gap: 12px;
   letter-spacing: -0.02em;
   margin-bottom: 6px;
+  color: #FFFFFF;
 }
 
 .roadmap-header-title-group p {
-  font-size: 14px;
+  font-size: 13.5px;
   color: #CBD5E1;
+  line-height: 1.5;
 }
 
 .roadmap-version-badge {
@@ -71,20 +74,21 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
-  padding-top: 16px;
+  padding-top: 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .roadmap-stat-box {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .roadmap-stat-val {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 900;
   color: #FFFFFF;
+  letter-spacing: -0.02em;
 }
 
 .roadmap-stat-lbl {
@@ -114,26 +118,26 @@
 .roadmap-filter-btn {
   padding: 8px 16px;
   background: #FFFFFF;
-  border: 1px solid var(--slate-200);
+  border: 1px solid #E2E8F0;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--slate-700);
+  color: #334155;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-fast, 150ms ease);
 }
 
 .roadmap-filter-btn:hover {
   background: #EEF2FF;
   border-color: #C7D2FE;
-  color: var(--primary);
+  color: #4F46E5;
 }
 
 .roadmap-filter-btn.active {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: #4F46E5;
+  border-color: #4F46E5;
   color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+  box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3);
 }
 
 /* --------------------------------------------------------------------------
@@ -177,8 +181,8 @@
   height: 32px;
   border-radius: 50%;
   background: #FFFFFF;
-  border: 3px solid var(--primary);
-  color: var(--primary);
+  border: 3px solid #4F46E5;
+  color: #4F46E5;
   font-size: 13px;
   font-weight: 900;
   display: flex;
@@ -198,12 +202,14 @@
 .roadmap-phase-title-text {
   font-size: 18px;
   font-weight: 800;
-  color: var(--slate-900);
+  color: #0F172A;
+  letter-spacing: -0.01em;
 }
 
 .roadmap-phase-sub {
   font-size: 13px;
-  color: var(--slate-500);
+  color: #64748B;
+  margin-top: 2px;
 }
 
 /* Milestones Grid within Phase */
@@ -216,14 +222,14 @@
 
 .roadmap-milestone-card {
   background: #FFFFFF;
-  border: 1px solid var(--slate-200);
+  border: 1px solid #E2E8F0;
   border-radius: 16px;
-  padding: 20px;
-  box-shadow: var(--shadow-subtle);
+  padding: 20px 22px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  transition: all var(--transition-smooth);
+  transition: all var(--transition-fast, 150ms ease);
   position: relative;
 }
 
@@ -234,9 +240,9 @@
 }
 
 .roadmap-milestone-card.current-sprint {
-  border-color: var(--primary);
-  background: #FAFCFF;
-  box-shadow: 0 4px 20px -2px rgba(79, 70, 229, 0.18);
+  border: 1.5px solid #4F46E5;
+  background: linear-gradient(180deg, #FAFCFF 0%, #F5F8FF 100%);
+  box-shadow: 0 6px 20px -2px rgba(79, 70, 229, 0.18);
 }
 
 .roadmap-milestone-card.current-sprint::before {
@@ -244,14 +250,14 @@
   position: absolute;
   top: -11px;
   right: 18px;
-  background: var(--primary);
+  background: #4F46E5;
   color: #FFFFFF;
   font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 0.05em;
-  padding: 2px 10px;
+  padding: 3px 10px;
   border-radius: 999px;
-  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.35);
 }
 
 .roadmap-card-header-row {
@@ -291,13 +297,14 @@
 .roadmap-card-title {
   font-size: 16px;
   font-weight: 800;
-  color: var(--slate-900);
+  color: #0F172A;
+  letter-spacing: -0.01em;
 }
 
 .roadmap-card-desc {
   font-size: 13px;
-  color: var(--slate-600);
-  line-height: 1.45;
+  color: #475569;
+  line-height: 1.5;
 }
 
 .roadmap-skill-tags {
@@ -307,11 +314,11 @@
 }
 
 .roadmap-skill-tag {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
   background: #F1F5F9;
-  color: #475569;
-  padding: 2px 8px;
+  color: #334155;
+  padding: 3px 9px;
   border-radius: 6px;
 }
 
@@ -319,44 +326,44 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px solid var(--slate-100);
+  padding-top: 14px;
+  border-top: 1px solid #F1F5F9;
   margin-top: auto;
 }
 
 .roadmap-btn-action {
   font-size: 12.5px;
   font-weight: 700;
-  color: var(--primary);
+  color: #4F46E5;
   display: flex;
   align-items: center;
   gap: 4px;
   background: none;
   border: none;
   cursor: pointer;
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast, 150ms ease);
 }
 
 .roadmap-btn-action:hover {
-  color: var(--primary-dark);
+  color: #4338CA;
 }
 
 .roadmap-btn-toggle {
   font-size: 11.5px;
   font-weight: 600;
-  color: var(--slate-500);
+  color: #475569;
   background: #F8FAFC;
-  border: 1px solid var(--slate-200);
+  border: 1px solid #CBD5E1;
   padding: 4px 10px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-fast, 150ms ease);
 }
 
 .roadmap-btn-toggle:hover {
   background: #EEF2FF;
   border-color: #C7D2FE;
-  color: var(--primary);
+  color: #4F46E5;
 }
 
 /* Responsive */

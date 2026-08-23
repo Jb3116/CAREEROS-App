@@ -1,24 +1,25 @@
 /* ==========================================================================
    CAREEROS - Placement Assessment Stylesheet
-   Proctored Multi-Section Diagnostic Assessment Engine
+   Proctored Multi-Section Diagnostic Assessment Engine (Pixel-Perfect)
    ========================================================================== */
 
 .assessment-page-container {
   min-height: 100vh;
-  background-color: #0F172A;
+  background-color: #0B0F19;
   color: #F8FAFC;
   display: flex;
   flex-direction: column;
-  font-family: var(--font-sans);
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* --------------------------------------------------------------------------
    Top Proctored Header
    -------------------------------------------------------------------------- */
 .assessment-topbar {
-  background: #1E293B;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 14px 28px;
+  background: #0F172A;
+  border-bottom: 1px solid #1E293B;
+  padding: 14px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -30,43 +31,93 @@
 .assessment-brand-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+}
+
+.assessment-brand-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+}
+
+.assessment-title-main {
+  font-size: 15px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+}
+
+.assessment-title-sub {
+  font-size: 12px;
+  color: #94A3B8;
+  font-weight: 500;
+}
+
+.assessment-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .assessment-timer-badge {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.35);
   color: #F87171;
   padding: 6px 14px;
   border-radius: 999px;
   font-weight: 800;
-  font-size: 14px;
-  font-family: monospace;
+  font-size: 13.5px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  letter-spacing: 0.05em;
 }
 
 .assessment-proctor-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   color: #34D399;
   font-size: 12px;
   font-weight: 700;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
+}
+
+.assessment-submit-top-btn {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+  transition: all var(--transition-fast, 150ms ease);
+}
+
+.assessment-submit-top-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
 }
 
 /* --------------------------------------------------------------------------
    Section Navigation Bar
    -------------------------------------------------------------------------- */
 .assessment-section-nav {
-  background: #182234;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 10px 28px;
+  background: #111827;
+  border-bottom: 1px solid #1E293B;
+  padding: 10px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -77,12 +128,12 @@
 .assessment-section-tabs {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .assessment-sec-tab {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: #94A3B8;
   padding: 8px 16px;
   border-radius: 10px;
@@ -91,20 +142,21 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: all var(--transition-fast);
+  gap: 8px;
+  transition: all var(--transition-fast, 150ms ease);
 }
 
 .assessment-sec-tab:hover {
-  background: rgba(79, 70, 229, 0.2);
+  background: rgba(79, 70, 229, 0.15);
   color: #E0E7FF;
+  border-color: rgba(99, 102, 241, 0.3);
 }
 
 .assessment-sec-tab.active {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: #4F46E5;
+  border-color: #4F46E5;
   color: #FFFFFF;
-  box-shadow: 0 2px 10px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 2px 12px rgba(79, 70, 229, 0.4);
 }
 
 /* --------------------------------------------------------------------------
@@ -118,9 +170,9 @@
 }
 
 .assessment-pane-left {
-  background: #111827;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 24px;
+  background: #0F172A;
+  border-right: 1px solid #1E293B;
+  padding: 28px 32px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -128,8 +180,8 @@
 }
 
 .assessment-pane-right {
-  background: #0B0F19;
-  padding: 20px;
+  background: #080C14;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -145,43 +197,45 @@
 }
 
 .assessment-diff-tag {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 800;
   padding: 3px 10px;
   border-radius: 6px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .assessment-diff-tag.hard {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.15);
   color: #F87171;
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  border: 1px solid rgba(239, 68, 68, 0.35);
 }
 
 .assessment-diff-tag.medium {
-  background: rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.15);
   color: #FBBF24;
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
 .assessment-diff-tag.easy {
-  background: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.15);
   color: #34D399;
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
 .assessment-code-box {
-  background: #020617;
+  background: #040711;
   border: 1px solid #1E293B;
-  border-radius: 12px;
-  padding: 16px;
-  font-family: monospace;
-  font-size: 13px;
-  line-height: 1.5;
+  border-radius: 14px;
+  padding: 16px 20px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13.5px;
+  line-height: 1.55;
   color: #E2E8F0;
   flex: 1;
   display: flex;
   flex-direction: column;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .assessment-editor-textarea {
@@ -190,28 +244,29 @@
   background: transparent;
   border: none;
   color: #F1F5F9;
-  font-family: monospace;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 13.5px;
-  line-height: 1.55;
+  line-height: 1.6;
   outline: none;
   resize: none;
-  min-height: 340px;
+  min-height: 380px;
 }
 
 /* MCQ Question Card */
 .assessment-mcq-card {
-  background: #1E293B;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 24px;
+  background: #111827;
+  border: 1px solid #1E293B;
+  border-radius: 18px;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .assessment-mcq-option {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 14px 18px;
   color: #E2E8F0;
@@ -220,7 +275,7 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-fast, 150ms ease);
 }
 
 .assessment-mcq-option:hover {
@@ -229,7 +284,7 @@
 }
 
 .assessment-mcq-option.selected {
-  background: rgba(79, 70, 229, 0.3);
+  background: rgba(79, 70, 229, 0.25);
   border-color: #818CF8;
   color: #FFFFFF;
   font-weight: 700;
@@ -240,11 +295,11 @@
   background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 24px;
-  padding: 32px;
+  padding: 32px 36px;
   color: #FFFFFF;
   max-width: 680px;
   width: 100%;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -253,14 +308,14 @@
 .assessment-score-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 14px;
 }
 
 .assessment-score-pill {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: 16px;
   text-align: center;
 }
 

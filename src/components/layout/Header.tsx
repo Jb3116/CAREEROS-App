@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Bell, Flame, Search, ChevronDown, CheckCheck, Sparkles, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Bell,
+  Flame,
+  Search,
+  ChevronDown,
+  CheckCheck,
+  Sparkles,
+  X,
+  ClipboardCheck,
+  Map,
+} from 'lucide-react';
 import { StudentProfile } from '../../types/dashboard';
 
 interface HeaderProps {
@@ -9,6 +20,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
+  const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([
     {
@@ -52,6 +64,49 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
 
       {/* Header Actions */}
       <div className="header-actions">
+        {/* Quick Nav Shortcuts */}
+        <button
+          onClick={() => navigate('/assessment')}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            background: '#F0FDF4',
+            border: '1px solid #BBF7D0',
+            color: '#15803D',
+            fontSize: 12.5,
+            fontWeight: 700,
+            padding: '6px 12px',
+            borderRadius: 999,
+            cursor: 'pointer',
+          }}
+          title="Start or review Placement Assessment"
+        >
+          <ClipboardCheck size={14} />
+          <span>Assessment (78%)</span>
+        </button>
+
+        <button
+          onClick={() => navigate('/career-roadmap')}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            background: '#EEF2FF',
+            border: '1px solid #C7D2FE',
+            color: '#4F46E5',
+            fontSize: 12.5,
+            fontWeight: 700,
+            padding: '6px 12px',
+            borderRadius: 999,
+            cursor: 'pointer',
+          }}
+          title="View Adaptive Career Roadmap"
+        >
+          <Map size={14} />
+          <span>Roadmap v3.2</span>
+        </button>
+
         {/* Streak Badge */}
         <div className="streak-badge" title="Consecutive days practiced">
           <Flame size={16} fill="#EA580C" strokeWidth={0} />
@@ -117,7 +172,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllRead}
-                    style={{ fontSize: 11, color: '#4F46E5', fontWeight: 600 }}
+                    style={{ fontSize: 11, color: '#4F46E5', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     Mark all read
                   </button>
@@ -169,3 +224,5 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
     </header>
   );
 };
+
+export default Header;
