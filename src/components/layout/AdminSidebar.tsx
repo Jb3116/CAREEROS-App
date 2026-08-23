@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   CalendarCheck,
+  ClipboardCheck,
   Megaphone,
   Briefcase,
   Building2,
@@ -39,6 +40,12 @@ export const AdminSidebar: React.FC = () => {
       label: 'Opportunity Manager',
       path: '/admin/opportunities',
       icon: CalendarCheck,
+    },
+    {
+      id: 'criteria',
+      label: 'Interview Criteria',
+      path: '/admin/interview-criteria',
+      icon: ClipboardCheck,
     },
     {
       id: 'announcements',

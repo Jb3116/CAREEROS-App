@@ -20,6 +20,7 @@ import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { AdminOpportunityManagerPage } from './pages/AdminOpportunityManagerPage';
+import { AdminInterviewCriteriaPage } from './pages/AdminInterviewCriteriaPage';
 import { AdminAnnouncementsPage } from './pages/AdminAnnouncementsPage';
 import { AdminCompaniesPage } from './pages/AdminCompaniesPage';
 import { AdminDrivesPage } from './pages/AdminDrivesPage';
@@ -54,6 +55,7 @@ export const App: React.FC = () => {
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/opportunities" element={<AdminOpportunityManagerPage />} />
+          <Route path="/admin/interview-criteria" element={<AdminInterviewCriteriaPage />} />
           <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />
           <Route path="/admin/companies" element={<AdminCompaniesPage />} />
           <Route path="/admin/drives" element={<AdminDrivesPage />} />

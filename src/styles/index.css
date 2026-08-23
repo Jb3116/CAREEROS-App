@@ -21,6 +21,7 @@
 @import './admin-students.css';
 @import './admin-companies.css';
 @import './admin-opportunities.css';
+@import './admin-interview-criteria.css';
 
 :root {
   /* Brand Colors */
