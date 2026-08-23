@@ -9,6 +9,7 @@ import { RoadmapView } from './components/roadmap/RoadmapView';
 import { AssessmentView } from './components/assessment/AssessmentView';
 import { LearningPage } from './pages/LearningPage';
 import { PracticeView } from './components/practice/PracticeView';
+import { OpportunitiesView } from './components/opportunities/OpportunitiesView';
 import { ProfileView } from './components/profile/ProfileView';
 import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
           <Route path="/roadmap" element={<RoadmapView />} />
           <Route path="/career-roadmap" element={<RoadmapView />} />
           <Route path="/assessment" element={<AssessmentView />} />
+          <Route path="/opportunities" element={<OpportunitiesView />} />
           <Route path="/learning" element={<LearningPage />} />
           <Route path="/practice" element={<PracticeView />} />
           <Route path="/profile" element={<ProfileView />} />

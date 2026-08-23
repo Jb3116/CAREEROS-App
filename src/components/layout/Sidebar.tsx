@@ -4,9 +4,10 @@ import {
   LayoutDashboard,
   ClipboardCheck,
   Map,
-  BookOpen,
   Code2,
+  BookOpen,
   FileText,
+  Briefcase,
   User,
   Activity,
   LucideIcon,
@@ -18,34 +19,73 @@ interface SidebarProps {
   onTabChange?: (tab: NavTabId) => void;
 }
 
-interface NavItemConfig {
+interface SidebarNavItem {
   id: string;
   label: string;
   path: string;
   icon: LucideIcon;
+  badge?: string;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Navigation Items matching the CAREEROS full suite
-  const navItems: NavItemConfig[] = [
-    { id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { id: 'assessment', label: 'Placement Assessment', path: '/assessment', icon: ClipboardCheck },
-    { id: 'career-roadmap', label: 'Career Roadmap', path: '/career-roadmap', icon: Map },
-    { id: 'practice', label: 'Aptitude & Coding', path: '/practice', icon: Code2 },
-    { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
-    { id: 'resume', label: 'ATS Resume Builder', path: '/resume-builder', icon: FileText },
+  // Master navigation list matching the Figma Design hierarchy
+  const navItems: SidebarNavItem[] = [
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      path: '/dashboard',
+      icon: LayoutDashboard,
+    },
+    {
+      id: 'practice',
+      label: 'Aptitude & Coding',
+      path: '/practice',
+      icon: Code2,
+    },
+    {
+      id: 'assessment',
+      label: 'Placement Assessment',
+      path: '/assessment',
+      icon: ClipboardCheck,
+    },
+    {
+      id: 'career-roadmap',
+      label: 'Career Roadmap',
+      path: '/career-roadmap',
+      icon: Map,
+    },
+    {
+      id: 'opportunities',
+      label: 'Opportunities & Calendar',
+      path: '/opportunities',
+      icon: Briefcase,
+    },
+    {
+      id: 'learning',
+      label: 'Learning Hub',
+      path: '/learning',
+      icon: BookOpen,
+    },
+    {
+      id: 'resume',
+      label: 'ATS Resume Builder',
+      path: '/resume-builder',
+      icon: FileText,
+    },
   ];
 
-  const handleNavClick = (item: NavItemConfig) => {
-    navigate(item.path);
+  const handleNavigate = (path: string) => {
+    navigate(path);
   };
 
-  const isCurrentActive = (item: NavItemConfig) => {
+  const checkIsActive = (item: SidebarNavItem): boolean => {
     if (location.pathname === item.path) return true;
-    if (item.id === 'career-roadmap' && (location.pathname === '/career-roadmap' || location.pathname === '/roadmap')) return true;
+    if (item.id === 'career-roadmap' && (location.pathname === '/career-roadmap' || location.pathname === '/roadmap')) {
+      return true;
+    }
     if (activeTab) {
       if (activeTab === item.id) return true;
       if (activeTab === 'practice' && item.id === 'practice') return true;
@@ -57,47 +97,51 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab }) => {
   };
 
   return (
-    <aside className="sidebar" aria-label="Sidebar Navigation">
-      {/* Brand Logo Button */}
+    <aside className="sidebar" aria-label="Main Application Sidebar">
+      {/* ---------------- Top Brand Logo Button ---------------- */}
       <button
         className="sidebar-logo"
         onClick={() => navigate('/')}
         title="CAREEROS Home"
         aria-label="CAREEROS Home"
+        type="button"
       >
         <Activity size={24} strokeWidth={2.5} />
       </button>
 
-      {/* Main Navigation List */}
-      <nav className="sidebar-nav">
+      {/* ---------------- Main Navigation Items ---------------- */}
+      <nav className="sidebar-nav" aria-label="Sidebar Page Navigation">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = isCurrentActive(item);
+          const isActive = checkIsActive(item);
+
           return (
             <button
               key={item.id}
-              className={`nav-item ${active ? 'active' : ''}`}
-              onClick={() => handleNavClick(item)}
+              className={`nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => handleNavigate(item.path)}
               aria-label={item.label}
-              aria-current={active ? 'page' : undefined}
+              aria-current={isActive ? 'page' : undefined}
               title={item.label}
+              type="button"
             >
-              <Icon size={20} strokeWidth={active ? 2.5 : 2} />
+              <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
               <span className="nav-tooltip">{item.label}</span>
             </button>
           );
         })}
       </nav>
 
-      {/* Bottom Profile Footer Action */}
+      {/* ---------------- Bottom Profile Footer ---------------- */}
       <div className="sidebar-footer">
         <button
           className={`nav-item ${location.pathname === '/profile' || activeTab === 'profile' ? 'active' : ''}`}
-          onClick={() => navigate('/profile')}
+          onClick={() => handleNavigate('/profile')}
           aria-label="My Profile"
           title="My Profile"
+          type="button"
         >
-          <User size={20} />
+          <User size={20} strokeWidth={location.pathname === '/profile' ? 2.5 : 2} />
           <span className="nav-tooltip">My Profile</span>
         </button>
       </div>

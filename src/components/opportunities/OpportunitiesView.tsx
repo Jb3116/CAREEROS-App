@@ -1,323 +1,618 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Briefcase,
-  Search,
-  Building2,
-  MapPin,
+  Calendar,
+  CalendarDays,
+  CheckCircle2,
   Clock,
   ExternalLink,
-  Sparkles,
-  CheckCircle2,
   Filter,
+  Search,
+  Sparkles,
+  Building,
+  MapPin,
   DollarSign,
+  FileText,
+  ChevronRight,
+  AlertTriangle,
+  ArrowRight,
+  TrendingUp,
+  Award,
+  Layers,
+  Send,
+  X,
 } from 'lucide-react';
 
-interface JobOpportunity {
+interface DriveItem {
   id: string;
-  role: string;
   company: string;
-  logoColor: string;
+  role: string;
+  logoBg: string;
+  initials: string;
+  type: 'On-Campus Drive' | 'Off-Campus Internship' | 'Full-Time SDE';
+  stipendOrSalary: string;
   location: string;
-  type: 'Internship' | 'Full-Time' | 'Drive';
-  stipend: string;
+  deadlineDate: string;
+  daysRemaining: number;
   matchScore: number;
-  deadlineDays: number;
-  skills: string[];
-  description: string;
+  tags: string[];
+  status: 'Open' | 'Applied' | 'Shortlisted' | 'Assessment Scheduled';
+  roundInfo: string;
 }
 
 export const OpportunitiesView: React.FC = () => {
-  const [filterType, setFilterType] = useState<'all' | 'Internship' | 'Full-Time'>('all');
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'drives' | 'calendar' | 'pipeline'>('drives');
   const [searchQuery, setSearchQuery] = useState('');
-  const [appliedJobs, setAppliedJobs] = useState<string[]>([]);
+  const [filterType, setFilterType] = useState('all');
+  const [selectedDrive, setSelectedDrive] = useState<DriveItem | null>(null);
+  const [appliedDrives, setAppliedDrives] = useState<string[]>(['d1']);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const opportunities: JobOpportunity[] = [
+  const drives: DriveItem[] = [
     {
-      id: 'opp-1',
-      role: 'Software Development Engineer Intern (Summer 2026)',
+      id: 'd1',
       company: 'Goldman Sachs',
-      logoColor: '#1E3A8A',
-      location: 'Bangalore / Hybrid',
-      type: 'Internship',
-      stipend: '₹1,20,000 / month',
-      matchScore: 94,
-      deadlineDays: 5,
-      skills: ['C++', 'Data Structures', 'Algorithms', 'SQL', 'Distributed Systems'],
-      description: 'Join the Core Engineering team building ultra-low-latency financial trading infrastructure and scalable event processing pipelines.',
-    },
-    {
-      id: 'opp-2',
-      role: 'Software Engineer - University Graduate 2026',
-      company: 'Google Campus Drive',
-      logoColor: '#EA4335',
+      role: 'Summer Analyst 2026 - Engineering',
+      logoBg: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
+      initials: 'GS',
+      type: 'On-Campus Drive',
+      stipendOrSalary: '₹1,50,000 / mo',
       location: 'Bangalore / Hyderabad',
-      type: 'Full-Time',
-      stipend: '₹32 - 38 LPA CTC',
+      deadlineDate: 'Aug 28, 2026',
+      daysRemaining: 5,
+      matchScore: 94,
+      tags: ['C++', 'DSA Trees & Graphs', 'System Design', 'Quantitative Logic'],
+      status: 'Shortlisted',
+      roundInfo: 'HackerRank OA on Aug 28 (120 mins)',
+    },
+    {
+      id: 'd2',
+      company: 'Google',
+      role: 'Software Engineering Intern (Summer 2026)',
+      logoBg: 'linear-gradient(135deg, #EA4335 0%, #FBBC05 100%)',
+      initials: 'G',
+      type: 'On-Campus Drive',
+      stipendOrSalary: '₹1,75,000 / mo',
+      location: 'Bangalore / Pune',
+      deadlineDate: 'Aug 25, 2026',
+      daysRemaining: 2,
       matchScore: 91,
-      deadlineDays: 3,
-      skills: ['Trees & Graphs', 'Dynamic Programming', 'System Design', 'Python/Java'],
-      description: 'Work on billion-user scale products across Search, Cloud, Android, and YouTube. Assessment includes 2 coding rounds + 1 behavioral.',
+      tags: ['Algorithms', 'Python', 'Go', 'Tree LCA'],
+      status: 'Open',
+      roundInfo: 'Registration Closes in 48 Hours',
     },
     {
-      id: 'opp-3',
-      role: 'Full Stack Engineering Intern',
+      id: 'd3',
       company: 'Razorpay',
-      logoColor: '#2563EB',
-      location: 'Bangalore (Onsite)',
-      type: 'Internship',
-      stipend: '₹80,000 / month',
+      role: 'Product Engineering Intern',
+      logoBg: 'linear-gradient(135deg, #0C2340 0%, #0080FF 100%)',
+      initials: 'RZ',
+      type: 'Off-Campus Internship',
+      stipendOrSalary: '₹80,000 / mo',
+      location: 'Bangalore',
+      deadlineDate: 'Sep 02, 2026',
+      daysRemaining: 10,
       matchScore: 88,
-      deadlineDays: 8,
-      skills: ['React', 'TypeScript', 'Node.js', 'Redis', 'PostgreSQL'],
-      description: 'Develop developer-first payment checkout experiences, recurring billing microservices, and merchant dashboard analytics.',
+      tags: ['React', 'Node.js', 'PostgreSQL', 'Microservices'],
+      status: 'Open',
+      roundInfo: 'Round 1 Coding Challenge: Sep 04',
     },
     {
-      id: 'opp-4',
-      role: 'Backend Engineering Intern',
+      id: 'd4',
       company: 'Zepto',
-      logoColor: '#7C3AED',
-      location: 'Mumbai / Bangalore',
-      type: 'Internship',
-      stipend: '₹1,00,000 / month',
+      role: 'Backend SDE Intern - Supply Chain',
+      logoBg: 'linear-gradient(135deg, #7C2D12 0%, #EA580C 100%)',
+      initials: 'ZP',
+      type: 'Off-Campus Internship',
+      stipendOrSalary: '₹1,00,000 / mo',
+      location: 'Mumbai / Remote',
+      deadlineDate: 'Sep 05, 2026',
+      daysRemaining: 13,
       matchScore: 86,
-      deadlineDays: 12,
-      skills: ['Go', 'Microservices', 'Kafka', 'Docker', 'PostgreSQL'],
-      description: 'Architect supply-chain optimization algorithms and real-time inventory dispatch routing engines under 10-minute SLAs.',
+      tags: ['Go', 'Kafka', 'Redis', 'High-Scale Concurrency'],
+      status: 'Open',
+      roundInfo: 'Rolling Shortlists Every Friday',
     },
     {
-      id: 'opp-5',
-      role: 'Member of Technical Staff 1',
-      company: 'D.E. Shaw & Co.',
-      logoColor: '#0F172A',
-      location: 'Hyderabad',
-      type: 'Full-Time',
-      stipend: '₹45 - 52 LPA CTC',
-      matchScore: 85,
-      deadlineDays: 14,
-      skills: ['Advanced Algorithms', 'C++', 'Concurrency', 'Operating Systems'],
-      description: 'Solve complex quantitative problems and engineer high-performance analytical compute grids.',
+      id: 'd5',
+      company: 'Microsoft',
+      role: 'Software Development Engineer (Full-Time 2026)',
+      logoBg: 'linear-gradient(135deg, #0078D4 0%, #002050 100%)',
+      initials: 'MS',
+      type: 'Full-Time SDE',
+      stipendOrSalary: '₹32 - 44 LPA',
+      location: 'Hyderabad / Noida',
+      deadlineDate: 'Sep 10, 2026',
+      daysRemaining: 18,
+      matchScore: 84,
+      tags: ['C#', 'Azure', 'DSA', 'OOP Architecture'],
+      status: 'Open',
+      roundInfo: 'Pre-Placement Talk (PPT): Sep 06',
     },
   ];
 
-  const filtered = opportunities.filter((op) => {
-    const matchesType = filterType === 'all' || op.type === filterType;
-    const matchesSearch =
-      op.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      op.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      op.skills.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesType && matchesSearch;
-  });
-
-  const handleApply = (id: string) => {
-    setAppliedJobs([...appliedJobs, id]);
-    alert('🎉 Application submitted through CAREEROS! Your verified skill profile and ATS resume have been forwarded directly to the campus placement team.');
+  const handleApply = (drive: DriveItem) => {
+    if (!appliedDrives.includes(drive.id)) {
+      setAppliedDrives([...appliedDrives, drive.id]);
+    }
+    setToastMessage(`✓ Successfully submitted tailored ATS resume to ${drive.company}!`);
+    setSelectedDrive(null);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
+  const filteredDrives = drives.filter((d) => {
+    const matchesSearch =
+      d.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesType =
+      filterType === 'all' ||
+      (filterType === 'campus' && d.type === 'On-Campus Drive') ||
+      (filterType === 'intern' && d.type === 'Off-Campus Internship') ||
+      (filterType === 'fulltime' && d.type === 'Full-Time SDE');
+    return matchesSearch && matchesType;
+  });
+
   return (
-    <div style={{ padding: '24px 36px', display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1200, margin: '0 auto', width: '100%' }}>
-      {/* Header Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%)',
-          borderRadius: 20,
-          padding: '28px 32px',
-          color: '#FFFFFF',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 16,
-          boxShadow: '0 12px 32px rgba(79, 70, 229, 0.25)',
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: 22, fontWeight: 900, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Briefcase size={24} color="#C7D2FE" />
-            <span>Opportunities & Placement Radar</span>
-          </h1>
-          <p style={{ fontSize: 13.5, color: '#C7D2FE' }}>
-            Verified campus drives and internships filtered by algorithmic skill match with your student profile.
-          </p>
+    <div className="opp-page-container">
+      {/* ---------------- Toast Notification ---------------- */}
+      {toastMessage && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 24,
+            right: 24,
+            background: '#064E3B',
+            color: '#A7F3D0',
+            border: '1px solid #059669',
+            padding: '12px 20px',
+            borderRadius: 12,
+            fontWeight: 800,
+            fontSize: 13.5,
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            animation: 'slideIn 200ms ease',
+          }}
+        >
+          <CheckCircle2 size={18} />
+          <span>{toastMessage}</span>
         </div>
+      )}
 
-        <div style={{ display: 'flex', gap: 12 }}>
-          <div style={{ background: 'rgba(255,255,255,0.12)', padding: '8px 16px', borderRadius: 12, textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 900 }}>5</div>
-            <div style={{ fontSize: 11, color: '#CBD5E1' }}>Active Matches</div>
+      {/* ---------------- Top Hero Stats Banner ---------------- */}
+      <section className="opp-header-card" aria-label="Opportunities Summary">
+        <div className="opp-header-top">
+          <div className="opp-header-title-group">
+            <h1>
+              <Briefcase size={26} color="#818CF8" />
+              <span>Opportunities & Smart Placement Calendar</span>
+            </h1>
+            <p>
+              AI-calibrated campus drives, ATS resume matching scores, and real-time assessment schedules for <strong>Alex Chen</strong>.
+            </p>
           </div>
-          <div style={{ background: 'rgba(255,255,255,0.12)', padding: '8px 16px', borderRadius: 12, textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 900, color: '#34D399' }}>94%</div>
-            <div style={{ fontSize: 11, color: '#CBD5E1' }}>Top Match Rate</div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: 'rgba(16, 185, 129, 0.2)',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+                color: '#34D399',
+                fontSize: 12.5,
+                fontWeight: 800,
+                padding: '6px 14px',
+                borderRadius: 999,
+              }}
+            >
+              <Sparkles size={14} />
+              <span>14 Verified Drives Active</span>
+            </span>
           </div>
         </div>
-      </div>
 
-      {/* Filter & Search Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: 260, maxWidth: 400 }}>
-          <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
-          <input
-            type="text"
-            placeholder="Search roles, companies (e.g. Goldman Sachs, C++)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              height: 42,
-              padding: '0 16px 0 38px',
-              borderRadius: 10,
-              border: '1px solid #CBD5E1',
-              background: '#FFFFFF',
-              fontSize: 13.5,
-            }}
-          />
+        {/* Stats Row */}
+        <div className="opp-stats-row">
+          <div className="opp-stat-box">
+            <span className="opp-stat-val" style={{ color: '#818CF8' }}>
+              94% Match
+            </span>
+            <span className="opp-stat-lbl">Top Fit: Goldman Sachs SDE</span>
+          </div>
+          <div className="opp-stat-box">
+            <span className="opp-stat-val" style={{ color: '#F87171' }}>
+              3 Days Left
+            </span>
+            <span className="opp-stat-lbl">Google Summer Intern Reg.</span>
+          </div>
+          <div className="opp-stat-box">
+            <span className="opp-stat-val" style={{ color: '#34D399' }}>
+              5 In Pipeline
+            </span>
+            <span className="opp-stat-lbl">2 Shortlisted • 1 OA Scheduled</span>
+          </div>
+          <div className="opp-stat-box">
+            <span className="opp-stat-val" style={{ color: '#FBBF24' }}>
+              ₹1.5L / mo
+            </span>
+            <span className="opp-stat-lbl">Average Tier-1 Stipend</span>
+          </div>
         </div>
+      </section>
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            { id: 'all', label: 'All Openings' },
-            { id: 'Internship', label: 'Internships' },
-            { id: 'Full-Time', label: 'Full-Time Offers' },
-          ].map((tab) => (
+      {/* ---------------- Navigation Tabs ---------------- */}
+      <div className="opp-mode-tabs">
+        {[
+          { id: 'drives', label: '💼 Verified Drives & Openings (14)', icon: Briefcase },
+          { id: 'calendar', label: '📅 Smart Placement Calendar', icon: CalendarDays },
+          { id: 'pipeline', label: '📈 Application Tracker & Pipeline', icon: TrendingUp },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
             <button
               key={tab.id}
-              onClick={() => setFilterType(tab.id as any)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: 10,
-                fontSize: 13,
-                fontWeight: 700,
-                border: '1px solid #CBD5E1',
-                background: filterType === tab.id ? '#4F46E5' : '#FFFFFF',
-                color: filterType === tab.id ? '#FFFFFF' : '#334155',
-                cursor: 'pointer',
-              }}
+              className={`opp-mode-btn ${isActive ? 'active' : 'inactive'}`}
+              onClick={() => setActiveTab(tab.id as any)}
             >
-              {tab.label}
+              <Icon size={16} />
+              <span>{tab.label}</span>
             </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Opportunities List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {filtered.map((op) => {
-          const isApplied = appliedJobs.includes(op.id);
-          return (
-            <div
-              key={op.id}
-              style={{
-                background: '#FFFFFF',
-                border: '1px solid #E2E8F0',
-                borderRadius: 18,
-                padding: 24,
-                boxShadow: 'var(--shadow-subtle)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: 20,
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flex: 1, minWidth: 280 }}>
-                <div
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 12,
-                    background: op.logoColor,
-                    color: '#FFFFFF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 900,
-                    fontSize: 16,
-                    flexShrink: 0,
-                  }}
-                >
-                  {op.company.charAt(0)}
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <h2 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A' }}>{op.role}</h2>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 800,
-                        padding: '2px 8px',
-                        borderRadius: 999,
-                        background: '#ECFDF5',
-                        color: '#059669',
-                        border: '1px solid #A7F3D0',
-                      }}
-                    >
-                      {op.matchScore}% MATCH
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 13, color: '#64748B' }}>
-                    <span style={{ fontWeight: 700, color: '#334155' }}>{op.company}</span>
-                    <span>•</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={13} /> {op.location}</span>
-                    <span>•</span>
-                    <span style={{ fontWeight: 700, color: '#059669' }}>{op.stipend}</span>
-                  </div>
-
-                  <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.45, marginTop: 4 }}>
-                    {op.description}
-                  </p>
-
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
-                    {op.skills.map((s, idx) => (
-                      <span key={idx} style={{ fontSize: 11.5, background: '#F1F5F9', color: '#334155', padding: '2px 8px', borderRadius: 6, fontWeight: 600 }}>
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10, minWidth: 160 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12.5, color: '#EA580C', fontWeight: 700 }}>
-                  <Clock size={14} />
-                  <span>{op.deadlineDays} Days Left</span>
-                </div>
-
-                <button
-                  onClick={() => handleApply(op.id)}
-                  disabled={isApplied}
-                  style={{
-                    background: isApplied ? '#ECFDF5' : 'linear-gradient(135deg, #4F46E5, #4338CA)',
-                    color: isApplied ? '#059669' : '#FFFFFF',
-                    border: isApplied ? '1px solid #A7F3D0' : 'none',
-                    fontWeight: 700,
-                    fontSize: 13,
-                    padding: '9px 18px',
-                    borderRadius: 10,
-                    cursor: isApplied ? 'default' : 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                  }}
-                >
-                  {isApplied ? (
-                    <>
-                      <CheckCircle2 size={14} />
-                      <span>Applied ✓</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Apply with CareerOS</span>
-                      <ExternalLink size={13} />
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
           );
         })}
       </div>
+
+      {/* ---------------- TAB 1: ALL DRIVES & EXPLORER ---------------- */}
+      {activeTab === 'drives' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Filter & Search Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 280, maxWidth: 420 }}>
+              <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
+              <input
+                type="text"
+                placeholder="Search by company, role, skills (e.g. Goldman, React, C++)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  width: '100%',
+                  height: 42,
+                  padding: '0 16px 0 38px',
+                  borderRadius: 10,
+                  border: '1px solid #CBD5E1',
+                  background: '#FFFFFF',
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  color: '#1E293B',
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {[
+                { id: 'all', label: 'All Openings' },
+                { id: 'campus', label: 'On-Campus Drives' },
+                { id: 'intern', label: 'Internships' },
+                { id: 'fulltime', label: 'Full-Time SDE' },
+              ].map((pill) => (
+                <button
+                  key={pill.id}
+                  onClick={() => setFilterType(pill.id)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: 10,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    border: '1px solid #CBD5E1',
+                    background: filterType === pill.id ? '#4F46E5' : '#FFFFFF',
+                    color: filterType === pill.id ? '#FFFFFF' : '#334155',
+                    cursor: 'pointer',
+                    transition: 'all 150ms ease',
+                  }}
+                >
+                  {pill.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Opportunities Cards Grid */}
+          <div className="opp-cards-grid">
+            {filteredDrives.map((drive) => {
+              const isApplied = appliedDrives.includes(drive.id);
+              return (
+                <div key={drive.id} className="opp-drive-card">
+                  {/* Card Header */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div className="opp-company-badge-box" style={{ background: drive.logoBg }}>
+                        {drive.initials}
+                      </div>
+                      <div>
+                        <h2 style={{ fontSize: 16, fontWeight: 900, color: '#0F172A', lineHeight: 1.2 }}>
+                          {drive.company}
+                        </h2>
+                        <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>{drive.type}</span>
+                      </div>
+                    </div>
+
+                    <div className="opp-match-pill">
+                      <Sparkles size={12} />
+                      <span>{drive.matchScore}% Match</span>
+                    </div>
+                  </div>
+
+                  {/* Role Title & Details */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div style={{ fontSize: 14.5, fontWeight: 800, color: '#1E293B' }}>{drive.role}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 12.5, color: '#64748B' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <DollarSign size={14} color="#059669" />
+                        <strong style={{ color: '#059669' }}>{drive.stipendOrSalary}</strong>
+                      </span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <MapPin size={14} />
+                        {drive.location}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Tech Tags */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {drive.tags.map((tag, i) => (
+                      <span
+                        key={i}
+                        style={{
+                          fontSize: 11.5,
+                          fontWeight: 600,
+                          background: '#F1F5F9',
+                          color: '#334155',
+                          padding: '3px 9px',
+                          borderRadius: 6,
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Round Timeline & CTA Actions */}
+                  <div style={{ borderTop: '1px solid #F1F5F9', paddingTop: 14, marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: drive.daysRemaining <= 3 ? '#DC2626' : '#64748B', fontWeight: 700 }}>
+                      <Clock size={14} />
+                      <span>{drive.daysRemaining <= 3 ? `Closing in ${drive.daysRemaining} days!` : drive.roundInfo}</span>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        onClick={() => setSelectedDrive(drive)}
+                        style={{
+                          background: '#EEF2FF',
+                          color: '#4F46E5',
+                          border: '1px solid #C7D2FE',
+                          padding: '6px 12px',
+                          borderRadius: 8,
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Syllabus
+                      </button>
+
+                      <button
+                        onClick={() => handleApply(drive)}
+                        disabled={isApplied}
+                        style={{
+                          background: isApplied ? '#ECFDF5' : 'linear-gradient(135deg, #4F46E5, #4338CA)',
+                          color: isApplied ? '#059669' : '#FFFFFF',
+                          border: isApplied ? '1px solid #A7F3D0' : 'none',
+                          padding: '6px 14px',
+                          borderRadius: 8,
+                          fontSize: 12.5,
+                          fontWeight: 800,
+                          cursor: isApplied ? 'default' : 'pointer',
+                        }}
+                      >
+                        {isApplied ? 'Applied ✓' : '1-Click Apply'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ---------------- TAB 2: SMART PLACEMENT CALENDAR ---------------- */}
+      {activeTab === 'calendar' && (
+        <div className="opp-calendar-grid">
+          {/* Left: Monthly Grid */}
+          <div className="opp-calendar-box">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <div>
+                <h2 style={{ fontSize: 18, fontWeight: 900, color: '#0F172A' }}>August / September 2026</h2>
+                <span style={{ fontSize: 12.5, color: '#64748B' }}>Campus Placement Drive & Assessment Schedule</span>
+              </div>
+              <div style={{ display: 'flex', gap: 8, fontSize: 12, fontWeight: 700 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#DC2626' }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#DC2626' }} /> Deadline
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#7C3AED' }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#7C3AED' }} /> OA Exam
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#059669' }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#059669' }} /> Interview
+                </span>
+              </div>
+            </div>
+
+            <div className="opp-days-header">
+              <span>SUN</span>
+              <span>MON</span>
+              <span>TUE</span>
+              <span>WED</span>
+              <span>THU</span>
+              <span>FRI</span>
+              <span>SAT</span>
+            </div>
+
+            <div className="opp-days-grid">
+              {/* Sample calendar cells */}
+              {Array.from({ length: 31 }, (_, i) => {
+                const day = i + 1;
+                const isToday = day === 23;
+                return (
+                  <div key={day} className={`opp-cal-day ${isToday ? 'today' : ''}`}>
+                    <span>{day}</span>
+                    {day === 25 && <div className="opp-event-chip deadline">Google Closes</div>}
+                    {day === 28 && <div className="opp-event-chip oa">Goldman OA</div>}
+                    {day === 30 && <div className="opp-event-chip interview">Prep Mock Round</div>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right: Upcoming Timeline */}
+          <div className="opp-calendar-box">
+            <h3 style={{ fontSize: 16, fontWeight: 900, color: '#0F172A', marginBottom: 14 }}>
+              Upcoming Milestones This Week
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ padding: 14, borderRadius: 12, background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: 13, color: '#DC2626' }}>
+                  <span>Google SDE Intern</span>
+                  <span>Aug 25 (2 Days)</span>
+                </div>
+                <p style={{ fontSize: 12, color: '#7F1D1D', margin: '4px 0 0' }}>
+                  Official registration deadline on campus placement portal. Ensure resume is verified.
+                </p>
+              </div>
+
+              <div style={{ padding: 14, borderRadius: 12, background: '#F3E8FF', border: '1px solid #E9D5FF' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: 13, color: '#7C3AED' }}>
+                  <span>Goldman Sachs OA (120m)</span>
+                  <span>Aug 28 (5 Days)</span>
+                </div>
+                <p style={{ fontSize: 12, color: '#581C87', margin: '4px 0 0' }}>
+                  Proctored HackerRank test: 2 Coding Problems (Trees + DP) + 10 CS Core MCQs.
+                </p>
+              </div>
+
+              <div style={{ padding: 14, borderRadius: 12, background: '#ECFDF5', border: '1px solid #A7F3D0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: 13, color: '#059669' }}>
+                  <span>Mock STAR Interview Round</span>
+                  <span>Aug 30 (7 Days)</span>
+                </div>
+                <p style={{ fontSize: 12, color: '#064E3B', margin: '4px 0 0' }}>
+                  AI speech-evaluation & system design drill with instant feedback report.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------- TAB 3: APPLICATION PIPELINE TRACKER ---------------- */}
+      {activeTab === 'pipeline' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+          {[
+            {
+              stage: 'Applied (5)',
+              color: '#3B82F6',
+              items: ['Google SDE Intern', 'Razorpay Backend', 'Zepto SDE'],
+            },
+            {
+              stage: 'Shortlisted (2)',
+              color: '#F59E0B',
+              items: ['Goldman Sachs Summer Analyst', 'Microsoft SDE Campus'],
+            },
+            {
+              stage: 'Online Assessment (1)',
+              color: '#8B5CF6',
+              items: ['Goldman Sachs HackerRank OA (Aug 28)'],
+            },
+            {
+              stage: 'Interview Scheduled (0)',
+              color: '#10B981',
+              items: ['No active rounds scheduled yet'],
+            },
+          ].map((col, idx) => (
+            <div key={idx} style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 16, padding: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 900, fontSize: 14, color: col.color }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: col.color }} />
+                <span>{col.stage}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {col.items.map((item, i) => (
+                  <div key={i} style={{ padding: 12, background: '#F8FAFC', borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 12.5, fontWeight: 700, color: '#1E293B' }}>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ---------------- Drive Syllabus Detail Modal ---------------- */}
+      {selectedDrive && (
+        <div className="modal-backdrop">
+          <div className="modal-card" style={{ maxWidth: 540 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Building size={20} color="#4F46E5" />
+                <h3 style={{ fontSize: 17, fontWeight: 900, color: '#0F172A' }}>{selectedDrive.company} Hiring Syllabus</h3>
+              </div>
+              <button onClick={() => setSelectedDrive(null)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                <X size={18} color="#64748B" />
+              </button>
+            </div>
+
+            <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.5, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>
+                <strong>Role:</strong> {selectedDrive.role} ({selectedDrive.type})
+              </div>
+              <div>
+                <strong>Key Test Topics:</strong>
+                <ul style={{ margin: '6px 0 0', paddingLeft: 20 }}>
+                  <li>Binary Trees, Segment Trees & Graphs BFS/DFS</li>
+                  <li>Database Indexing (B+ Trees) & 2-Phase Locking</li>
+                  <li>System Design: Load Balancers & Caching Invalidation</li>
+                </ul>
+              </div>
+              <div style={{ background: '#F5F7FF', padding: 12, borderRadius: 10, border: '1px solid #E0E7FF', color: '#4F46E5', fontWeight: 700 }}>
+                💡 Your ATS Resume Match Score for this role is <strong>{selectedDrive.matchScore}%</strong>.
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 18 }}>
+              <button
+                onClick={() => setSelectedDrive(null)}
+                style={{ padding: '8px 16px', background: '#F1F5F9', border: '1px solid #CBD5E1', borderRadius: 8, fontWeight: 700, fontSize: 12.5, cursor: 'pointer' }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => handleApply(selectedDrive)}
+                style={{ padding: '8px 18px', background: '#4F46E5', color: '#FFF', border: 'none', borderRadius: 8, fontWeight: 800, fontSize: 12.5, cursor: 'pointer' }}
+              >
+                Apply with Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

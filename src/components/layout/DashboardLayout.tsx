@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
+import { AppSidebar } from './AppSidebar';
 import { Header } from './Header';
 import { DetailModal, ModalContentType } from '../dashboard/DetailModal';
 import { StudentProfile } from '../../types/dashboard';
@@ -29,8 +29,8 @@ export const DashboardLayout: React.FC = () => {
 
   return (
     <div className="app-container">
-      {/* Permanent Persistent Left Sidebar */}
-      <Sidebar />
+      {/* Permanent Persistent Application Sidebar using UI Primitives */}
+      <AppSidebar />
 
       {/* Main App Content Wrapper */}
       <div className="main-wrapper">
