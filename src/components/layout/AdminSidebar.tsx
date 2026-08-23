@@ -86,7 +86,7 @@ export const AdminSidebar: React.FC = () => {
     },
     {
       id: 'analytics',
-      label: 'Batch Readiness Analytics',
+      label: 'Analytics & Insights',
       path: '/admin/analytics',
       icon: BarChart3,
     },

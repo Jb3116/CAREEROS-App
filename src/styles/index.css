@@ -23,6 +23,7 @@
 @import './admin-opportunities.css';
 @import './admin-interview-criteria.css';
 @import './admin-calendar.css';
+@import './admin-analytics.css';
 
 :root {
   /* Brand Colors */
