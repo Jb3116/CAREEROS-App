@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
+  Megaphone,
   Sliders,
   Users,
   Building2,
@@ -30,6 +31,12 @@ export const AdminSidebar: React.FC = () => {
       label: 'Admin Dashboard',
       path: '/admin/dashboard',
       icon: LayoutDashboard,
+    },
+    {
+      id: 'announcements',
+      label: 'Announcements Hub',
+      path: '/admin/announcements',
+      icon: Megaphone,
     },
     {
       id: 'control',

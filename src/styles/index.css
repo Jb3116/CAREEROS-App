@@ -16,6 +16,7 @@
 @import './admin.css';
 @import './admin-dashboard.css';
 @import './admin-control.css';
+@import './announcements.css';
 
 :root {
   /* Brand Colors */
