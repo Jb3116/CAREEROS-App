@@ -19,6 +19,7 @@ import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 // College Admin Layout & Components
 import { AdminLayout } from './components/layout/AdminLayout';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { AdminPlacementCalendarPage } from './pages/AdminPlacementCalendarPage';
 import { AdminOpportunityManagerPage } from './pages/AdminOpportunityManagerPage';
 import { AdminInterviewCriteriaPage } from './pages/AdminInterviewCriteriaPage';
 import { AdminAnnouncementsPage } from './pages/AdminAnnouncementsPage';
@@ -54,6 +55,7 @@ export const App: React.FC = () => {
         {/* Authenticated College Admin & TPO Experience (Protected by AdminLayout) */}
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/placement-calendar" element={<AdminPlacementCalendarPage />} />
           <Route path="/admin/opportunities" element={<AdminOpportunityManagerPage />} />
           <Route path="/admin/interview-criteria" element={<AdminInterviewCriteriaPage />} />
           <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />

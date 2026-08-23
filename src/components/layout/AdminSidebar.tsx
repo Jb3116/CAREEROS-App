@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
+  CalendarDays,
   CalendarCheck,
   ClipboardCheck,
   Megaphone,
@@ -34,6 +35,12 @@ export const AdminSidebar: React.FC = () => {
       label: 'Admin Dashboard',
       path: '/admin/dashboard',
       icon: LayoutDashboard,
+    },
+    {
+      id: 'calendar',
+      label: 'Placement Calendar',
+      path: '/admin/placement-calendar',
+      icon: CalendarDays,
     },
     {
       id: 'opportunities',
