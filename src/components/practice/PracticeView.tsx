@@ -37,7 +37,20 @@ interface ProblemItem {
 export const PracticeView: React.FC = () => {
   const navigate = useNavigate();
   const [activeMode, setActiveMode] = useState<'coding' | 'aptitude' | 'analytics'>('coding');
-  const [selectedLanguage, setSelectedLanguage] = useState<'cpp' | 'python' | 'java' | 'typescript' | 'go'>('cpp');
+
+  // Programming language state
+  const [selectedLang, setSelectedLang] = useState<'python' | 'cpp' | 'java' | 'javascript' | 'css'>('python');
+
+  // Multi-Language Starter Templates Dictionary
+  const languageTemplates: Record<'python' | 'cpp' | 'java' | 'javascript' | 'css', string> = {
+    python: `# Write your Python solution here\ndef solve():\n    pass`,
+    cpp: `// Write your C++ solution here\n#include <iostream>\nusing namespace std;\n\nint main() {\n    // Code here\n    return 0;\n}`,
+    java: `// Write your Java solution here\npublic class Solution {\n    public static void main(String[] args) {\n        // Code here\n    }\n}`,
+    javascript: `// Write your JavaScript solution here\nfunction solve() {\n    \n}`,
+    css: `/* Write your CSS styles here */\n.element {\n    display: flex;\n    justify-content: center;\n}`,
+  };
+
+  const [code, setCode] = useState<string>(languageTemplates.python);
   const [searchQuery, setSearchQuery] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
   const [activeProblemId, setActiveProblemId] = useState('p1');
@@ -101,56 +114,50 @@ export const PracticeView: React.FC = () => {
     },
   ];
 
-  const [code, setCode] = useState(`/**
- * Problem: 124. Binary Tree Maximum Path Sum
- * Definition for a binary tree node:
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- * };
- */
+  // Dynamic Language Switcher Handler
+  const handleLanguageChange = (newLang: 'python' | 'cpp' | 'java' | 'javascript' | 'css') => {
+    setSelectedLang(newLang);
+    setCode(languageTemplates[newLang]);
+    setRunResult(null);
+  };
 
-class Solution {
-private:
-    int maxSum = INT_MIN;
-    
-    int maxGain(TreeNode* root) {
-        if (!root) return 0;
-        
-        // Compute maximum path sum recursively, ignoring negative paths
-        int leftGain = max(maxGain(root->left), 0);
-        int rightGain = max(maxGain(root->right), 0);
-        
-        // Price of the new path passing through current node
-        int currentPathSum = root->val + leftGain + rightGain;
-        maxSum = max(maxSum, currentPathSum);
-        
-        // Return maximum contribution for parent recursion
-        return root->val + max(leftGain, rightGain);
+  const getFileName = () => {
+    switch (selectedLang) {
+      case 'python':
+        return 'solution.py';
+      case 'cpp':
+        return 'solution.cpp';
+      case 'java':
+        return 'Solution.java';
+      case 'javascript':
+        return 'solution.js';
+      case 'css':
+        return 'styles.css';
+      default:
+        return 'solution.txt';
     }
-
-public:
-    int maxPathSum(TreeNode* root) {
-        maxSum = INT_MIN;
-        maxGain(root);
-        return maxSum;
-    }
-};`);
+  };
 
   const handleRunCode = () => {
     setIsRunning(true);
     setRunResult(null);
     setTimeout(() => {
       setIsRunning(false);
-      setRunResult({
-        status: 'passed',
-        time: '28 ms (Faster than 91.2% of submissions)',
-        memory: '27.4 MB (Better than 94.6% memory allocation)',
-        output: 'Testcase 1: Passed [Input: root = [1,2,3], Expected: 6, Output: 6]\nTestcase 2: Passed [Input: root = [-10,9,20,null,null,15,7], Expected: 42, Output: 42]\nTestcase 3: Passed [Input: root = [-3], Expected: -3, Output: -3]\n\nAll Proctored Testcases Executed Successfully! ✨',
-      });
+      if (selectedLang === 'css') {
+        setRunResult({
+          status: 'passed',
+          time: '12 ms (CSS Layout Render Tree)',
+          memory: '14.2 MB (DOM Style Computation)',
+          output: '✓ CSS Rules Validated Successfully!\n✓ Box Model & Flexbox layout parsed without syntax warnings.\n✓ Render Engine: Blink / WebKit Verified.',
+        });
+      } else {
+        setRunResult({
+          status: 'passed',
+          time: '28 ms (Faster than 91.2% of submissions)',
+          memory: '27.4 MB (Better than 94.6% memory allocation)',
+          output: `Language Target: ${selectedLang.toUpperCase()}\nTestcase 1: Passed [Input: root = [1,2,3], Expected: 6, Output: 6]\nTestcase 2: Passed [Input: root = [-10,9,20,null,null,15,7], Expected: 42, Output: 42]\nTestcase 3: Passed [Input: root = [-3], Expected: -3, Output: -3]\n\nAll Proctored Testcases Executed Successfully! ✨`,
+        });
+      }
     }, 550);
   };
 
@@ -386,22 +393,23 @@ public:
             <div className="practice-editor-pane">
               <div className="practice-editor-box">
                 {/* Editor Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <FileCode size={16} color="#818CF8" />
                     <span style={{ color: '#E2E8F0', fontSize: 13, fontWeight: 700 }}>
-                      solution.{selectedLanguage === 'cpp' ? 'cpp' : selectedLanguage === 'python' ? 'py' : selectedLanguage === 'java' ? 'java' : selectedLanguage === 'go' ? 'go' : 'ts'}
+                      {getFileName()}
                     </span>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    {/* Multi-Language Selector Dropdown */}
                     <select
-                      value={selectedLanguage}
-                      onChange={(e) => setSelectedLanguage(e.target.value as any)}
+                      value={selectedLang}
+                      onChange={(e) => handleLanguageChange(e.target.value as any)}
                       style={{
                         background: '#1E293B',
                         color: '#FFFFFF',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        border: '1px solid rgba(255, 255, 255, 0.25)',
                         padding: '6px 12px',
                         borderRadius: 8,
                         fontSize: 12.5,
@@ -409,12 +417,13 @@ public:
                         cursor: 'pointer',
                         outline: 'none',
                       }}
+                      aria-label="Select Programming Language"
                     >
-                      <option value="cpp">C++ (GCC 14)</option>
                       <option value="python">Python 3.12</option>
+                      <option value="cpp">C++ (GCC 14)</option>
                       <option value="java">Java 21</option>
-                      <option value="typescript">TypeScript 5.4</option>
-                      <option value="go">Go 1.22</option>
+                      <option value="javascript">JavaScript (ES2024)</option>
+                      <option value="css">CSS3 (Styles & Flexbox)</option>
                     </select>
 
                     <button
@@ -436,16 +445,17 @@ public:
                       }}
                     >
                       <Play size={14} fill="#FFFFFF" />
-                      <span>{isRunning ? 'Compiling...' : 'Run Code'}</span>
+                      <span>{isRunning ? 'Compiling...' : selectedLang === 'css' ? 'Validate CSS' : 'Run Code'}</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Textarea */}
+                {/* Textarea with Dynamic Multi-Language Template */}
                 <textarea
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   className="practice-editor-textarea"
+                  placeholder={`Write your ${selectedLang.toUpperCase()} solution here...`}
                   spellCheck={false}
                 />
               </div>
@@ -471,7 +481,7 @@ public:
                       Runtime: <strong>{runResult.time}</strong> • Memory: <strong>{runResult.memory}</strong>
                     </div>
                   </div>
-                  <pre style={{ fontFamily: 'monospace', fontSize: 12, color: '#334155', background: '#F8FAFC', padding: 12, borderRadius: 10, margin: 0, border: '1px solid #E2E8F0' }}>
+                  <pre style={{ fontFamily: 'monospace', fontSize: 12, color: '#334155', background: '#F8FAFC', padding: 12, borderRadius: 10, margin: 0, border: '1px solid #E2E8F0', whiteSpace: 'pre-wrap' }}>
                     {runResult.output}
                   </pre>
                 </div>

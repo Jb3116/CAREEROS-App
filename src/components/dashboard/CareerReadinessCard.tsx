@@ -1,5 +1,6 @@
 import React from 'react';
-import { Target, TrendingUp, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Target, TrendingUp, Info, ArrowRight } from 'lucide-react';
 
 interface CareerReadinessCardProps {
   score: number;
@@ -10,6 +11,8 @@ export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
   score = 78,
   onViewDetails,
 }) => {
+  const navigate = useNavigate();
+
   // SVG Donut calculation
   const radius = 65;
   const circumference = 2 * Math.PI * radius;
@@ -23,8 +26,8 @@ export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
         </h2>
         <button
           onClick={onViewDetails}
-          title="How readiness is computed"
-          style={{ color: '#94A3B8', display: 'flex', alignItems: 'center' }}
+          title="Click to view readiness breakdown score"
+          style={{ color: '#94A3B8', display: 'flex', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer' }}
           aria-label="Readiness calculation info"
         >
           <Info size={16} />
@@ -32,7 +35,12 @@ export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
       </div>
 
       <div className="readiness-body">
-        <div className="gauge-container">
+        <div
+          className="gauge-container"
+          onClick={() => navigate('/assessment')}
+          title="Click to Take or Review Diagnostic Assessment"
+          style={{ cursor: 'pointer' }}
+        >
           <svg className="gauge-svg" viewBox="0 0 160 160">
             <defs>
               <linearGradient id="readinessGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -67,13 +75,16 @@ export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
 
         <button
           className="readiness-status-badge"
-          onClick={onViewDetails}
-          title="Click to view readiness breakdown"
+          onClick={() => navigate('/assessment')}
+          title="Start or review Placement Assessment"
+          style={{ cursor: 'pointer', border: 'none' }}
         >
           <TrendingUp size={14} />
-          <span>Keep going!</span>
+          <span>Take Assessment</span>
         </button>
       </div>
     </div>
   );
 };
+
+export default CareerReadinessCard;

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Check, ArrowRight, ListTodo } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Check, ArrowRight, ListTodo, Plus, Sparkles } from 'lucide-react';
 import { PlanTask } from '../../types/dashboard';
 
 interface TodaysPlanCardProps {
@@ -13,7 +14,19 @@ export const TodaysPlanCard: React.FC<TodaysPlanCardProps> = ({
   onToggleTask,
   onStartPlan,
 }) => {
+  const navigate = useNavigate();
   const completedCount = tasks.filter((t) => t.completed).length;
+  const progressPercent = Math.round((completedCount / tasks.length) * 100);
+
+  const handleActionClick = () => {
+    // Route to practice or active task target
+    const firstIncomplete = tasks.find((t) => !t.completed);
+    if (firstIncomplete?.title.toLowerCase().includes('interview')) {
+      navigate('/interview-studio');
+    } else {
+      navigate('/practice');
+    }
+  };
 
   return (
     <div className="dash-card">
@@ -21,9 +34,22 @@ export const TodaysPlanCard: React.FC<TodaysPlanCardProps> = ({
         <h2 className="card-title">
           Today's Plan
         </h2>
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#64748B' }}>
-          {completedCount}/{tasks.length} Completed
+        <span style={{ fontSize: 12.5, fontWeight: 800, color: completedCount === tasks.length ? '#059669' : '#4F46E5' }}>
+          {completedCount}/{tasks.length} Completed ({progressPercent}%)
         </span>
+      </div>
+
+      {/* Progress Track */}
+      <div style={{ height: 6, background: '#F1F5F9', borderRadius: 999, margin: '4px 0 10px', overflow: 'hidden' }}>
+        <div
+          style={{
+            height: '100%',
+            width: `${progressPercent}%`,
+            background: completedCount === tasks.length ? '#10B981' : 'linear-gradient(90deg, #4F46E5, #818CF8)',
+            borderRadius: 999,
+            transition: 'width 250ms ease',
+          }}
+        />
       </div>
 
       <div className="plan-list">
@@ -42,6 +68,8 @@ export const TodaysPlanCard: React.FC<TodaysPlanCardProps> = ({
                   onToggleTask(task.id);
                 }
               }}
+              title="Click to mark complete/pending"
+              style={{ cursor: 'pointer' }}
             >
               <div className="plan-item-left">
                 <div className="plan-checkbox">
@@ -49,7 +77,18 @@ export const TodaysPlanCard: React.FC<TodaysPlanCardProps> = ({
                 </div>
                 <span className="plan-item-text">{task.title}</span>
               </div>
-              {task.tag && <span className="plan-item-tag">{task.tag}</span>}
+              {task.tag && (
+                <span
+                  className="plan-item-tag"
+                  style={{
+                    background: task.completed ? '#ECFDF5' : '#EEF2FF',
+                    color: task.completed ? '#059669' : '#4F46E5',
+                    fontWeight: 700,
+                  }}
+                >
+                  {task.completed ? '✓ Done' : task.tag}
+                </span>
+              )}
             </div>
           );
         })}
@@ -58,14 +97,20 @@ export const TodaysPlanCard: React.FC<TodaysPlanCardProps> = ({
       <div className="plan-footer">
         <span className="plan-progress-text">
           {completedCount === tasks.length
-            ? '🎉 All daily targets accomplished!'
-            : `${tasks.length - completedCount} tasks remaining today`}
+            ? '🎉 All daily goals achieved!'
+            : `${tasks.length - completedCount} goals remaining today`}
         </span>
-        <button className="btn-start-plan" onClick={onStartPlan}>
-          <span>Start Now</span>
+        <button
+          className="btn-start-plan"
+          onClick={handleActionClick}
+          title="Jump into Coding & Aptitude Practice"
+        >
+          <span>Start Practice</span>
           <ArrowRight size={15} />
         </button>
       </div>
     </div>
   );
 };
+
+export default TodaysPlanCard;

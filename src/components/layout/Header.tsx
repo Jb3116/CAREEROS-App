@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell,
@@ -10,25 +10,36 @@ import {
   X,
   ClipboardCheck,
   Map,
+  User,
+  FileText,
+  LogOut,
+  Settings,
+  ExternalLink,
 } from 'lucide-react';
 import { StudentProfile } from '../../types/dashboard';
 
 interface HeaderProps {
   profile: StudentProfile;
-  onOpenProfile: () => void;
-  onOpenNotifications: () => void;
+  onOpenProfile?: () => void;
+  onOpenNotifications?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
+export const Header: React.FC<HeaderProps> = ({ profile }) => {
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const notifRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+
   const [notifications, setNotifications] = useState([
     {
       id: 'n1',
       title: 'AI Roadmap Updated',
-      desc: 'Target syllabus updated for upcoming SWE assessment.',
+      desc: 'Target syllabus updated for upcoming Google SWE coding assessment.',
       time: '10m ago',
       read: false,
+      targetPath: '/career-roadmap',
     },
     {
       id: 'n2',
@@ -36,20 +47,42 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
       desc: 'Goldman Sachs posted a SWE Internship matching 94% of your skills.',
       time: '1h ago',
       read: false,
+      targetPath: '/opportunities',
     },
     {
       id: 'n3',
       title: 'Daily Streak Milestone',
-      desc: 'You reached a 5-day continuous learning streak!',
+      desc: 'You reached a 5-day continuous learning streak! +50 XP bonus added.',
       time: 'Yesterday',
       read: true,
+      targetPath: '/practice',
     },
   ]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setShowProfileMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const markAllRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, read: true })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const handleNotificationClick = (targetPath: string, id: string) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    setShowNotifications(false);
+    navigate(targetPath);
   };
 
   return (
@@ -79,6 +112,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
             padding: '6px 12px',
             borderRadius: 999,
             cursor: 'pointer',
+            transition: 'all 150ms ease',
           }}
           title="Start or review Placement Assessment"
         >
@@ -100,6 +134,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
             padding: '6px 12px',
             borderRadius: 999,
             cursor: 'pointer',
+            transition: 'all 150ms ease',
           }}
           title="View Adaptive Career Roadmap"
         >
@@ -108,16 +143,24 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
         </button>
 
         {/* Streak Badge */}
-        <div className="streak-badge" title="Consecutive days practiced">
+        <div
+          className="streak-badge"
+          onClick={() => navigate('/practice')}
+          title="5 Days Consecutive Practice - Click to solve daily question"
+          style={{ cursor: 'pointer' }}
+        >
           <Flame size={16} fill="#EA580C" strokeWidth={0} />
           <span>{profile.streakDays} Day Streak</span>
         </div>
 
-        {/* Notifications Button */}
-        <div style={{ position: 'relative' }}>
+        {/* ---------------- Notifications Popover ---------------- */}
+        <div style={{ position: 'relative' }} ref={notifRef}>
           <button
             className="header-icon-btn"
-            onClick={() => setShowNotifications(!showNotifications)}
+            onClick={() => {
+              setShowNotifications(!showNotifications);
+              setShowProfileMenu(false);
+            }}
             aria-label="Notifications"
             title="View Notifications"
           >
@@ -125,7 +168,6 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
             {unreadCount > 0 && <span className="notification-dot" />}
           </button>
 
-          {/* Notifications Dropdown */}
           {showNotifications && (
             <div
               style={{
@@ -136,10 +178,10 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
                 background: '#FFFFFF',
                 borderRadius: 16,
                 border: '1px solid #E2E8F0',
-                boxShadow: '0 12px 32px rgba(15, 23, 42, 0.12)',
+                boxShadow: '0 16px 36px rgba(15, 23, 42, 0.15)',
                 padding: '16px',
-                zIndex: 60,
-                animation: 'slideUp 200ms ease-out',
+                zIndex: 100,
+                animation: 'slideUp 180ms ease-out',
               }}
             >
               <div
@@ -153,15 +195,15 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>Notifications</span>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: '#0F172A' }}>Notifications</span>
                   {unreadCount > 0 && (
                     <span
                       style={{
                         background: '#EEF2FF',
                         color: '#4F46E5',
                         fontSize: 11,
-                        fontWeight: 700,
-                        padding: '1px 6px',
+                        fontWeight: 800,
+                        padding: '1px 7px',
                         borderRadius: 999,
                       }}
                     >
@@ -172,17 +214,18 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllRead}
-                    style={{ fontSize: 11, color: '#4F46E5', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
+                    style={{ fontSize: 11.5, color: '#4F46E5', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     Mark all read
                   </button>
                 )}
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {notifications.map((n) => (
                   <div
                     key={n.id}
+                    onClick={() => handleNotificationClick(n.targetPath, n.id)}
                     style={{
                       padding: 10,
                       borderRadius: 10,
@@ -190,14 +233,16 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
                       border: n.read ? '1px solid #F1F5F9' : '1px solid #E0E7FF',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: 2,
+                      gap: 3,
+                      cursor: 'pointer',
+                      transition: 'background 120ms ease',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 12.5, fontWeight: 700, color: '#1E293B' }}>{n.title}</span>
-                      <span style={{ fontSize: 10, color: '#94A3B8' }}>{n.time}</span>
+                      <span style={{ fontSize: 12.5, fontWeight: 800, color: '#1E293B' }}>{n.title}</span>
+                      <span style={{ fontSize: 10.5, color: '#94A3B8' }}>{n.time}</span>
                     </div>
-                    <span style={{ fontSize: 11.5, color: '#64748B', lineHeight: 1.3 }}>{n.desc}</span>
+                    <span style={{ fontSize: 11.5, color: '#64748B', lineHeight: 1.35 }}>{n.desc}</span>
                   </div>
                 ))}
               </div>
@@ -205,20 +250,125 @@ export const Header: React.FC<HeaderProps> = ({ profile, onOpenProfile }) => {
           )}
         </div>
 
-        {/* Student Profile Pill */}
-        <div
-          className="user-profile-pill"
-          onClick={onOpenProfile}
-          title="View Student Profile"
-          role="button"
-          tabIndex={0}
-        >
-          <div className="user-avatar">{profile.avatarText}</div>
-          <div className="user-info">
-            <span className="user-name">{profile.name}</span>
-            <span className="user-role">{profile.year}</span>
+        {/* ---------------- Profile Popover Dropdown ---------------- */}
+        <div style={{ position: 'relative' }} ref={profileRef}>
+          <div
+            className="user-profile-pill"
+            onClick={() => {
+              setShowProfileMenu(!showProfileMenu);
+              setShowNotifications(false);
+            }}
+            title="View Student Profile Menu"
+            role="button"
+            tabIndex={0}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className="user-avatar">{profile.avatarText}</div>
+            <div className="user-info">
+              <span className="user-name">{profile.name}</span>
+              <span className="user-role">{profile.year}</span>
+            </div>
+            <ChevronDown size={14} color="#94A3B8" />
           </div>
-          <ChevronDown size={14} color="#94A3B8" />
+
+          {showProfileMenu && (
+            <div
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 'calc(100% + 10px)',
+                width: 240,
+                background: '#FFFFFF',
+                borderRadius: 16,
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 16px 36px rgba(15, 23, 42, 0.15)',
+                padding: '12px',
+                zIndex: 100,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                animation: 'slideUp 180ms ease-out',
+              }}
+            >
+              <div style={{ padding: '8px 10px', borderBottom: '1px solid #F1F5F9', marginBottom: 4 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 900, color: '#0F172A' }}>{profile.name}</div>
+                <div style={{ fontSize: 11.5, color: '#64748B' }}>{profile.college}</div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  navigate('/profile');
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#334155',
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                <User size={15} color="#4F46E5" />
+                <span>My Profile & Skills</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  navigate('/resume-builder');
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#334155',
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                <FileText size={15} color="#059669" />
+                <span>AI Resume Builder</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  navigate('/login');
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'rgba(239, 68, 68, 0.08)',
+                  color: '#DC2626',
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  marginTop: 6,
+                  textAlign: 'left',
+                }}
+              >
+                <LogOut size={15} />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>
