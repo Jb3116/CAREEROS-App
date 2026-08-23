@@ -1,40 +1,74 @@
 import React from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   GitFork,
   Code2,
   BookOpen,
-  MessageSquare,
+  FileText,
   Briefcase,
   Settings,
   User,
   Activity,
-  LucideIcon
+  Home,
+  LucideIcon,
 } from 'lucide-react';
 import { NavTabId } from '../../types/dashboard';
 
 interface SidebarProps {
-  activeTab: NavTabId;
-  onTabChange: (tab: NavTabId) => void;
+  activeTab?: string;
+  onTabChange?: (tab: NavTabId) => void;
+}
+
+interface NavItemConfig {
+  id: string;
+  label: string;
+  path: string;
+  icon: LucideIcon;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
-  const navItems: { id: NavTabId; label: string; icon: LucideIcon }[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'roadmap', label: 'Career Roadmap', icon: GitFork },
-    { id: 'practice', label: 'Practice & Coding', icon: Code2 },
-    { id: 'learn', label: 'Learning Resources', icon: BookOpen },
-    { id: 'communication', label: 'Communication Prep', icon: MessageSquare },
-    { id: 'opportunities', label: 'Opportunities & Jobs', icon: Briefcase },
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const navItems: NavItemConfig[] = [
+    { id: 'home', label: 'Home', path: '/', icon: Home },
+    { id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { id: 'roadmap', label: 'Career Roadmap', path: '/roadmap', icon: GitFork },
+    { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
+    { id: 'practice', label: 'Practice & Coding', path: '/practice', icon: Code2 },
+    { id: 'resume', label: 'ATS Resume Builder', path: '/resume-builder', icon: FileText },
   ];
+
+  const handleNavClick = (item: NavItemConfig) => {
+    if (onTabChange && location.pathname === '/dashboard') {
+      if (item.id === 'home') navigate('/');
+      else if (item.id === 'roadmap') navigate('/roadmap');
+      else if (item.id === 'learning') navigate('/learning');
+      else if (item.id === 'practice') navigate('/practice');
+      else if (item.id === 'resume') navigate('/resume-builder');
+      else onTabChange(item.id as NavTabId);
+    } else {
+      navigate(item.path);
+    }
+  };
+
+  const isCurrentActive = (item: NavItemConfig) => {
+    if (activeTab) {
+      if (activeTab === item.id) return true;
+      if (activeTab === 'learn' && item.id === 'learning') return true;
+      if (activeTab === 'resume' && item.id === 'resume') return true;
+    }
+    return location.pathname === item.path;
+  };
 
   return (
     <aside className="sidebar" aria-label="Sidebar Navigation">
-      {/* Brand Icon */}
+      {/* Brand Icon (Clicking takes user to /) */}
       <button
         className="sidebar-logo"
-        onClick={() => onTabChange('dashboard')}
-        title="CAREEROS Student Dashboard"
+        onClick={() => navigate('/')}
+        title="CAREEROS Home"
         aria-label="CAREEROS Home"
       >
         <Activity size={24} strokeWidth={2.5} />
@@ -44,16 +78,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
       <nav className="sidebar-nav">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activeTab === item.id;
+          const active = isCurrentActive(item);
           return (
             <button
               key={item.id}
-              className={`nav-item ${isActive ? 'active' : ''}`}
-              onClick={() => onTabChange(item.id)}
+              className={`nav-item ${active ? 'active' : ''}`}
+              onClick={() => handleNavClick(item)}
               aria-label={item.label}
-              aria-current={isActive ? 'page' : undefined}
+              aria-current={active ? 'page' : undefined}
+              title={item.label}
             >
-              <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+              <Icon size={20} strokeWidth={active ? 2.5 : 2} />
               <span className="nav-tooltip">{item.label}</span>
             </button>
           );
@@ -63,17 +98,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
       {/* Bottom Footer Actions */}
       <div className="sidebar-footer">
         <button
-          className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
-          onClick={() => onTabChange('settings')}
-          aria-label="Settings"
-        >
-          <Settings size={20} />
-          <span className="nav-tooltip">Settings</span>
-        </button>
-        <button
-          className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
-          onClick={() => onTabChange('profile')}
+          className={`nav-item ${location.pathname === '/profile' || activeTab === 'profile' ? 'active' : ''}`}
+          onClick={() => navigate('/profile')}
           aria-label="Profile"
+          title="My Profile"
         >
           <User size={20} />
           <span className="nav-tooltip">My Profile</span>
@@ -82,3 +110,5 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
     </aside>
   );
 };
+
+export default Sidebar;
