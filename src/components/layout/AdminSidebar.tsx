@@ -2,30 +2,77 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
+  Sliders,
   Users,
   Building2,
   BarChart3,
   Settings,
   LogOut,
   GraduationCap,
-  Sparkles,
-  Layers,
+  LucideIcon,
 } from 'lucide-react';
+
+interface AdminNavItem {
+  id: string;
+  label: string;
+  path: string;
+  icon: LucideIcon;
+}
 
 export const AdminSidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const navItems = [
-    { id: 'dashboard', label: 'Admin Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { id: 'students', label: 'Student Cohort Roster', path: '/admin/students', icon: Users },
-    { id: 'drives', label: 'Campus Placement Drives', path: '/admin/drives', icon: Building2 },
-    { id: 'analytics', label: 'Batch Readiness Analytics', path: '/admin/analytics', icon: BarChart3 },
-    { id: 'settings', label: 'Campus TPO Settings', path: '/admin/settings', icon: Settings },
+  // Navigation Items for College Admin & TPO Placement Command Center
+  const navItems: AdminNavItem[] = [
+    {
+      id: 'dashboard',
+      label: 'Admin Dashboard',
+      path: '/admin/dashboard',
+      icon: LayoutDashboard,
+    },
+    {
+      id: 'control',
+      label: 'Placement Control Center',
+      path: '/admin/control',
+      icon: Sliders,
+    },
+    {
+      id: 'students',
+      label: 'Student Cohort Roster',
+      path: '/admin/students',
+      icon: Users,
+    },
+    {
+      id: 'drives',
+      label: 'Campus Placement Drives',
+      path: '/admin/drives',
+      icon: Building2,
+    },
+    {
+      id: 'analytics',
+      label: 'Batch Readiness Analytics',
+      path: '/admin/analytics',
+      icon: BarChart3,
+    },
+    {
+      id: 'settings',
+      label: 'Campus TPO Settings',
+      path: '/admin/settings',
+      icon: Settings,
+    },
   ];
 
+  const checkIsActive = (item: AdminNavItem) => {
+    if (location.pathname === item.path) return true;
+    if (item.id === 'control' && (location.pathname === '/admin/control' || location.pathname === '/admin/settings')) {
+      return true;
+    }
+    return false;
+  };
+
   return (
-    <aside className="admin-sidebar" aria-label="College Admin Sidebar">
+    <aside className="admin-sidebar" aria-label="College Admin Sidebar Navigation">
       {/* Brand Header */}
       <div className="admin-sidebar-brand">
         <div className="admin-sidebar-logo-icon">
@@ -45,12 +92,14 @@ export const AdminSidebar: React.FC = () => {
       <nav className="admin-sidebar-nav">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const isActive = checkIsActive(item);
           return (
             <button
               key={item.id}
               className={`admin-nav-item ${isActive ? 'active' : ''}`}
               onClick={() => navigate(item.path)}
+              aria-current={isActive ? 'page' : undefined}
+              type="button"
             >
               <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
               <span>{item.label}</span>
@@ -99,6 +148,7 @@ export const AdminSidebar: React.FC = () => {
             fontWeight: 700,
             cursor: 'pointer',
           }}
+          type="button"
         >
           <LogOut size={14} />
           <span>Exit Admin Portal (Logout)</span>

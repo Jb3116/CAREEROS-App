@@ -47,10 +47,11 @@ export const App: React.FC = () => {
         {/* Authenticated College Admin & TPO Experience (Protected by AdminLayout) */}
         <Route element={<AdminLayout />}>
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/control" element={<AdminSettingsPage />} />
+          <Route path="/admin/settings" element={<AdminSettingsPage />} />
           <Route path="/admin/students" element={<AdminDashboardPage />} />
           <Route path="/admin/drives" element={<AdminDashboardPage />} />
           <Route path="/admin/analytics" element={<AdminDashboardPage />} />
-          <Route path="/admin/settings" element={<AdminSettingsPage />} />
         </Route>
 
         {/* Fallback / Catch-all */}
