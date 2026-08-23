@@ -1,8 +1,9 @@
-// Server API handlers for CAREEROS Student Dashboard & AI DKT Intelligence
+// Server API handlers for CAREEROS Student Dashboard & AI Services (DKT + Sentence-BERT)
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { DKTInference, trainDKT, SKILL_MAP } from '../ai/dkt-engine.mjs';
+import { SentenceBERTSkillGapService, matchSkillSemantics, TARGET_ROLE_BLUEPRINTS, EMBEDDING_MODEL_INFO } from '../ai/sentence-bert-service.mjs';
 
 const DATA_DIR = join(process.cwd(), 'data');
 const EVENTS_FILE = join(DATA_DIR, 'student_events.json');
@@ -51,6 +52,8 @@ export async function handleApi(request, response) {
     
     // Get real-time DKT prediction
     const dktResult = DKTInference.predict(allEvents, studentId);
+    // Get Sentence-BERT skill gap analysis
+    const skillGapResult = SentenceBERTSkillGapService.analyzeSkillGaps(dktResult, 'swe');
 
     const defaultSkills = [
       { id: 's1', name: 'Coding', percentage: 72, level: 'Advanced', category: 'coding', targetPercentage: 85 },
@@ -80,6 +83,7 @@ export async function handleApi(request, response) {
         { id: 's3', name: 'Communication', percentage: dktResult.category_mastery.communication, level: dktResult.category_mastery.communication >= 85 ? 'Master' : 'Intermediate', category: 'communication', targetPercentage: 80 },
       ] : defaultSkills,
       dkt_intelligence: dktResult,
+      skill_gap_analysis: skillGapResult,
       deadline: {
         title: 'SWE Coding Assessment',
         company: 'Google Campus Drive',
@@ -99,8 +103,7 @@ export async function handleApi(request, response) {
     return;
   }
 
-  // ---------------- 2. Student Event Ingestion API ----------------
-  // POST /api/ai/student-event
+  // ---------------- 2. Student Event Ingestion API (DKT Telemetry) ----------------
   if (pathname === '/api/ai/student-event' && request.method === 'POST') {
     let body = '';
     request.on('data', (chunk) => {
@@ -111,7 +114,6 @@ export async function handleApi(request, response) {
       try {
         const payload = JSON.parse(body || '{}');
 
-        // Field validations
         if (!payload.student_id || typeof payload.student_id !== 'string') {
           response.writeHead(400);
           response.end(JSON.stringify({ error: 'Missing or invalid student_id parameter.' }));
@@ -141,7 +143,6 @@ export async function handleApi(request, response) {
 
         saveStudentEvent(newEvent);
 
-        // Fetch updated DKT skill prediction
         const history = getStudentEvents().filter((e) => e.student_id === payload.student_id);
         const prediction = DKTInference.predict(history, payload.student_id);
 
@@ -163,7 +164,6 @@ export async function handleApi(request, response) {
   }
 
   // ---------------- 3. DKT Skill Profile Inference API ----------------
-  // GET /api/ai/skill-profile/:student_id or GET /api/ai/skill-profile?student_id=s123
   if (pathname.startsWith('/api/ai/skill-profile') && request.method === 'GET') {
     const parts = pathname.split('/');
     let studentId = parts[4] || url.searchParams.get('student_id') || 's123';
@@ -182,8 +182,56 @@ export async function handleApi(request, response) {
     return;
   }
 
-  // ---------------- 4. DKT Model Training API ----------------
-  // POST /api/ai/train-dkt
+  // ---------------- 4. Sentence-BERT Skill Gap Detection API ----------------
+  // GET /api/ai/skill-gap/:student_id?target_role=swe
+  if (pathname.startsWith('/api/ai/skill-gap') && request.method === 'GET') {
+    const parts = pathname.split('/');
+    let studentId = parts[4] || url.searchParams.get('student_id') || 's123';
+    const targetRole = url.searchParams.get('target_role') || 'swe';
+
+    if (!studentId || studentId.trim() === '') {
+      response.writeHead(400);
+      response.end(JSON.stringify({ error: 'Missing student_id' }));
+      return;
+    }
+
+    const history = getStudentEvents().filter((e) => e.student_id === studentId);
+    const dktPrediction = DKTInference.predict(history, studentId);
+    const gapAnalysis = SentenceBERTSkillGapService.analyzeSkillGaps(dktPrediction, targetRole);
+
+    response.writeHead(200);
+    response.end(JSON.stringify(gapAnalysis));
+    return;
+  }
+
+  // POST /api/ai/skill-gap/semantic-match
+  if (pathname === '/api/ai/skill-gap/semantic-match' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => {
+      body += chunk;
+    });
+
+    request.on('end', () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const queryText = payload.query || payload.skill || '';
+        if (!queryText) {
+          response.writeHead(400);
+          response.end(JSON.stringify({ error: 'Missing query or skill field in request.' }));
+          return;
+        }
+        const matchResult = matchSkillSemantics(queryText);
+        response.writeHead(200);
+        response.end(JSON.stringify(matchResult));
+      } catch (err) {
+        response.writeHead(400);
+        response.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
+      }
+    });
+    return;
+  }
+
+  // ---------------- 5. DKT Model Training API ----------------
   if (pathname === '/api/ai/train-dkt' && request.method === 'POST') {
     try {
       const devDataPath = join(DATA_DIR, 'development_interactions.json');
@@ -191,7 +239,6 @@ export async function handleApi(request, response) {
       if (existsSync(devDataPath)) {
         dataset = JSON.parse(readFileSync(devDataPath, 'utf-8'));
       }
-      // Merge with live recorded events
       const liveEvents = getStudentEvents();
       dataset = dataset.concat(liveEvents);
 

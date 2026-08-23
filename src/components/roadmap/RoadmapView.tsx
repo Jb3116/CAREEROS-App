@@ -42,6 +42,18 @@ export const RoadmapView: React.FC = () => {
   const navigate = useNavigate();
   const [filterStatus, setFilterStatus] = useState<'all' | 'in-progress' | 'completed' | 'upcoming'>('all');
   const [activeModalMilestone, setActiveModalMilestone] = useState<Milestone | null>(null);
+  const [skillGapData, setSkillGapData] = useState<any>(null);
+
+  React.useEffect(() => {
+    fetch('/api/ai/skill-gap/s123?target_role=swe')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 'success') {
+          setSkillGapData(data);
+        }
+      })
+      .catch((err) => console.warn('Roadmap skill gap fetch notice:', err));
+  }, []);
 
   const [phases, setPhases] = useState<RoadmapPhase[]>([
     {
@@ -244,9 +256,9 @@ export const RoadmapView: React.FC = () => {
           </div>
           <div className="roadmap-stat-box">
             <span className="roadmap-stat-val" style={{ color: '#34D399' }}>
-              78% &rarr; 85%
+              {skillGapData ? `${skillGapData.role_fit_score}% Role Fit` : '78% → 85%'}
             </span>
-            <span className="roadmap-stat-lbl">Target Readiness Gain</span>
+            <span className="roadmap-stat-lbl">Target SDE Readiness</span>
           </div>
           <div className="roadmap-stat-box">
             <span className="roadmap-stat-val" style={{ color: '#FBBF24' }}>
@@ -256,9 +268,9 @@ export const RoadmapView: React.FC = () => {
           </div>
           <div className="roadmap-stat-box">
             <span className="roadmap-stat-val" style={{ color: '#F472B6' }}>
-              2 Tree Problems
+              {skillGapData?.summary?.top_critical_gap ? `Fix: ${skillGapData.summary.top_critical_gap}` : '2 Tree Problems'}
             </span>
-            <span className="roadmap-stat-lbl">Current High-Yield Action</span>
+            <span className="roadmap-stat-lbl">Sentence-BERT Priority Gap</span>
           </div>
         </div>
       </section>
