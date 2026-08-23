@@ -13,6 +13,12 @@ import {
   Rocket,
   Check,
   Zap,
+  Building,
+  Target,
+  BookOpen,
+  ChevronRight,
+  Award,
+  Calendar,
 } from 'lucide-react';
 
 export const OnboardingPage: React.FC = () => {
@@ -22,18 +28,20 @@ export const OnboardingPage: React.FC = () => {
   // Form State
   const [formData, setFormData] = useState({
     fullName: 'Alex Chen',
-    college: 'Vellore Institute of Technology',
+    college: 'Vellore Institute of Technology, Vellore',
     degree: 'B.Tech in Computer Science & Engineering',
-    gradYear: '2027 (3rd Year)',
+    currentYear: '3rd Year (Cohort 2027)',
+    gradYear: '2027',
     cgpa: '8.9',
+    rollNumber: '23BCE1042',
     targetRoles: ['Software Development Engineer', 'Full Stack Developer'],
-    targetCompanyTypes: ['Tier-1 Product Companies', 'High-Growth Tech Startups'],
-    primaryLanguages: ['C++', 'Python', 'TypeScript'],
-    frameworks: ['React', 'Node.js', 'PostgreSQL'],
-    dsaLevel: 'Intermediate (150+ LeetCode solved)',
-    weeklyHours: '10 - 15 Hours / Week',
-    routinePreference: 'Evening (6 PM - 10 PM)',
-    targetAssessment: 'Google Campus Drive (Aug 2026)',
+    targetCompanyTypes: ['Tier-1 Product Companies (FAANG & High Tier)', 'High-Growth Tech Startups'],
+    primaryLanguages: ['C++', 'Python', 'TypeScript', 'SQL'],
+    frameworks: ['React', 'Node.js', 'PostgreSQL', 'Docker'],
+    dsaLevel: 'Intermediate (150+ LeetCode solved - Trees, Graphs, DP)',
+    weeklyHours: '10 - 15 Hours / Week (Recommended)',
+    routinePreference: 'Evening (6:00 PM - 10:00 PM)',
+    targetAssessment: 'Google & Goldman Sachs Campus Drive (Aug 2026)',
   });
 
   const toggleRole = (role: string) => {
@@ -64,19 +72,26 @@ export const OnboardingPage: React.FC = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < 5) setCurrentStep(currentStep + 1);
-    else navigate('/dashboard');
+    if (currentStep < 5) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   const prevStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const steps = [
     { num: 1, label: 'Profile', icon: GraduationCap },
-    { num: 2, label: 'Goals', icon: Briefcase },
+    { num: 2, label: 'Career Goals', icon: Target },
     { num: 3, label: 'Tech Stack', icon: Code2 },
-    { num: 4, label: 'Routine', icon: Clock },
+    { num: 4, label: 'Study Routine', icon: Clock },
     { num: 5, label: 'AI Roadmap', icon: Rocket },
   ];
 
@@ -92,9 +107,14 @@ export const OnboardingPage: React.FC = () => {
             <span>CAREEROS</span>
           </Link>
 
-          <button className="onboard-skip-btn" onClick={() => navigate('/dashboard')}>
-            Skip to Dashboard →
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <span style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>
+              Step {currentStep} of {steps.length}
+            </span>
+            <button className="onboard-skip-btn" onClick={() => navigate('/dashboard')}>
+              Skip to Dashboard →
+            </button>
+          </div>
         </div>
 
         {/* 5-Step Progress Tracker */}
@@ -115,6 +135,8 @@ export const OnboardingPage: React.FC = () => {
                 key={s.num}
                 className={`onboard-step-node ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
                 onClick={() => setCurrentStep(s.num)}
+                role="button"
+                tabIndex={0}
               >
                 <div className="onboard-node-circle">
                   {isCompleted ? <Check size={16} strokeWidth={3} /> : <Icon size={16} />}
@@ -126,64 +148,95 @@ export const OnboardingPage: React.FC = () => {
         </div>
       </header>
 
-      {/* ---------------- Wizard Card ---------------- */}
+      {/* ---------------- Main Wizard Card ---------------- */}
       <main className="onboard-card">
-        {/* Step 1: Education & Personal */}
+        {/* Step 1: Education & Academic Identity */}
         {currentStep === 1 && (
           <>
             <div className="onboard-card-header">
-              <h1 className="onboard-card-title">Step 1: Academic & Student Profile 🎓</h1>
+              <h1 className="onboard-card-title">Step 1: Academic & University Identity 🎓</h1>
               <p className="onboard-card-desc">
-                Help CAREEROS calibrate your initial syllabus and benchmark against peer averages.
+                Help CAREEROS calibrate your initial syllabus and benchmark against peer cohort averages.
               </p>
             </div>
 
             <div className="onboard-form">
               <div className="onboard-grid-2">
                 <div className="onboard-field">
-                  <label className="onboard-label">Full Name</label>
+                  <label className="onboard-label">Full Legal Name</label>
                   <input
                     type="text"
                     className="onboard-input"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                     placeholder="e.g. Alex Chen"
+                    required
                   />
                 </div>
                 <div className="onboard-field">
-                  <label className="onboard-label">Graduation Year / Cohort</label>
-                  <select
-                    className="onboard-select"
-                    value={formData.gradYear}
-                    onChange={(e) => setFormData({ ...formData, gradYear: e.target.value })}
-                  >
-                    <option>2027 (3rd Year)</option>
-                    <option>2028 (2nd Year)</option>
-                    <option>2026 (Final Year)</option>
-                    <option>2029 (1st Year)</option>
-                  </select>
+                  <label className="onboard-label">Student ID / Roll Number</label>
+                  <input
+                    type="text"
+                    className="onboard-input"
+                    value={formData.rollNumber}
+                    onChange={(e) => setFormData({ ...formData, rollNumber: e.target.value })}
+                    placeholder="e.g. 23BCE1042"
+                  />
                 </div>
               </div>
 
               <div className="onboard-field">
                 <label className="onboard-label">College / University</label>
-                <input
-                  type="text"
-                  className="onboard-input"
+                <select
+                  className="onboard-select"
                   value={formData.college}
                   onChange={(e) => setFormData({ ...formData, college: e.target.value })}
-                  placeholder="e.g. Vellore Institute of Technology"
-                />
+                >
+                  <option>Vellore Institute of Technology, Vellore</option>
+                  <option>IIT Bombay</option>
+                  <option>BITS Pilani</option>
+                  <option>NIT Trichy</option>
+                  <option>IIIT Hyderabad</option>
+                  <option>Delhi Technological University</option>
+                  <option>Other Engineering College</option>
+                </select>
               </div>
 
               <div className="onboard-grid-2">
                 <div className="onboard-field">
-                  <label className="onboard-label">Degree & Specialization</label>
+                  <label className="onboard-label">Degree & Department</label>
                   <input
                     type="text"
                     className="onboard-input"
                     value={formData.degree}
                     onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
+                    placeholder="e.g. B.Tech in Computer Science & Engineering"
+                  />
+                </div>
+                <div className="onboard-field">
+                  <label className="onboard-label">Current Academic Year</label>
+                  <select
+                    className="onboard-select"
+                    value={formData.currentYear}
+                    onChange={(e) => setFormData({ ...formData, currentYear: e.target.value })}
+                  >
+                    <option>1st Year (Class of 2029)</option>
+                    <option>2nd Year (Class of 2028)</option>
+                    <option>3rd Year (Cohort 2027)</option>
+                    <option>4th Year / Final (Class of 2026)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="onboard-grid-2">
+                <div className="onboard-field">
+                  <label className="onboard-label">Graduation Year</label>
+                  <input
+                    type="text"
+                    className="onboard-input"
+                    value={formData.gradYear}
+                    onChange={(e) => setFormData({ ...formData, gradYear: e.target.value })}
+                    placeholder="e.g. 2027"
                   />
                 </div>
                 <div className="onboard-field">
@@ -201,19 +254,19 @@ export const OnboardingPage: React.FC = () => {
           </>
         )}
 
-        {/* Step 2: Target Roles & Companies */}
+        {/* Step 2: Target Career Goals & Roles */}
         {currentStep === 2 && (
           <>
             <div className="onboard-card-header">
-              <h1 className="onboard-card-title">Step 2: Target Career Goals 🎯</h1>
+              <h1 className="onboard-card-title">Step 2: Target Career Goals & Roles 🎯</h1>
               <p className="onboard-card-desc">
-                Select the technical roles and hiring tier environments you are preparing for.
+                Select the technical engineering tracks and company environments you are targeting.
               </p>
             </div>
 
             <div className="onboard-form">
               <div className="onboard-field">
-                <label className="onboard-label">Target Roles (Select all that apply)</label>
+                <label className="onboard-label">Primary Target Roles (Select all that apply)</label>
                 <div className="onboard-pill-group">
                   {[
                     'Software Development Engineer',
@@ -243,8 +296,8 @@ export const OnboardingPage: React.FC = () => {
                 <label className="onboard-label">Target Company Tiers</label>
                 <div className="onboard-pill-group">
                   {[
-                    'Tier-1 Product Companies (Google, Microsoft, Amazon)',
-                    'High-Growth Tech Startups (Zepto, Razorpay, Uber)',
+                    'Tier-1 Product Companies (FAANG & High Tier)',
+                    'High-Growth Tech Startups',
                     'FinTech & Quant Firms (Goldman Sachs, D.E. Shaw)',
                     'IT Services & Enterprise Consulting',
                   ].map((comp) => {
@@ -267,7 +320,7 @@ export const OnboardingPage: React.FC = () => {
           </>
         )}
 
-        {/* Step 3: Programming Languages & Stack */}
+        {/* Step 3: Tech Stack & Coding Languages */}
         {currentStep === 3 && (
           <>
             <div className="onboard-card-header">
@@ -279,7 +332,7 @@ export const OnboardingPage: React.FC = () => {
 
             <div className="onboard-form">
               <div className="onboard-field">
-                <label className="onboard-label">Primary Coding Languages</label>
+                <label className="onboard-label">Primary Programming Languages</label>
                 <div className="onboard-pill-group">
                   {['C++', 'Java', 'Python', 'TypeScript', 'JavaScript', 'Go', 'SQL', 'C#'].map((lang) => {
                     const isSelected = formData.primaryLanguages.includes(lang);
@@ -305,17 +358,17 @@ export const OnboardingPage: React.FC = () => {
                   value={formData.dsaLevel}
                   onChange={(e) => setFormData({ ...formData, dsaLevel: e.target.value })}
                 >
-                  <option>Beginner (Starting with Arrays, Strings & Math)</option>
-                  <option>Intermediate (150+ LeetCode solved - Trees, Recursion, Stack)</option>
-                  <option>Advanced (300+ Solved - Dynamic Programming, Graphs, Tries)</option>
-                  <option>Competitive Programmer (Codeforces / CodeChef active)</option>
+                  <option>Beginner (0 - 50 problems: Arrays, Strings, Basic Math)</option>
+                  <option>Intermediate (150+ LeetCode solved - Trees, Graphs, DP)</option>
+                  <option>Advanced (300+ Solved - Dynamic Programming, Tries, Segment Trees)</option>
+                  <option>Competitive Programmer (Codeforces 1600+ / LeetCode Knight)</option>
                 </select>
               </div>
             </div>
           </>
         )}
 
-        {/* Step 4: Availability & Schedule */}
+        {/* Step 4: Schedule & Study Routine */}
         {currentStep === 4 && (
           <>
             <div className="onboard-card-header">
@@ -328,15 +381,15 @@ export const OnboardingPage: React.FC = () => {
             <div className="onboard-form">
               <div className="onboard-grid-2">
                 <div className="onboard-field">
-                  <label className="onboard-label">Weekly Prep Hours</label>
+                  <label className="onboard-label">Weekly Prep Hours Commitment</label>
                   <select
                     className="onboard-select"
                     value={formData.weeklyHours}
                     onChange={(e) => setFormData({ ...formData, weeklyHours: e.target.value })}
                   >
-                    <option>5 - 10 Hours / Week (Light)</option>
+                    <option>5 - 10 Hours / Week (Light / Balance with Classes)</option>
                     <option>10 - 15 Hours / Week (Recommended)</option>
-                    <option>15 - 25 Hours / Week (Intensive)</option>
+                    <option>15 - 25 Hours / Week (Intensive Sprint)</option>
                   </select>
                 </div>
                 <div className="onboard-field">
@@ -346,21 +399,22 @@ export const OnboardingPage: React.FC = () => {
                     value={formData.routinePreference}
                     onChange={(e) => setFormData({ ...formData, routinePreference: e.target.value })}
                   >
-                    <option>Morning (6 AM - 9 AM)</option>
-                    <option>Afternoon (1 PM - 4 PM)</option>
-                    <option>Evening (6 PM - 10 PM)</option>
-                    <option>Night Owl (10 PM - 1 AM)</option>
+                    <option>Early Bird (6:00 AM - 9:00 AM)</option>
+                    <option>Afternoon (1:00 PM - 4:00 PM)</option>
+                    <option>Evening (6:00 PM - 10:00 PM)</option>
+                    <option>Night Owl (10:00 PM - 1:00 AM)</option>
                   </select>
                 </div>
               </div>
 
               <div className="onboard-field">
-                <label className="onboard-label">First Upcoming Assessment / Drive</label>
+                <label className="onboard-label">Target Placement Drive / Milestone</label>
                 <input
                   type="text"
                   className="onboard-input"
                   value={formData.targetAssessment}
                   onChange={(e) => setFormData({ ...formData, targetAssessment: e.target.value })}
+                  placeholder="e.g. Google & Goldman Sachs Campus Drive (Aug 2026)"
                 />
               </div>
             </div>
@@ -404,7 +458,7 @@ export const OnboardingPage: React.FC = () => {
               </div>
 
               <div style={{ background: 'rgba(255,255,255,0.08)', padding: 14, borderRadius: 12, fontSize: 13, lineHeight: 1.5, color: '#E0E7FF' }}>
-                💡 <strong>Next Best Action:</strong> Complete the <em>2 Tree Problems</em> module in your Practice Arena to bridge the detected Binary Search Tree mastery gap before the upcoming Google Campus Assessment.
+                💡 <strong>High-Yield Priority:</strong> Complete the <em>2 Tree Problems</em> module in your Practice Arena to bridge the detected Binary Search Tree mastery gap before the upcoming Google Campus Assessment.
               </div>
             </div>
           </>
