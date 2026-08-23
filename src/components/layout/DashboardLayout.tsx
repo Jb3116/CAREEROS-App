@@ -4,6 +4,7 @@ import { AppSidebar } from './AppSidebar';
 import { Header } from './Header';
 import { DetailModal, ModalContentType } from '../dashboard/DetailModal';
 import { AiMentorChatModal } from '../chat/AiMentorChatModal';
+import { AiWebsiteTour } from '../tour/AiWebsiteTour';
 import { StudentProfile } from '../../types/dashboard';
 
 export const DashboardLayout: React.FC = () => {
@@ -58,6 +59,9 @@ export const DashboardLayout: React.FC = () => {
 
       {/* Floating CAREEROS AI Career Mentor Widget */}
       <AiMentorChatModal />
+
+      {/* Interactive AI Website Tour Overlay */}
+      <AiWebsiteTour />
     </div>
   );
 };

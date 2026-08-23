@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   MessageSquare,
   Sparkles,
@@ -13,6 +14,7 @@ import {
   Target,
   BrainCircuit,
   Loader2,
+  Compass,
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -20,6 +22,8 @@ interface ChatMessage {
   role: 'user' | 'model';
   text: string;
   timestamp: string;
+  actionUrl?: string;
+  actionLabel?: string;
 }
 
 interface StudentContext {
@@ -30,6 +34,7 @@ interface StudentContext {
 }
 
 export const AiMentorChatModal: React.FC = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +43,7 @@ export const AiMentorChatModal: React.FC = () => {
     {
       id: 'welcome-1',
       role: 'model',
-      text: `👋 Hi Alex! I'm your **CAREEROS AI Career Mentor**.\n\nI'm actively tracking your **DKT Knowledge State** and **Sentence-BERT Skill Gaps** for upcoming campus placement drives.\n\nHow can I help you today? Choose a quick prompt below or ask me anything!`,
+      text: `👋 Hi Alex! I'm your **CAREEROS AI Career Mentor**.\n\nI'm actively tracking your **DKT Knowledge State** and **Sentence-BERT Skill Gaps** for upcoming campus placement drives.\n\nHow can I help you today? Take the interactive website tour, choose a quick prompt below, or ask me anything!`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -47,10 +52,11 @@ export const AiMentorChatModal: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const quickPrompts = [
-    'What should I learn next?',
-    'Explain my skill gaps',
-    'Create a 30-day roadmap',
-    'Prepare me for an interview',
+    '🎯 Start Interactive Website Tour',
+    '🎤 Start STAR Interview Drill',
+    '💻 Start Technical Interview',
+    '📊 Explain my skill gaps',
+    '🗺️ View Adaptive Roadmap',
   ];
 
   // Auto-scroll to bottom of messages
@@ -70,6 +76,24 @@ export const AiMentorChatModal: React.FC = () => {
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputMessage).trim();
     if (!text || isLoading) return;
+
+    // Intercept Website Tour command
+    if (text.toLowerCase().includes('tour')) {
+      window.dispatchEvent(new CustomEvent('careeros-start-tour'));
+      setIsOpen(false);
+      return;
+    }
+
+    // Smart Navigation Assist
+    if (text.toLowerCase().includes('technical interview') || text.toLowerCase().includes('star interview') || text.toLowerCase().includes('interview studio')) {
+      navigate('/interview');
+    } else if (text.toLowerCase().includes('practice') || text.toLowerCase().includes('code practice')) {
+      navigate('/practice');
+    } else if (text.toLowerCase().includes('assessment') || text.toLowerCase().includes('diagnostic test')) {
+      navigate('/assessment');
+    } else if (text.toLowerCase().includes('roadmap') || text.toLowerCase().includes('learning path')) {
+      navigate('/roadmap');
+    }
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,

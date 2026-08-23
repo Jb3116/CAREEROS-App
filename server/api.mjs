@@ -7,6 +7,13 @@ import { SentenceBERTSkillGapService, matchSkillSemantics, TARGET_ROLE_BLUEPRINT
 import { handleMentorChat } from '../ai/mentor-service.mjs';
 import { generateAdaptiveRoadmap } from '../ai/adaptive-roadmap-service.mjs';
 import { analyzeCodeSubmission } from '../ai/code-analysis-service.mjs';
+import {
+  startInterviewSession,
+  getInterviewQuestion,
+  analyzeCandidateResponse,
+  generateInterviewFollowUp,
+  generateFinalInterviewReport,
+} from '../ai/interview-service.mjs';
 
 const DATA_DIR = join(process.cwd(), 'data');
 const EVENTS_FILE = join(DATA_DIR, 'student_events.json');
@@ -400,7 +407,132 @@ export async function handleApi(request, response) {
     return;
   }
 
-  // ---------------- 8. DKT Model Training API ----------------
+  // ---------------- 8. AI Interview Studio Endpoints ----------------
+  // 8.1 Start Interview Session
+  if (pathname === '/api/ai/interview/start' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => { body += chunk; });
+    request.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const session = await startInterviewSession({
+          mode: payload.mode || 'star',
+          targetCareer: payload.target_career || 'swe',
+          studentId: payload.student_id || 's123',
+        });
+        response.writeHead(200);
+        response.end(JSON.stringify(session));
+      } catch (err) {
+        response.writeHead(500);
+        response.end(JSON.stringify({ error: 'Failed to start interview session', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  // 8.2 Get Interview Question
+  if (pathname === '/api/ai/interview/question' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => { body += chunk; });
+    request.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const qData = getInterviewQuestion(payload.mode || 'star', payload.question_index || 0);
+        response.writeHead(200);
+        response.end(JSON.stringify(qData));
+      } catch (err) {
+        response.writeHead(500);
+        response.end(JSON.stringify({ error: 'Failed to fetch interview question', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  // 8.3 Analyze Candidate Response
+  if (pathname === '/api/ai/interview/analyze' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => { body += chunk; });
+    request.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const analysis = await analyzeCandidateResponse({
+          mode: payload.mode || 'star',
+          question: payload.question || {},
+          transcript: payload.transcript || '',
+          audioDurationSeconds: payload.audio_duration_seconds || 45,
+        });
+        response.writeHead(200);
+        response.end(JSON.stringify(analysis));
+      } catch (err) {
+        response.writeHead(500);
+        response.end(JSON.stringify({ error: 'Interview response analysis failed', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  // 8.4 Generate Contextual Follow-up Question
+  if (pathname === '/api/ai/interview/follow-up' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => { body += chunk; });
+    request.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const followUp = await generateInterviewFollowUp({
+          mode: payload.mode || 'star',
+          question: payload.question || {},
+          transcript: payload.transcript || '',
+        });
+        response.writeHead(200);
+        response.end(JSON.stringify(followUp));
+      } catch (err) {
+        response.writeHead(500);
+        response.end(JSON.stringify({ error: 'Failed to generate follow-up question', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  // 8.5 Complete Interview & Generate Final Evaluation Report
+  if (pathname === '/api/ai/interview/complete' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => { body += chunk; });
+    request.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const report = await generateFinalInterviewReport({
+          studentId: payload.student_id || 's123',
+          mode: payload.mode || 'star',
+          responses: payload.responses || [],
+        });
+
+        // Telemetry into DKT
+        const skillKey = payload.mode === 'technical' ? 'algorithms' : 'communication';
+        saveStudentEvent({
+          student_id: payload.student_id || 's123',
+          skill: skillKey,
+          activity: 'mock_interview',
+          correct: report.overall_readiness_score >= 70,
+          difficulty: 'hard',
+          timestamp: new Date().toISOString(),
+          metadata: {
+            mode: payload.mode,
+            verdict: report.benchmark_verdict,
+            star_score: report.metrics.star_fluency_score,
+          },
+        });
+
+        response.writeHead(200);
+        response.end(JSON.stringify(report));
+      } catch (err) {
+        response.writeHead(500);
+        response.end(JSON.stringify({ error: 'Failed to complete interview evaluation', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  // ---------------- 9. DKT Model Training API ----------------
   if (pathname === '/api/ai/train-dkt' && request.method === 'POST') {
     try {
       const devDataPath = join(DATA_DIR, 'development_interactions.json');
