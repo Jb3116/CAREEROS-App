@@ -7,6 +7,8 @@ import { OnboardingPage } from './pages/OnboardingPage';
 import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 import { LearningPage } from './pages/LearningPage';
 import { RoadmapPage } from './pages/RoadmapPage';
+import { CareerRoadmapPage } from './pages/CareerRoadmapPage';
+import { AssessmentPage } from './pages/AssessmentPage';
 import { PracticePage } from './pages/PracticePage';
 import { ProfilePage } from './pages/ProfilePage';
 
@@ -26,7 +28,11 @@ export const App: React.FC = () => {
         {/* Student Dashboard Page */}
         <Route path="/dashboard" element={<DashboardPage />} />
 
-        {/* Adaptive Career Roadmap */}
+        {/* Placement Assessment Suite */}
+        <Route path="/assessment" element={<AssessmentPage />} />
+
+        {/* Career Roadmap Pages */}
+        <Route path="/career-roadmap" element={<CareerRoadmapPage />} />
         <Route path="/roadmap" element={<RoadmapPage />} />
 
         {/* Learning Hub & Handbooks */}

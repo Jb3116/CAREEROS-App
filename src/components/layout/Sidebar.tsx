@@ -11,6 +11,7 @@ import {
   User,
   Activity,
   Home,
+  Award,
   LucideIcon,
 } from 'lucide-react';
 import { NavTabId } from '../../types/dashboard';
@@ -32,9 +33,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
   const location = useLocation();
 
   const navItems: NavItemConfig[] = [
-    { id: 'home', label: 'Home', path: '/', icon: Home },
     { id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { id: 'roadmap', label: 'Career Roadmap', path: '/roadmap', icon: GitFork },
+    { id: 'assessment', label: 'Placement Assessment', path: '/assessment', icon: Award },
+    { id: 'career-roadmap', label: 'Career Roadmap', path: '/career-roadmap', icon: GitFork },
     { id: 'learning', label: 'Learning Hub', path: '/learning', icon: BookOpen },
     { id: 'practice', label: 'Practice & Coding', path: '/practice', icon: Code2 },
     { id: 'resume', label: 'ATS Resume Builder', path: '/resume-builder', icon: FileText },
@@ -43,7 +44,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
   const handleNavClick = (item: NavItemConfig) => {
     if (onTabChange && location.pathname === '/dashboard') {
       if (item.id === 'home') navigate('/');
-      else if (item.id === 'roadmap') navigate('/roadmap');
+      else if (item.id === 'assessment') navigate('/assessment');
+      else if (item.id === 'career-roadmap') navigate('/career-roadmap');
       else if (item.id === 'learning') navigate('/learning');
       else if (item.id === 'practice') navigate('/practice');
       else if (item.id === 'resume') navigate('/resume-builder');
@@ -56,10 +58,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
   const isCurrentActive = (item: NavItemConfig) => {
     if (activeTab) {
       if (activeTab === item.id) return true;
+      if (activeTab === 'roadmap' && item.id === 'career-roadmap') return true;
       if (activeTab === 'learn' && item.id === 'learning') return true;
       if (activeTab === 'resume' && item.id === 'resume') return true;
     }
-    return location.pathname === item.path;
+    if (location.pathname === item.path) return true;
+    if (item.id === 'career-roadmap' && (location.pathname === '/career-roadmap' || location.pathname === '/roadmap')) return true;
+    return false;
   };
 
   return (
