@@ -19,6 +19,7 @@ import { ResumeBuilderPage } from './pages/ResumeBuilderPage';
 // College Admin Layout & Components
 import { AdminLayout } from './components/layout/AdminLayout';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { AdminSettingsPage } from './pages/AdminSettingsPage';
 
 export const App: React.FC = () => {
   return (
@@ -49,7 +50,7 @@ export const App: React.FC = () => {
           <Route path="/admin/students" element={<AdminDashboardPage />} />
           <Route path="/admin/drives" element={<AdminDashboardPage />} />
           <Route path="/admin/analytics" element={<AdminDashboardPage />} />
-          <Route path="/admin/settings" element={<AdminDashboardPage />} />
+          <Route path="/admin/settings" element={<AdminSettingsPage />} />
         </Route>
 
         {/* Fallback / Catch-all */}

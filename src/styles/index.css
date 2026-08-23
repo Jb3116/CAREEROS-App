@@ -15,6 +15,7 @@
 @import './interview.css';
 @import './admin.css';
 @import './admin-dashboard.css';
+@import './admin-control.css';
 
 :root {
   /* Brand Colors */
