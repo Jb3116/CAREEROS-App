@@ -140,7 +140,7 @@ export const AppSidebar: React.FC = () => {
 
       {/* ---------------- Main Navigation Menu ---------------- */}
       <SidebarContent>
-        <SidebarMenu style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', alignItems: 'center' }}>
+        <SidebarMenu>
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isCurrentActive(item);

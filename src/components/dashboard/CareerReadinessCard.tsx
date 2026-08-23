@@ -81,16 +81,22 @@ export const CareerReadinessCard: React.FC<CareerReadinessCardProps> = ({
               </>
             ) : (
               <>
-                <span className="gauge-value" style={{ fontSize: 15, fontWeight: 800, color: '#64748B' }}>
-                  Not assessed
+                <span className="gauge-value" style={{ fontSize: 14, fontWeight: 800, color: '#64748B' }}>
+                  Not Assessed
                 </span>
-                <span className="gauge-label" style={{ fontSize: 11, color: '#94A3B8' }}>
-                  Take Assessment
+                <span className="gauge-label" style={{ fontSize: 10.5, color: '#94A3B8' }}>
+                  Awaiting Test
                 </span>
               </>
             )}
           </div>
         </div>
+
+        {!isAssessed && (
+          <div style={{ fontSize: 12, color: '#64748B', textAlign: 'center', lineHeight: 1.4, margin: '2px 0 6px' }}>
+            Complete your assessment to calculate your career readiness.
+          </div>
+        )}
 
         <button
           className="readiness-status-badge"

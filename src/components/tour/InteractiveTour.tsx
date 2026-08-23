@@ -130,6 +130,7 @@ export const getCurrentUserId = (): string => {
       if (authUser) {
         const parsed = JSON.parse(authUser);
         if (parsed?.id) return parsed.id;
+        if (parsed?.email) return parsed.email.replace(/[^a-zA-Z0-9_-]/g, '_');
       }
     }
   } catch (e) {}
@@ -138,7 +139,72 @@ export const getCurrentUserId = (): string => {
 
 export const getTourStorageKey = (userId?: string): string => {
   const uid = userId || getCurrentUserId();
-  return `careeros_tour_completed_${uid}`;
+  return `tour_completed_${uid}`;
+};
+
+/**
+ * Check if the onboarding tour has already been completed or dismissed
+ */
+export const isTourCompleted = (userId?: string): boolean => {
+  if (typeof window === 'undefined') return false;
+  try {
+    const uid = userId || getCurrentUserId();
+
+    // User-scoped keys
+    if (
+      localStorage.getItem(`tour_completed_${uid}`) === 'true' ||
+      localStorage.getItem(`tour_completed_${uid}`) === 'skipped' ||
+      localStorage.getItem(`careeros_tour_completed_${uid}`) === 'true' ||
+      localStorage.getItem(`careeros_tour_completed_${uid}`) === 'skipped'
+    ) {
+      return true;
+    }
+
+    // Global flags (fallback)
+    if (
+      localStorage.getItem('careeros_tour_completed') === 'true' ||
+      localStorage.getItem('careeros_tour_completed') === 'skipped' ||
+      localStorage.getItem('careeros_ai_tour_completed') === 'true' ||
+      localStorage.getItem('careeros_ai_tour_completed') === 'skipped' ||
+      localStorage.getItem('tour_completed') === 'true' ||
+      localStorage.getItem('tour_completed') === 'skipped'
+    ) {
+      return true;
+    }
+  } catch (e) {}
+  return false;
+};
+
+/**
+ * Mark the tour as completed / skipped in localStorage
+ */
+export const setTourCompleted = (userId?: string, status: 'true' | 'skipped' = 'true'): void => {
+  if (typeof window === 'undefined') return;
+  try {
+    const uid = userId || getCurrentUserId();
+    localStorage.setItem(`tour_completed_${uid}`, status);
+    localStorage.setItem(`careeros_tour_completed_${uid}`, status);
+    localStorage.setItem('careeros_tour_completed', status);
+    localStorage.setItem('careeros_ai_tour_completed', 'true');
+    localStorage.setItem('tour_completed', status);
+    localStorage.removeItem('careeros_tour_current_step');
+  } catch (e) {}
+};
+
+/**
+ * Reset/clear tour completion status in localStorage (for logouts & new users)
+ */
+export const clearTourCompleted = (userId?: string): void => {
+  if (typeof window === 'undefined') return;
+  try {
+    const uid = userId || getCurrentUserId();
+    localStorage.removeItem(`tour_completed_${uid}`);
+    localStorage.removeItem(`careeros_tour_completed_${uid}`);
+    localStorage.removeItem('careeros_tour_completed');
+    localStorage.removeItem('careeros_ai_tour_completed');
+    localStorage.removeItem('tour_completed');
+    localStorage.removeItem('careeros_tour_current_step');
+  } catch (e) {}
 };
 
 export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => {
@@ -158,11 +224,7 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
   const startTour = useCallback(
     (resetPersistence = false) => {
       if (resetPersistence) {
-        const uid = getCurrentUserId();
-        localStorage.removeItem(getTourStorageKey(uid));
-        localStorage.removeItem('careeros_ai_tour_completed');
-        localStorage.removeItem('careeros_tour_completed');
-        localStorage.removeItem('careeros_tour_current_step');
+        clearTourCompleted();
       }
 
       console.log('[AI TOUR] Starting automatic tour');
@@ -188,21 +250,7 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
     if (location.pathname !== '/dashboard') return;
 
     // Strictly check if tour has ever been completed or skipped
-    if (
-      typeof window !== 'undefined' &&
-      (localStorage.getItem('careeros_ai_tour_completed') === 'true' ||
-        localStorage.getItem('careeros_tour_completed') === 'true' ||
-        localStorage.getItem('careeros_tour_completed') === 'skipped')
-    ) {
-      return;
-    }
-
-    const uid = getCurrentUserId();
-    const userTourKey = getTourStorageKey(uid);
-    if (
-      typeof window !== 'undefined' &&
-      (localStorage.getItem(userTourKey) === 'true' || localStorage.getItem(userTourKey) === 'skipped')
-    ) {
+    if (isTourCompleted()) {
       return;
     }
 
@@ -350,10 +398,7 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
 
   const handleComplete = (routeToOnboarding = true) => {
     const uid = getCurrentUserId();
-    localStorage.setItem('careeros_ai_tour_completed', 'true');
-    localStorage.setItem(getTourStorageKey(uid), 'true');
-    localStorage.setItem('careeros_tour_completed', 'true');
-    localStorage.removeItem('careeros_tour_current_step');
+    setTourCompleted(uid, 'true');
     setIsVisible(false);
     if (onClose) onClose();
 
@@ -364,10 +409,7 @@ export const InteractiveTour: React.FC<InteractiveTourProps> = ({ onClose }) => 
 
   const handleSkip = useCallback(() => {
     const uid = getCurrentUserId();
-    localStorage.setItem('careeros_ai_tour_completed', 'true');
-    localStorage.setItem(getTourStorageKey(uid), 'skipped');
-    localStorage.setItem('careeros_tour_completed', 'skipped');
-    localStorage.removeItem('careeros_tour_current_step');
+    setTourCompleted(uid, 'skipped');
     setIsVisible(false);
     if (onClose) onClose();
     navigate('/onboarding');

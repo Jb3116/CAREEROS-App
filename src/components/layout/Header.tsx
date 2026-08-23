@@ -19,6 +19,7 @@ import {
 import { StudentProfile } from '../../types/dashboard';
 import { StreakCalendar } from '../common/StreakCalendar';
 import { useStudentProfile } from '../../utils/userProfile';
+import { clearTourCompleted } from '../tour/InteractiveTour';
 
 interface HeaderProps {
   profile?: StudentProfile;
@@ -400,6 +401,10 @@ export const Header: React.FC<HeaderProps> = ({ profile }) => {
                 onClick={() => {
                   setShowProfileMenu(false);
                   localStorage.removeItem('careeros_auth_user');
+                  localStorage.removeItem('careeros_student_profile');
+                  localStorage.removeItem('careeros_event_ledger');
+                  localStorage.removeItem('careeros_local_events');
+                  clearTourCompleted();
                   navigate('/login');
                 }}
                 style={{

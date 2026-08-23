@@ -181,7 +181,7 @@ export function generateAutomatedTodaysPlan(
       route: '/practice',
       actionLabel: 'Launch Sandbox',
       status: todayCompleted.has('problemSolved') ? 'completed' : 'not_started',
-      rationale: 'Targeted skill gap: Tree & DP optimization accuracy is currently at 58%.',
+      rationale: 'Targeted skill gap: Remediation sprint calibrated from your verified diagnostic assessment.',
     },
     {
       id: 'task-lang-1',

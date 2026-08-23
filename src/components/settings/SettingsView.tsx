@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Settings, Bell, Shield, Key, Moon, Sun, Laptop, Save, Sparkles } from 'lucide-react';
+import { clearTourCompleted } from '../tour/InteractiveTour';
 
 export const SettingsView: React.FC = () => {
   const [emailAlerts, setEmailAlerts] = useState(true);
@@ -18,48 +19,35 @@ export const SettingsView: React.FC = () => {
         </p>
       </div>
 
-      <div style={{ background: '#FFFFFF', borderRadius: 18, border: '1px solid #E2E8F0', padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Preferences Grid */}
+      <div style={{ background: '#FFFFFF', borderRadius: 18, border: '1px solid #E2E8F0', padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <h2 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', borderBottom: '1px solid #F1F5F9', paddingBottom: 8 }}>
-          Notification Preferences
+          AI Notifications & Automation
         </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E293B' }}>Real-time Opportunity Alerts</div>
+              <div style={{ fontSize: 12.5, color: '#64748B' }}>Get notified instantly when new internship match scores exceed 85%.</div>
+            </div>
+            <input type="checkbox" checked={emailAlerts} onChange={(e) => setEmailAlerts(e.target.checked)} style={{ width: 18, height: 18, accentColor: '#4F46E5' }} />
+          </label>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#1E293B' }}>Campus Drive & Assessment Deadlines</div>
-            <div style={{ fontSize: 12.5, color: '#64748B' }}>Receive urgent alerts 48h before registered tests</div>
-          </div>
-          <input
-            type="checkbox"
-            checked={emailAlerts}
-            onChange={(e) => setEmailAlerts(e.target.checked)}
-            style={{ width: 18, height: 18, accentColor: '#4F46E5' }}
-          />
-        </div>
+          <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E293B' }}>Daily Adaptive Practice Reminders</div>
+              <div style={{ fontSize: 12.5, color: '#64748B' }}>Receive curated morning study tasks aligned with upcoming company test dates.</div>
+            </div>
+            <input type="checkbox" checked={dailyReminders} onChange={(e) => setDailyReminders(e.target.checked)} style={{ width: 18, height: 18, accentColor: '#4F46E5' }} />
+          </label>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#1E293B' }}>Daily Adaptive Practice Reminders</div>
-            <div style={{ fontSize: 12.5, color: '#64748B' }}>Maintain your streak and execute scheduled high-yield tasks</div>
-          </div>
-          <input
-            type="checkbox"
-            checked={dailyReminders}
-            onChange={(e) => setDailyReminders(e.target.checked)}
-            style={{ width: 18, height: 18, accentColor: '#4F46E5' }}
-          />
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#1E293B' }}>Automated ATS Resume Sync</div>
-            <div style={{ fontSize: 12.5, color: '#64748B' }}>Recalculate ATS matching when new projects or skills are completed</div>
-          </div>
-          <input
-            type="checkbox"
-            checked={autoAtsCheck}
-            onChange={(e) => setAutoAtsCheck(e.target.checked)}
-            style={{ width: 18, height: 18, accentColor: '#4F46E5' }}
-          />
+          <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E293B' }}>Automated Resume ATS Scoring</div>
+              <div style={{ fontSize: 12.5, color: '#64748B' }}>Re-evaluate your resume whenever new project achievements or skill milestones are logged.</div>
+            </div>
+            <input type="checkbox" checked={autoAtsCheck} onChange={(e) => setAutoAtsCheck(e.target.checked)} style={{ width: 18, height: 18, accentColor: '#4F46E5' }} />
+          </label>
         </div>
       </div>
 
@@ -77,7 +65,7 @@ export const SettingsView: React.FC = () => {
           </div>
           <button
             onClick={() => {
-              localStorage.removeItem('careeros_tour_completed');
+              clearTourCompleted();
               window.dispatchEvent(new CustomEvent('careeros-start-tour'));
             }}
             style={{

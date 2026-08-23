@@ -408,7 +408,7 @@ export const AssessmentView: React.FC = () => {
         aptitudeAttemptedCount: answeredAptitudeCount,
         aptitudeCorrectCount: correctAptitudeCount,
         aptitudeScore,
-        overallScore: Math.min(98, overallReadiness),
+        overallScore: Math.min(100, Math.round(overallReadiness)),
         categoryStats,
         difficultyStats,
         submittedAt: new Date().toISOString(),
@@ -419,8 +419,8 @@ export const AssessmentView: React.FC = () => {
 
       // Save verified readiness score & streak to live student profile
       saveStudentProfile({
-        readinessScore: Math.min(98, overallReadiness),
-        careerReadiness: Math.min(98, overallReadiness),
+        readinessScore: Math.min(100, Math.round(overallReadiness)),
+        careerReadiness: Math.min(100, Math.round(overallReadiness)),
         assessmentCompleted: true,
         assessmentStatus: 'completed',
         streakDays: Math.max(1, studentProfile.streakDays || 1),
@@ -432,7 +432,7 @@ export const AssessmentView: React.FC = () => {
           id: 'phase-1',
           phaseNumber: 1,
           title: 'Diagnostic Baseline & Core Foundations',
-          subtitle: `Calibrated Baseline (${Math.min(98, overallReadiness)}% Readiness) & Algorithmic Patterns`,
+          subtitle: `Calibrated Baseline (${Math.min(100, Math.round(overallReadiness))}% Readiness) & Algorithmic Patterns`,
           status: 'completed' as const,
           milestones: [
             {
@@ -441,7 +441,7 @@ export const AssessmentView: React.FC = () => {
               description: `Completed diagnosis with ${aptitudeScore ?? 0}% Aptitude Score and ${codingAttemptedCount} Coding submissions.`,
               status: 'completed' as const,
               difficulty: 'Intermediate' as const,
-              topics: ['Diagnostic Coding Test', 'Quantitative Aptitude Test', `Diagnostic Score: ${Math.min(98, overallReadiness)}%`],
+              topics: ['Diagnostic Coding Test', 'Quantitative Aptitude Test', `Diagnostic Score: ${Math.min(100, Math.round(overallReadiness))}%`],
               skill_id: 'algorithms',
               whyThisSkill: 'Calibrated cold-start diagnostic baseline for knowledge tracing algorithms.',
             },

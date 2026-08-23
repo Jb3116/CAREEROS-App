@@ -23,6 +23,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { getStudentProfile, saveStudentProfile } from '../utils/userProfile';
+import { setProfileCompleted } from '../utils/assessmentValidation';
 
 export const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ export const OnboardingPage: React.FC = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       // Save all inputted details to the global user profile and state
-      saveStudentProfile({
+      const saved = saveStudentProfile({
         name: formData.fullName || 'Student',
         college: formData.college,
         degree: formData.degree,
@@ -101,6 +102,7 @@ export const OnboardingPage: React.FC = () => {
         primaryLanguages: formData.primaryLanguages,
       });
 
+      setProfileCompleted(true, saved.email);
       navigate('/assessment');
     }
   };
@@ -527,16 +529,16 @@ export const OnboardingPage: React.FC = () => {
 
               <div className="onboard-summary-stats" style={{ marginTop: 14 }}>
                 <div className="onboard-summary-stat-card">
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#FFFFFF' }}>78%</div>
-                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>{formData.currentYear} Readiness</div>
+                  <div style={{ fontSize: 16, fontWeight: 900, color: '#818CF8' }}>Diagnostic Ready</div>
+                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>{formData.currentYear} Baseline</div>
                 </div>
                 <div className="onboard-summary-stat-card">
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#34D399' }}>91%</div>
-                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>ATS Resume Score</div>
+                  <div style={{ fontSize: 16, fontWeight: 900, color: '#34D399' }}>Target 90%+</div>
+                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>Tier-1 Placement Cutoff</div>
                 </div>
                 <div className="onboard-summary-stat-card">
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#FBBF24' }}>94%</div>
-                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>Target Match</div>
+                  <div style={{ fontSize: 16, fontWeight: 900, color: '#FBBF24' }}>AI Calibrated</div>
+                  <div style={{ fontSize: 11, color: '#C7D2FE', marginTop: 2 }}>Adaptive DKT Tracking</div>
                 </div>
               </div>
 

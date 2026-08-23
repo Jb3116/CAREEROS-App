@@ -271,6 +271,7 @@ export function clearAssessmentRecord(studentId?: string): void {
     localStorage.removeItem('careeros_assessment_coding');
     localStorage.removeItem('careeros_assessment_aptitude');
     localStorage.removeItem('careeros_career_roadmap');
+    localStorage.removeItem('careeros_profile_completed');
 
     if (studentId) {
       const cleanId = String(studentId).replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -278,6 +279,51 @@ export function clearAssessmentRecord(studentId?: string): void {
       localStorage.removeItem(`careeros_assessment_coding_${cleanId}`);
       localStorage.removeItem(`careeros_assessment_aptitude_${cleanId}`);
       localStorage.removeItem(`careeros_career_roadmap_${cleanId}`);
+      localStorage.removeItem(`careeros_profile_completed_${cleanId}`);
     }
   } catch {}
 }
+
+/**
+ * Check if user profile is completed
+ */
+export function isProfileCompleted(studentId?: string): boolean {
+  if (typeof localStorage === 'undefined') return false;
+  try {
+    if (studentId) {
+      const cleanId = String(studentId).replace(/[^a-zA-Z0-9_-]/g, '_');
+      return localStorage.getItem(`careeros_profile_completed_${cleanId}`) === 'true';
+    }
+    return localStorage.getItem('careeros_profile_completed') === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export function setProfileCompleted(completed: boolean, studentId?: string): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    const val = completed ? 'true' : 'false';
+    localStorage.setItem('careeros_profile_completed', val);
+    if (studentId) {
+      const cleanId = String(studentId).replace(/[^a-zA-Z0-9_-]/g, '_');
+      localStorage.setItem(`careeros_profile_completed_${cleanId}`, val);
+    }
+  } catch {}
+}
+
+/**
+ * Check if initial assessment is completed
+ */
+export function isInitialAssessmentCompleted(studentId?: string): boolean {
+  return hasAssessmentRecord(studentId);
+}
+
+/**
+ * Check if assessment result is available
+ */
+export function isAssessmentResultAvailable(studentId?: string): boolean {
+  const rec = getAssessmentRecord(studentId);
+  return rec !== null && rec.status === 'COMPLETED_WITH_RESPONSES' && typeof rec.overallScore === 'number' && rec.overallScore > 0;
+}
+

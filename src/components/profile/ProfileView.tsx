@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { useStudentProfile, saveStudentProfile } from '../../utils/userProfile';
 import { getUserActivitySummary } from '../../utils/userActivity';
-import { getAssessmentRecord } from '../../utils/assessmentValidation';
+import { getAssessmentRecord, setProfileCompleted } from '../../utils/assessmentValidation';
 import { getStudentStreak } from '../../utils/streakCalculator';
 import { getStudentAtsScore } from '../../utils/resumeVersioning';
 
@@ -54,7 +54,7 @@ export const ProfileView: React.FC = () => {
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    saveStudentProfile({
+    const saved = saveStudentProfile({
       name: formData.name.trim() || profile.name,
       college: formData.college.trim() || profile.college,
       degree: formData.degree.trim() || profile.degree,
@@ -71,6 +71,7 @@ export const ProfileView: React.FC = () => {
         .map((l) => l.trim())
         .filter(Boolean),
     });
+    setProfileCompleted(true, saved.email);
     setIsEditing(false);
   };
 

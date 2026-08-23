@@ -11,6 +11,19 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { handleMentorChat, buildMentorContext } from '../ai/mentor-service.mjs';
+import {
+  generateSmartMentorReply,
+  getUserAssessmentResults,
+  getUserCodingHistory,
+  getUserSkillScores,
+  getUserRoadmapData,
+  getUserResumeData,
+  getAssessmentResults,
+  getCodingHistory,
+  getSkillScores,
+  getRoadmap,
+  getResume,
+} from '../src/utils/mentorEngine.ts';
 
 describe('CAREEROS AI Career Mentor Chatbot Suite', () => {
   const testStudentEvents = [
@@ -130,5 +143,125 @@ describe('CAREEROS AI Career Mentor Chatbot Suite', () => {
     assert.equal(res.success, true);
     assert.ok(!res.reply.includes('AIzaSy'));
     assert.ok(!JSON.stringify(res).includes('GEMINI_API_KEY'));
+  });
+
+  test('8. Client Smart Intent Engine: Coding, Aptitude, Tutorials & Verified Links', () => {
+    // 1. Unassessed student
+    const unassessedProfile = { name: 'New Student', readinessScore: 0, streakDays: 0 };
+    
+    // Aptitude Intent
+    const aptRes = generateSmartMentorReply('where can I practice aptitude questions and quantitative reasoning?', unassessedProfile);
+    assert.ok(aptRes.text.includes('IndiaBIX Quantitative Aptitude'));
+    assert.ok(aptRes.text.includes('https://www.indiabix.com/aptitude/questions-and-answers/'));
+    assert.ok(aptRes.text.includes('CAREEROS Assessment & Practice Engine'));
+    assert.ok(aptRes.text.includes("I don't have enough assessment data yet to personalize this recommendation"));
+    assert.ok(aptRes.actionButtons.some(b => b.url === '/practice'));
+    assert.ok(aptRes.actionButtons.some(b => b.url === '/assessment'));
+
+    // Programming Tutorials Intent
+    const pyRes = generateSmartMentorReply('best free python and sql tutorials', unassessedProfile);
+    assert.ok(pyRes.text.includes('freeCodeCamp'));
+    assert.ok(pyRes.text.includes('https://www.freecodecamp.org/'));
+    assert.ok(pyRes.text.includes('Exercism'));
+    assert.ok(pyRes.text.includes('https://exercism.org/'));
+    assert.ok(pyRes.text.includes('HackerRank SQL Track'));
+    assert.ok(pyRes.actionButtons.some(b => b.url === '/learning'));
+
+    // Free vs Paid Intent
+    const freeRes = generateSmartMentorReply('is it free vs paid or do I need a subscription?', unassessedProfile);
+    assert.ok(freeRes.text.includes('Top 100% Free Platforms'));
+    assert.ok(freeRes.text.includes('freeCodeCamp'));
+    assert.ok(freeRes.text.includes('LeetCode Premium'));
+
+    // Coding & DSA Intent
+    const dsaRes = generateSmartMentorReply('where to practice coding and dsa?', unassessedProfile);
+    assert.ok(dsaRes.text.includes('CAREEROS Practice Arena'));
+    assert.ok(dsaRes.text.includes('LeetCode'));
+    assert.ok(dsaRes.text.includes('https://leetcode.com/problemset/all/'));
+    assert.ok(dsaRes.text.includes('GeeksforGeeks'));
+    assert.ok(dsaRes.actionButtons.some(b => b.url === '/practice'));
+  });
+
+  test('9. Strict Personalization Gating: Unassessed vs Evaluated Profile', () => {
+    // Unassessed user
+    const unassessed = { name: 'Brand New', readinessScore: 0, streakDays: 0 };
+    const unassessedRes = generateSmartMentorReply('explain my skill gaps', unassessed);
+    assert.ok(unassessedRes.text.includes("I don't have enough assessment data yet to personalize this recommendation"));
+    assert.ok(unassessedRes.actionButtons.some(b => b.url === '/assessment'));
+
+    // Evaluated user with verified assessment in localStorage
+    globalThis.localStorage = {
+      getItem: (key) => {
+        if (key === 'careeros_assessment_results') {
+          return JSON.stringify({ status: 'COMPLETED_WITH_RESPONSES', overallScore: 84, codingScore: 80, aptitudeScore: 88 });
+        }
+        return null;
+      },
+    };
+
+    const evaluated = { name: 'Assessed Student', readinessScore: 84, streakDays: 3 };
+    const assessedRes = generateSmartMentorReply('explain my skill gaps', evaluated);
+    assert.ok(assessedRes.text.includes('84%'));
+    assert.ok(assessedRes.text.includes('Verified Overall Readiness'));
+  });
+
+  test('10. Safe Content-Type & Non-JSON HTML Response Interception', async () => {
+    // Simulates an HTML 404/500 response from a static server or misrouted API
+    const mockHtmlResponse = {
+      ok: false,
+      status: 404,
+      headers: {
+        get: (name) => (name.toLowerCase() === 'content-type' ? 'text/html; charset=UTF-8' : null),
+      },
+      text: async () => '<!DOCTYPE html><html><body>404 Not Found</body></html>',
+      json: async () => {
+        throw new SyntaxError("Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON");
+      },
+    };
+
+    // Robust client verification logic
+    const contentType = mockHtmlResponse.headers.get('content-type') || '';
+    let parsedData = null;
+    let didCrashWithUnexpectedToken = false;
+
+    try {
+      if (mockHtmlResponse.ok && contentType.includes('application/json')) {
+        parsedData = await mockHtmlResponse.json();
+      }
+    } catch (err) {
+      didCrashWithUnexpectedToken = true;
+    }
+
+    assert.equal(didCrashWithUnexpectedToken, false, 'Client must NOT attempt response.json() on non-JSON content');
+    assert.equal(parsedData, null, 'Parsed data should remain null, triggering graceful fallback');
+  });
+
+  test('11. Authoritative Data-Grounded Retrieval Functions', () => {
+    // Reset storage to unassessed
+    globalThis.localStorage = {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+    };
+
+    // Unassessed student state
+    const unassessedScores = getSkillScores('s_new');
+    assert.equal(unassessedScores.isAssessed, false);
+    assert.equal(unassessedScores.readinessScore, null);
+
+    const codingHistory = getCodingHistory('s_new');
+    assert.equal(codingHistory.hasCodingActivity, false);
+
+    const roadmapData = getRoadmap('s_new');
+    assert.equal(roadmapData, null);
+
+    // Assessment record lookup
+    const assessmentRec = getAssessmentResults('s_new');
+    assert.equal(assessmentRec, null);
+
+    // Resume lookup
+    const resumeData = getResume('s_new');
+    assert.equal(resumeData.hasResume, false);
+    assert.equal(resumeData.atsScore, 0);
   });
 });

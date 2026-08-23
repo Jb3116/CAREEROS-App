@@ -4748,110 +4748,6 @@
     }
   },
   {
-    "student_id": "STU001",
-    "skill": "python",
-    "correct": true,
-    "difficulty": "easy",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T10:50:24.691Z"
-  },
-  {
-    "student_id": "STU001",
-    "skill": "python",
-    "correct": true,
-    "difficulty": "medium",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T11:50:24.692Z"
-  },
-  {
-    "student_id": "STU001",
-    "skill": "python",
-    "correct": true,
-    "difficulty": "hard",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T12:50:24.692Z"
-  },
-  {
-    "student_id": "STU001",
-    "skill": "python",
-    "correct": false,
-    "difficulty": "hard",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T13:50:24.692Z"
-  },
-  {
-    "student_id": "STU001",
-    "skill": "data_structures",
-    "correct": true,
-    "difficulty": "easy",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T14:50:24.692Z"
-  },
-  {
-    "student_id": "STU001",
-    "skill": "data_structures",
-    "correct": false,
-    "difficulty": "medium",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T15:50:24.692Z"
-  },
-  {
-    "student_id": "STU001",
-    "skill": "data_structures",
-    "correct": false,
-    "difficulty": "hard",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T16:50:24.692Z"
-  },
-  {
-    "student_id": "STU001",
-    "skill": "python",
-    "correct": true,
-    "difficulty": "hard",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T17:50:24.721Z"
-  },
-  {
-    "student_id": "STU002",
-    "skill": "algorithms",
-    "correct": false,
-    "difficulty": "medium",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T15:50:24.732Z"
-  },
-  {
-    "student_id": "STU002",
-    "skill": "algorithms",
-    "correct": false,
-    "difficulty": "hard",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T16:50:24.732Z"
-  },
-  {
-    "student_id": "STU002",
-    "skill": "aptitude",
-    "correct": true,
-    "difficulty": "easy",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T17:20:24.732Z"
-  },
-  {
-    "student_id": "STU002",
-    "skill": "aptitude",
-    "correct": true,
-    "difficulty": "medium",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T17:35:24.732Z"
-  },
-  {
-    "student_id": "STU002",
-    "skill": "aptitude",
-    "correct": true,
-    "difficulty": "hard",
-    "activity": "practice_problem",
-    "timestamp": "2026-08-23T17:50:24.732Z"
-  },
-  {
     "student_id": "http_stu_1",
     "skill": "python",
     "activity": "code_practice",
@@ -4905,6 +4801,950 @@
     "correct": true,
     "difficulty": "hard",
     "timestamp": "2026-08-23T17:50:25.432Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T18:45:31.863Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T18:45:31.898Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T18:45:31.912Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T18:45:32.176Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T18:45:32.185Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T18:49:51.567Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T18:49:51.601Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T18:49:51.620Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T18:49:51.916Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T18:49:51.937Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T18:53:41.014Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T18:53:41.153Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T18:53:41.220Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T18:53:42.118Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T18:53:42.191Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T18:58:37.361Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T18:58:37.394Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T18:58:37.409Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T18:58:37.615Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T18:58:37.639Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:01:18.684Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:01:18.701Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:01:18.711Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:01:18.912Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:01:18.928Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:05:18.523Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:05:18.556Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:05:18.572Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:05:18.804Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:05:18.830Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:09:48.111Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:09:48.150Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:09:48.176Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:09:48.602Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:09:48.619Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:10:36.161Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:10:36.200Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:10:36.215Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:10:36.507Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:10:36.524Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:11:20.550Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:11:20.586Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:11:20.598Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:11:20.847Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:11:20.864Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:20:38.705Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:20:38.744Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:20:38.759Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:20:39.017Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:20:39.033Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:21:38.812Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:21:38.833Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:21:38.845Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:21:39.065Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:21:39.082Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:26:05.529Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:26:05.549Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:26:05.562Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:26:05.794Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:26:05.809Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:31:47.488Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:31:47.510Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:31:47.523Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:31:47.773Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:31:47.788Z",
+    "metadata": {
+      "mode": "technical",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 88
+    }
+  },
+  {
+    "student_id": "STU001",
+    "skill": "python",
+    "correct": true,
+    "difficulty": "easy",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T12:33:53.059Z"
+  },
+  {
+    "student_id": "STU001",
+    "skill": "python",
+    "correct": true,
+    "difficulty": "medium",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T13:33:53.060Z"
+  },
+  {
+    "student_id": "STU001",
+    "skill": "python",
+    "correct": true,
+    "difficulty": "hard",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T14:33:53.060Z"
+  },
+  {
+    "student_id": "STU001",
+    "skill": "python",
+    "correct": false,
+    "difficulty": "hard",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T15:33:53.060Z"
+  },
+  {
+    "student_id": "STU001",
+    "skill": "data_structures",
+    "correct": true,
+    "difficulty": "easy",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T16:33:53.060Z"
+  },
+  {
+    "student_id": "STU001",
+    "skill": "data_structures",
+    "correct": false,
+    "difficulty": "medium",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T17:33:53.060Z"
+  },
+  {
+    "student_id": "STU001",
+    "skill": "data_structures",
+    "correct": false,
+    "difficulty": "hard",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T18:33:53.060Z"
+  },
+  {
+    "student_id": "STU001",
+    "skill": "python",
+    "correct": true,
+    "difficulty": "hard",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T19:33:53.088Z"
+  },
+  {
+    "student_id": "STU002",
+    "skill": "algorithms",
+    "correct": false,
+    "difficulty": "medium",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T17:33:53.102Z"
+  },
+  {
+    "student_id": "STU002",
+    "skill": "algorithms",
+    "correct": false,
+    "difficulty": "hard",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T18:33:53.102Z"
+  },
+  {
+    "student_id": "STU002",
+    "skill": "aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T19:03:53.102Z"
+  },
+  {
+    "student_id": "STU002",
+    "skill": "aptitude",
+    "correct": true,
+    "difficulty": "medium",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T19:18:53.102Z"
+  },
+  {
+    "student_id": "STU002",
+    "skill": "aptitude",
+    "correct": true,
+    "difficulty": "hard",
+    "activity": "practice_problem",
+    "timestamp": "2026-08-23T19:33:53.102Z"
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:33:53.470Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T19:33:53.502Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T19:33:53.515Z"
+  },
+  {
+    "student_id": "http_test_stu",
+    "skill": "communication",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:33:53.723Z",
+    "metadata": {
+      "mode": "star",
+      "verdict": "Strong Hire (Tier-1 SDE Ready)",
+      "star_score": 90
+    }
+  },
+  {
+    "student_id": "http_test_stu_2",
+    "skill": "algorithms",
+    "activity": "mock_interview",
+    "correct": true,
+    "difficulty": "hard",
+    "timestamp": "2026-08-23T19:33:53.735Z",
     "metadata": {
       "mode": "technical",
       "verdict": "Strong Hire (Tier-1 SDE Ready)",

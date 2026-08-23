@@ -22,11 +22,13 @@ import {
 } from 'lucide-react';
 
 import { getStudentProfile, saveStudentProfile, createFreshStudentProfile } from '../utils/userProfile';
+import { hasAssessmentRecord, isProfileCompleted } from '../utils/assessmentValidation';
 import {
   validatePasswordComplexity,
   registerNewAccount,
   verifyStudentCredentials,
 } from '../utils/authAccounts';
+import { clearTourCompleted } from '../components/tour/InteractiveTour';
 
 interface LoginPageProps {
   defaultSignUp?: boolean;
@@ -101,10 +103,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ defaultSignUp = true }) =>
       college: cleanEmail.includes('.edu') || cleanEmail.includes('.ac.in') ? 'University Campus' : 'Engineering Institution',
     });
 
-    // Reset tour state so AI Website Tour triggers on dashboard
-    localStorage.removeItem('careeros_ai_tour_completed');
-    localStorage.removeItem('careeros_tour_completed');
-    localStorage.removeItem(`careeros_tour_completed_${authId}`);
+    // Reset tour state so AI Website Tour triggers on dashboard for new user
+    clearTourCompleted(authId);
 
     setSocialProvider(null);
     setAlertMsg({
@@ -178,19 +178,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ defaultSignUp = true }) =>
       };
       localStorage.setItem('careeros_auth_user', JSON.stringify(authUser));
 
-      // Reset tour state so AI Website Tour triggers on dashboard
-      localStorage.removeItem('careeros_ai_tour_completed');
-      localStorage.removeItem('careeros_tour_completed');
-      localStorage.removeItem(`careeros_tour_completed_${authUser.id}`);
+      // Reset tour state so AI Website Tour triggers on dashboard after onboarding
+      clearTourCompleted(authUser.id);
 
       setAlertMsg({
         type: 'success',
-        text: 'Account created! Launching CareerOS Experience & AI Tour...',
+        text: 'Account created! Starting your profile setup & calibration...',
       });
 
       setTimeout(() => {
         setIsLoading(false);
-        navigate('/dashboard'); // Step 2: Dashboard auto-triggers clean AI Website Tour
+        navigate('/onboarding');
       }, 450);
       return;
     }
@@ -229,12 +227,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ defaultSignUp = true }) =>
         email: account.email,
       });
 
+      const isAssessed = hasAssessmentRecord(account.id) || hasAssessmentRecord(account.email);
       setAlertMsg({
         type: 'success',
-        text: 'Credentials verified! Launching your CareerOS dashboard...',
+        text: 'Credentials verified! Launching CareerOS...',
       });
       setTimeout(() => {
-        navigate('/dashboard');
+        if (!isAssessed && !isProfileCompleted(account.id)) {
+          navigate('/onboarding');
+        } else if (!isAssessed) {
+          navigate('/assessment');
+        } else {
+          navigate('/dashboard');
+        }
       }, 400);
     }, 400);
   };

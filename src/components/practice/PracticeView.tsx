@@ -34,11 +34,13 @@ import {
   Video,
   PlayCircle,
 } from 'lucide-react';
-import { CODING_QUESTION_BANK, APTITUDE_QUESTION_BANK, CodingQuestion, AptitudeQuestion } from '../../data/assessmentQuestions';
+import { PRACTICE_CODING_QUESTION_BANK, PRACTICE_APTITUDE_QUESTION_BANK } from '../../data/practiceQuestions';
+import { type CodingQuestion, type AptitudeQuestion } from '../../data/assessmentQuestions';
 import { getContextualYouTubeVideos, YouTubeVideoItem } from '../../data/youtubeResources';
 import { StreakCalendar } from '../common/StreakCalendar';
 import { emitAppEvent } from '../../utils/appEvents';
 import { useStudentProfile } from '../../utils/userProfile';
+import { evaluateCodingSubmissionReward, getDifficultyPoints } from '../../utils/rewardCalculator';
 
 interface ProblemItem {
   id: string;
@@ -59,7 +61,7 @@ export const PracticeView: React.FC = () => {
 
   // ---------------- 1. Coding Practice State ----------------
   const [selectedLang, setSelectedLang] = useState<'python' | 'cpp' | 'java' | 'javascript' | 'css'>('python');
-  const [activeProblemId, setActiveProblemId] = useState<string>(CODING_QUESTION_BANK[0]?.id || 'code-1');
+  const [activeProblemId, setActiveProblemId] = useState<string>(PRACTICE_CODING_QUESTION_BANK[0]?.id || 'prac-code-1');
   const [searchQuery, setSearchQuery] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
   const [isRunning, setIsRunning] = useState(false);
@@ -87,13 +89,14 @@ export const PracticeView: React.FC = () => {
     mentorFeedback: string;
     learningHint: string;
     primarySkill?: string;
+    reward?: any;
   } | null>(null);
 
   // Filtered Question Bank strictly swapped by Difficulty Filter
   const activeQuestionBank: CodingQuestion[] = useMemo(() => {
-    let pool = CODING_QUESTION_BANK;
+    let pool = PRACTICE_CODING_QUESTION_BANK;
     if (difficultyFilter !== 'all') {
-      pool = CODING_QUESTION_BANK.filter((q) => q.difficulty.toLowerCase() === difficultyFilter.toLowerCase());
+      pool = PRACTICE_CODING_QUESTION_BANK.filter((q) => q.difficulty.toLowerCase() === difficultyFilter.toLowerCase());
     }
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
@@ -104,7 +107,7 @@ export const PracticeView: React.FC = () => {
           p.constraints.some((c) => c.toLowerCase().includes(q))
       );
     }
-    return pool.length > 0 ? pool : CODING_QUESTION_BANK;
+    return pool.length > 0 ? pool : PRACTICE_CODING_QUESTION_BANK;
   }, [difficultyFilter, searchQuery]);
 
   // Ensure active problem stays valid within the active question bank
@@ -115,7 +118,7 @@ export const PracticeView: React.FC = () => {
     }
   }, [activeQuestionBank, activeProblemId]);
 
-  const activeProblem = activeQuestionBank.find((q) => q.id === activeProblemId) || activeQuestionBank[0] || CODING_QUESTION_BANK[0];
+  const activeProblem = activeQuestionBank.find((q) => q.id === activeProblemId) || activeQuestionBank[0] || PRACTICE_CODING_QUESTION_BANK[0];
   const activeProblemIndex = Math.max(0, activeQuestionBank.findIndex((q) => q.id === activeProblem.id));
 
   const [code, setCode] = useState<string>(
@@ -134,13 +137,13 @@ export const PracticeView: React.FC = () => {
 
   // Filter and sample aptitude questions based on controls
   const currentAptitudePool: AptitudeQuestion[] = useMemo(() => {
-    let pool = APTITUDE_QUESTION_BANK.filter((q) => {
+    let pool = PRACTICE_APTITUDE_QUESTION_BANK.filter((q: AptitudeQuestion) => {
       const matchCat = aptitudeCategoryFilter === 'all' || q.category === aptitudeCategoryFilter;
       const matchDiff = aptitudeDifficultyFilter === 'all' || q.difficulty === aptitudeDifficultyFilter;
       return matchCat && matchDiff;
     });
 
-    if (pool.length === 0) pool = APTITUDE_QUESTION_BANK;
+    if (pool.length === 0) pool = PRACTICE_APTITUDE_QUESTION_BANK;
     return pool.slice(0, aptitudeCountSetting);
   }, [aptitudeCategoryFilter, aptitudeDifficultyFilter, aptitudeCountSetting, aptitudeSessionId]);
 
@@ -176,8 +179,8 @@ export const PracticeView: React.FC = () => {
 
   // Similar Problems algorithm (finds 3-4 problems with matching category or difficulty)
   const similarProblems: CodingQuestion[] = useMemo(() => {
-    return CODING_QUESTION_BANK.filter(
-      (q) => q.id !== activeProblem.id && (q.category === activeProblem.category || q.difficulty === activeProblem.difficulty)
+    return PRACTICE_CODING_QUESTION_BANK.filter(
+      (q: CodingQuestion) => q.id !== activeProblem.id && (q.category === activeProblem.category || q.difficulty === activeProblem.difficulty)
     ).slice(0, 4);
   }, [activeProblem]);
 
@@ -275,6 +278,14 @@ export const PracticeView: React.FC = () => {
           overallState = 'error';
         }
 
+        const reward = evaluateCodingSubmissionReward({
+          difficulty: activeProblem.difficulty,
+          isCorrect,
+          testCasesPassed: analysis.test_cases_passed || (isCorrect ? activeProblem.testCases.length : 0),
+          totalTestCases: analysis.total_test_cases || activeProblem.testCases.length,
+          executionStatus: status,
+        });
+
         const formattedResults = (analysis.test_results || []).map((tr: any, i: number) => {
           const isHidden = Boolean(tr.isHidden || (activeProblem.testCases.length > 2 && i >= activeProblem.testCases.length - 1));
           const actualStr = String(tr.actual || '').trim();
@@ -306,6 +317,7 @@ export const PracticeView: React.FC = () => {
           mentorFeedback: analysis.mentor_feedback || '',
           learningHint: analysis.learning_hint || '',
           primarySkill: analysis.primary_dkt_skill,
+          reward,
         });
       }
     } catch (err: any) {
@@ -877,8 +889,33 @@ export const PracticeView: React.FC = () => {
                           : `Compilation / Execution ${executionResult.status.toUpperCase()}`}
                       </span>
                     </div>
-                    <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>
-                      Runtime: <strong>{executionResult.time}</strong> • <strong>{executionResult.memory}</strong>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      {executionResult.reward && (
+                        <div
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            background: executionResult.reward.isPassed ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.08)',
+                            border: executionResult.reward.isPassed ? '1px solid #10B981' : '1px solid #FCA5A5',
+                            color: executionResult.reward.isPassed ? '#059669' : '#DC2626',
+                            borderRadius: 8,
+                            padding: '4px 10px',
+                            fontSize: 12,
+                            fontWeight: 800,
+                          }}
+                        >
+                          <Trophy size={13} />
+                          <span>
+                            {executionResult.reward.isPassed
+                              ? `+${executionResult.reward.pointsAwarded} XP (${executionResult.reward.difficulty})`
+                              : '0 XP • Retry Allowed'}
+                          </span>
+                        </div>
+                      )}
+                      <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>
+                        Runtime: <strong>{executionResult.time}</strong> • <strong>{executionResult.memory}</strong>
+                      </div>
                     </div>
                   </div>
 

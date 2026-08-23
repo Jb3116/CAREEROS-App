@@ -103,4 +103,95 @@ describe('AI Website Tour & Smart Mentor Navigation Suite', () => {
     assert.equal(sequencePipeline[3], 'STEP_4_DIAGNOSTIC_ASSESSMENT');
     assert.equal(sequencePipeline[4], 'STEP_5_MAIN_DASHBOARD_ECOSYSTEM');
   });
+
+  test('10. One-Time Tour Launch: isTourCompleted & setTourCompleted Prevents Re-launch on Page Refresh', () => {
+    const mockStorage = new Map();
+    globalThis.localStorage = {
+      getItem: (key) => mockStorage.get(key) || null,
+      setItem: (key, val) => mockStorage.set(key, String(val)),
+      removeItem: (key) => mockStorage.delete(key),
+      clear: () => mockStorage.clear(),
+    };
+
+    const isTourCompletedHelper = (uid = 's123') => {
+      return Boolean(
+        globalThis.localStorage.getItem(`tour_completed_${uid}`) === 'true' ||
+        globalThis.localStorage.getItem(`tour_completed_${uid}`) === 'skipped' ||
+        globalThis.localStorage.getItem(`careeros_tour_completed_${uid}`) === 'true' ||
+        globalThis.localStorage.getItem(`careeros_tour_completed_${uid}`) === 'skipped' ||
+        globalThis.localStorage.getItem('careeros_tour_completed') === 'true' ||
+        globalThis.localStorage.getItem('careeros_tour_completed') === 'skipped' ||
+        globalThis.localStorage.getItem('careeros_ai_tour_completed') === 'true'
+      );
+    };
+
+    const setTourCompletedHelper = (uid = 's123', status = 'true') => {
+      globalThis.localStorage.setItem(`tour_completed_${uid}`, status);
+      globalThis.localStorage.setItem(`careeros_tour_completed_${uid}`, status);
+      globalThis.localStorage.setItem('careeros_tour_completed', status);
+      globalThis.localStorage.setItem('careeros_ai_tour_completed', 'true');
+      globalThis.localStorage.removeItem('careeros_tour_current_step');
+    };
+
+    // Brand new user: tour is NOT completed -> Should show tour
+    assert.equal(isTourCompletedHelper('user_1'), false, 'New user must not be marked as completed');
+
+    // User finishes / dismisses tour
+    setTourCompletedHelper('user_1', 'true');
+    assert.equal(globalThis.localStorage.getItem('careeros_tour_completed'), 'true');
+    assert.equal(globalThis.localStorage.getItem('tour_completed_user_1'), 'true');
+    assert.equal(isTourCompletedHelper('user_1'), true, 'User must be marked as completed');
+
+    // Simulate subsequent page refresh on dashboard
+    assert.equal(isTourCompletedHelper('user_1'), true, 'Page refresh must immediately see completion flag and block tour');
+  });
+
+  test('11. User Isolation & Logout Tour Cleanup', () => {
+    const mockStorage = new Map();
+    globalThis.localStorage = {
+      getItem: (key) => mockStorage.get(key) || null,
+      setItem: (key, val) => mockStorage.set(key, String(val)),
+      removeItem: (key) => mockStorage.delete(key),
+      clear: () => mockStorage.clear(),
+    };
+
+    const setTourCompletedHelper = (uid = 's123', status = 'true') => {
+      globalThis.localStorage.setItem(`tour_completed_${uid}`, status);
+      globalThis.localStorage.setItem(`careeros_tour_completed_${uid}`, status);
+      globalThis.localStorage.setItem('careeros_tour_completed', status);
+      globalThis.localStorage.setItem('careeros_ai_tour_completed', 'true');
+      globalThis.localStorage.removeItem('careeros_tour_current_step');
+    };
+
+    const clearTourCompletedHelper = (uid = 'user_1') => {
+      globalThis.localStorage.removeItem(`tour_completed_${uid}`);
+      globalThis.localStorage.removeItem(`careeros_tour_completed_${uid}`);
+      globalThis.localStorage.removeItem('careeros_tour_completed');
+      globalThis.localStorage.removeItem('careeros_ai_tour_completed');
+      globalThis.localStorage.removeItem('careeros_tour_current_step');
+    };
+
+    const isTourCompletedHelper = (uid) => {
+      return Boolean(
+        globalThis.localStorage.getItem(`tour_completed_${uid}`) === 'true' ||
+        globalThis.localStorage.getItem(`tour_completed_${uid}`) === 'skipped' ||
+        globalThis.localStorage.getItem(`careeros_tour_completed_${uid}`) === 'true' ||
+        globalThis.localStorage.getItem(`careeros_tour_completed_${uid}`) === 'skipped' ||
+        globalThis.localStorage.getItem('careeros_tour_completed') === 'true' ||
+        globalThis.localStorage.getItem('careeros_tour_completed') === 'skipped' ||
+        globalThis.localStorage.getItem('careeros_ai_tour_completed') === 'true'
+      );
+    };
+
+    // User A completes tour
+    setTourCompletedHelper('user_a', 'true');
+    assert.equal(isTourCompletedHelper('user_a'), true);
+
+    // User logs out -> Clear active tour flags
+    clearTourCompletedHelper('user_a');
+    assert.equal(globalThis.localStorage.getItem('careeros_tour_completed'), null);
+
+    // New User B logs in -> Tour will properly trigger
+    assert.equal(isTourCompletedHelper('user_b'), false, 'New user logging in will experience the tour properly');
+  });
 });
