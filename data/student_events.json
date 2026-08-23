@@ -1,11 +1,139 @@
 [
   {
+    "student_id": "s123",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T10:43:12.721Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "s123",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T10:57:02.194Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "O(N)",
+      "code_quality_score": 68
+    }
+  },
+  {
+    "student_id": "s123",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T10:57:22.612Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "O(N)",
+      "code_quality_score": 68
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T11:05:39.701Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "O(N)",
+      "code_quality_score": 68
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T11:05:39.713Z"
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T11:06:05.093Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T11:06:05.119Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T11:06:05.130Z"
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T11:06:11.273Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T11:06:11.289Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T11:06:11.297Z"
+  },
+  {
     "student_id": "STU001",
     "skill": "python",
     "correct": true,
     "difficulty": "easy",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T02:51:41.267Z"
+    "timestamp": "2026-08-23T04:09:01.772Z"
   },
   {
     "student_id": "STU001",
@@ -13,7 +141,7 @@
     "correct": true,
     "difficulty": "medium",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T03:51:41.277Z"
+    "timestamp": "2026-08-23T05:09:01.773Z"
   },
   {
     "student_id": "STU001",
@@ -21,7 +149,7 @@
     "correct": true,
     "difficulty": "hard",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T04:51:41.277Z"
+    "timestamp": "2026-08-23T06:09:01.773Z"
   },
   {
     "student_id": "STU001",
@@ -29,7 +157,7 @@
     "correct": false,
     "difficulty": "hard",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T05:51:41.277Z"
+    "timestamp": "2026-08-23T07:09:01.773Z"
   },
   {
     "student_id": "STU001",
@@ -37,7 +165,7 @@
     "correct": true,
     "difficulty": "easy",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T06:51:41.277Z"
+    "timestamp": "2026-08-23T08:09:01.773Z"
   },
   {
     "student_id": "STU001",
@@ -45,7 +173,7 @@
     "correct": false,
     "difficulty": "medium",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T07:51:41.277Z"
+    "timestamp": "2026-08-23T09:09:01.773Z"
   },
   {
     "student_id": "STU001",
@@ -53,7 +181,7 @@
     "correct": false,
     "difficulty": "hard",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T08:51:41.277Z"
+    "timestamp": "2026-08-23T10:09:01.773Z"
   },
   {
     "student_id": "STU001",
@@ -61,7 +189,7 @@
     "correct": true,
     "difficulty": "hard",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T09:51:41.309Z"
+    "timestamp": "2026-08-23T11:09:01.810Z"
   },
   {
     "student_id": "STU002",
@@ -69,7 +197,7 @@
     "correct": false,
     "difficulty": "medium",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T07:51:41.322Z"
+    "timestamp": "2026-08-23T09:09:01.828Z"
   },
   {
     "student_id": "STU002",
@@ -77,7 +205,7 @@
     "correct": false,
     "difficulty": "hard",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T08:51:41.322Z"
+    "timestamp": "2026-08-23T10:09:01.828Z"
   },
   {
     "student_id": "STU002",
@@ -85,7 +213,7 @@
     "correct": true,
     "difficulty": "easy",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T09:21:41.322Z"
+    "timestamp": "2026-08-23T10:39:01.828Z"
   },
   {
     "student_id": "STU002",
@@ -93,7 +221,7 @@
     "correct": true,
     "difficulty": "medium",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T09:36:41.322Z"
+    "timestamp": "2026-08-23T10:54:01.828Z"
   },
   {
     "student_id": "STU002",
@@ -101,6 +229,40 @@
     "correct": true,
     "difficulty": "hard",
     "activity": "practice_problem",
-    "timestamp": "2026-08-23T09:51:41.322Z"
+    "timestamp": "2026-08-23T11:09:01.828Z"
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "python",
+    "activity": "code_practice",
+    "correct": false,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T11:09:02.002Z",
+    "metadata": {
+      "language": "python",
+      "time_complexity": "N/A",
+      "code_quality_score": 0
+    }
+  },
+  {
+    "student_id": "http_stu_1",
+    "skill": "data_structures",
+    "activity": "code_practice",
+    "correct": true,
+    "difficulty": "medium",
+    "timestamp": "2026-08-23T11:09:02.041Z",
+    "metadata": {
+      "language": "javascript",
+      "time_complexity": "O(N)",
+      "code_quality_score": 92
+    }
+  },
+  {
+    "student_id": "stu_phase7",
+    "skill": "probability",
+    "activity": "assessment_aptitude",
+    "correct": true,
+    "difficulty": "easy",
+    "timestamp": "2026-08-23T11:09:02.057Z"
   }
 ]

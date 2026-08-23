@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { AppSidebar } from './AppSidebar';
 import { Header } from './Header';
 import { DetailModal, ModalContentType } from '../dashboard/DetailModal';
+import { AiMentorChatModal } from '../chat/AiMentorChatModal';
 import { StudentProfile } from '../../types/dashboard';
 
 export const DashboardLayout: React.FC = () => {
@@ -54,6 +55,9 @@ export const DashboardLayout: React.FC = () => {
 
       {/* Global Auxiliary Modal */}
       <DetailModal content={modalContent} onClose={() => setModalContent(null)} />
+
+      {/* Floating CAREEROS AI Career Mentor Widget */}
+      <AiMentorChatModal />
     </div>
   );
 };

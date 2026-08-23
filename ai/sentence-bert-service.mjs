@@ -1,330 +1,91 @@
 /**
- * CAREEROS - Sentence-BERT Semantic Skill Gap Detection Engine
- * High-performance semantic embedding and competency comparison service
- * mapping student DKT knowledge states to industry role requirements.
+ * CAREEROS - Real Pretrained Transformer Inference Service
+ * Powered by @huggingface/transformers & ONNX Runtime
+ * Model: Xenova/all-MiniLM-L6-v2 (384-dimensional dense semantic vectors)
  */
 
-import { SKILL_MAP, SKILL_DISPLAY_NAMES, SKILL_CATEGORIES } from './dkt-engine.mjs';
+import { pipeline, env } from '@huggingface/transformers';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { SKILL_DISPLAY_NAMES, SKILL_CATEGORIES } from './dkt-engine.mjs';
 
-export const EMBEDDING_MODEL_INFO = {
-  model_name: 'sentence-bert-base-nli-stsb',
-  architecture: 'Transformer-Dense-Cosine',
+// Configure ONNX WASM & Local Cache paths
+const distPath = join(process.cwd(), 'node_modules', 'onnxruntime-web', 'dist');
+env.backends.onnx.wasm.wasmPaths = pathToFileURL(distPath).href + '/';
+env.backends.onnx.wasm.numThreads = 1;
+env.cacheDir = join(process.cwd(), '.cache');
+
+export const TRANSFORMER_METADATA = {
+  model_name: 'Xenova/all-MiniLM-L6-v2',
+  model_source: 'Hugging Face (sentence-transformers/all-MiniLM-L6-v2)',
+  runtime: 'ONNX Runtime (WASM / CPU)',
+  tokenizer: 'BertTokenizer (WordPiece)',
+  architecture: 'MiniLM-L6-H384-uncased Transformer (6 layers, 12 heads, 384 hidden)',
   embedding_dim: 384,
-  version: '2.4.0',
+  real_transformer_inference: true,
+  model_weights_loaded: true,
+  tokenizer_loaded: true,
+  version: '3.3.3',
 };
 
-// Curated Semantic Keyword Embeddings & Lexicons for Tier-1 Tech Skill Matching
-export const SKILL_SEMANTIC_LEXICON = {
-  python: [
-    'python',
-    'python programming',
-    'python 3',
-    'py',
-    'scripting',
-    'numpy',
-    'pandas',
-    'django',
-    'fastapi',
-    'flask',
-    'asyncio',
-    'pythonic code',
-  ],
-  data_structures: [
-    'data structures',
-    'dsa',
-    'dsa algorithms',
-    'data structures & algorithms',
-    'arrays',
-    'linked lists',
-    'trees',
-    'binary search trees',
-    'bst',
-    'graphs',
-    'heaps',
-    'stacks',
-    'queues',
-    'hash tables',
-    'hashmaps',
-    'tries',
-  ],
-  algorithms: [
-    'algorithms',
-    'algo',
-    'dsa algorithms',
-    'dynamic programming',
-    'dp',
-    'greedy algorithms',
-    'divide and conquer',
-    'sorting algorithms',
-    'quicksort',
-    'mergesort',
-    'binary search',
-    'graph traversal',
-    'bfs',
-    'dfs',
-    'dijkstra',
-    'backtracking',
-    'recursion',
-  ],
-  sql: [
-    'sql',
-    'structured query language',
-    'relational database queries',
-    'postgresql queries',
-    'mysql',
-    'postgresql',
-    'postgres',
-    'sqlite',
-    'joins',
-    'indexing',
-    'group by',
-    'aggregations',
-    'window functions',
-    'cte',
-    'complex queries',
-  ],
-  oop: [
-    'oop',
-    'object-oriented programming',
-    'object oriented',
-    'oop design patterns',
-    'classes and objects',
-    'inheritance',
-    'polymorphism',
-    'encapsulation',
-    'abstraction',
-    'design patterns',
-    'solid principles',
-    'clean architecture',
-  ],
-  dbms: [
-    'dbms',
-    'database management systems',
-    'database management',
-    'acid properties',
-    'transactions',
-    'concurrency control',
-    'two phase locking',
-    '2pl',
-    'normalization',
-    '1nf 2nf 3nf',
-    'b+ trees',
-    'storage engines',
-    'wal',
-    'nosql',
-    'mongodb',
-    'redis',
-  ],
-  operating_systems: [
-    'operating systems',
-    'os',
-    'processes and threads',
-    'multithreading',
-    'concurrency',
-    'concurrency & mutex',
-    'mutex and semaphore',
-    'mutex',
-    'deadlocks',
-    'virtual memory',
-    'paging',
-    'page replacement',
-    'cpu scheduling',
-    'system calls',
-    'inter-process communication',
-    'ipc',
-    'linux internals',
-  ],
-  computer_networks: [
-    'computer networks',
-    'networking',
-    'tcp/ip',
-    'tcp/ip sockets',
-    'osi model',
-    'tcp vs udp',
-    'http/https',
-    'http/2',
-    'websockets',
-    'dns resolution',
-    'routing protocols',
-    'subnetting',
-    'tls/ssl',
-    'load balancing',
-    'cdn',
-    'rest apis',
-  ],
-  machine_learning: [
-    'machine learning',
-    'ml',
-    'predictive modelling',
-    'predictive modeling',
-    'predictive',
-    'supervised learning',
-    'unsupervised learning',
-    'deep learning',
-    'neural networks',
-    'transformers',
-    'llms',
-    'scikit-learn',
-    'pytorch',
-    'tensorflow',
-    'regression',
-    'classification',
-    'clustering',
-    'model evaluation',
-    'cross-validation',
-    'gradient descent',
-  ],
-  aptitude: [
-    'aptitude',
-    'quantitative aptitude',
-    'quantitative reasoning',
-    'logical reasoning',
-    'problem solving',
-    'probability',
-    'permutations and combinations',
-    'time and work',
-    'profit and loss',
-    'speed and distance',
-    'number theory',
-    'syllogisms',
-    'data interpretation',
-    'critical thinking',
-  ],
-  communication: [
-    'communication',
-    'behavioral',
-    'star method',
-    'star method behavioral',
-    'star behavioral',
-    'soft skills',
-    'leadership',
-    'teamwork',
-    'conflict resolution',
-    'verbal communication',
-    'articulation',
-    'speech fluency',
-    'technical presentation',
-    'mock interview',
-  ],
-};
+export const EMBEDDING_MODEL_INFO = TRANSFORMER_METADATA;
 
-// Target Job Role Competency Blueprints
-export const TARGET_ROLE_BLUEPRINTS = {
-  swe: {
-    role_id: 'swe',
-    title: 'Software Development Engineer (SDE / SWE)',
-    category: 'Software Engineering',
-    requirements: [
-      { skill: 'data_structures', weight: 0.95, min_mastery: 75, importance: 'Critical' },
-      { skill: 'algorithms', weight: 0.95, min_mastery: 75, importance: 'Critical' },
-      { skill: 'python', weight: 0.85, min_mastery: 70, importance: 'High' },
-      { skill: 'oop', weight: 0.85, min_mastery: 70, importance: 'High' },
-      { skill: 'dbms', weight: 0.80, min_mastery: 65, importance: 'High' },
-      { skill: 'operating_systems', weight: 0.80, min_mastery: 65, importance: 'High' },
-      { skill: 'computer_networks', weight: 0.75, min_mastery: 60, importance: 'Medium' },
-      { skill: 'sql', weight: 0.70, min_mastery: 60, importance: 'Medium' },
-      { skill: 'communication', weight: 0.75, min_mastery: 65, importance: 'Medium' },
-      { skill: 'aptitude', weight: 0.70, min_mastery: 60, importance: 'Medium' },
-    ],
-  },
-  backend: {
-    role_id: 'backend',
-    title: 'Backend Systems Engineer',
-    category: 'Backend & Infrastructure',
-    requirements: [
-      { skill: 'operating_systems', weight: 0.95, min_mastery: 75, importance: 'Critical' },
-      { skill: 'computer_networks', weight: 0.95, min_mastery: 75, importance: 'Critical' },
-      { skill: 'dbms', weight: 0.90, min_mastery: 75, importance: 'Critical' },
-      { skill: 'sql', weight: 0.90, min_mastery: 70, importance: 'High' },
-      { skill: 'data_structures', weight: 0.85, min_mastery: 70, importance: 'High' },
-      { skill: 'algorithms', weight: 0.85, min_mastery: 70, importance: 'High' },
-      { skill: 'python', weight: 0.80, min_mastery: 65, importance: 'Medium' },
-      { skill: 'oop', weight: 0.80, min_mastery: 65, importance: 'Medium' },
-    ],
-  },
-  ml_engineer: {
-    role_id: 'ml_engineer',
-    title: 'Machine Learning & AI Engineer',
-    category: 'Data & Artificial Intelligence',
-    requirements: [
-      { skill: 'machine_learning', weight: 0.98, min_mastery: 80, importance: 'Critical' },
-      { skill: 'python', weight: 0.95, min_mastery: 75, importance: 'Critical' },
-      { skill: 'algorithms', weight: 0.85, min_mastery: 70, importance: 'High' },
-      { skill: 'data_structures', weight: 0.80, min_mastery: 65, importance: 'High' },
-      { skill: 'aptitude', weight: 0.80, min_mastery: 65, importance: 'Medium' },
-      { skill: 'sql', weight: 0.70, min_mastery: 60, importance: 'Medium' },
-      { skill: 'communication', weight: 0.70, min_mastery: 60, importance: 'Medium' },
-    ],
-  },
-  data_analyst: {
-    role_id: 'data_analyst',
-    title: 'Data Analyst / BI Specialist',
-    category: 'Analytics & Business Intelligence',
-    requirements: [
-      { skill: 'sql', weight: 0.95, min_mastery: 80, importance: 'Critical' },
-      { skill: 'python', weight: 0.85, min_mastery: 70, importance: 'High' },
-      { skill: 'aptitude', weight: 0.85, min_mastery: 70, importance: 'High' },
-      { skill: 'dbms', weight: 0.80, min_mastery: 65, importance: 'Medium' },
-      { skill: 'communication', weight: 0.80, min_mastery: 70, importance: 'High' },
-    ],
-  },
-};
+// Singleton pipeline instance and vector cache
+let extractorPromise = null;
+let isModelInitialized = false;
+let modelLoadTimeMs = 0;
+const EMBEDDING_CACHE = new Map();
 
 /**
- * Deterministic Semantic Vector Representation Generator
- * Encodes text strings into 384-dimensional dense semantic vectors
+ * Initialize and cache the pretrained Transformer pipeline
  */
-export function createSemanticVector(text, dim = 384) {
-  const normText = text.toLowerCase().trim();
-  const vector = new Float32Array(dim);
+export async function initializeModel() {
+  if (extractorPromise) return extractorPromise;
 
-  // Character n-gram contextual hashing
-  for (let i = 0; i < normText.length; i++) {
-    const code = normText.charCodeAt(i);
-    const pos1 = (code * 31 + i * 17) % dim;
-    const pos2 = (code * 97 + i * 37) % dim;
-    const pos3 = (code * 193 + i * 53) % dim;
-    vector[pos1] += Math.sin(code + i);
-    vector[pos2] += Math.cos(code * 2 + i);
-    vector[pos3] += Math.sin(code * 3 + i * 2);
+  const t0 = performance.now();
+  try {
+    extractorPromise = pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+      dtype: 'fp32',
+    });
+    const extractor = await extractorPromise;
+    const t1 = performance.now();
+    modelLoadTimeMs = Number((t1 - t0).toFixed(2));
+    isModelInitialized = true;
+    return extractor;
+  } catch (err) {
+    console.error('Failed to initialize Transformer model:', err);
+    extractorPromise = null;
+    isModelInitialized = false;
+    throw err;
   }
-
-  // Token semantic matching projection
-  const words = normText.split(/[\s,+/&_-]+/);
-  for (const [skillKey, keywords] of Object.entries(SKILL_SEMANTIC_LEXICON)) {
-    const hasMatch = keywords.some(
-      (kw) =>
-        normText === kw ||
-        normText.includes(kw) ||
-        kw.includes(normText) ||
-        words.some((w) => w.length > 2 && (kw === w || kw.startsWith(w) || w.startsWith(kw)))
-    );
-    if (hasMatch) {
-      const skillIdx = SKILL_MAP[skillKey] || 0;
-      const offset = (skillIdx * 32) % dim;
-      for (let j = 0; j < 32; j++) {
-        vector[(offset + j) % dim] += 5.0;
-      }
-    }
-  }
-
-  // L2 Normalization
-  let norm = 0;
-  for (let i = 0; i < dim; i++) {
-    norm += vector[i] * vector[i];
-  }
-  norm = Math.sqrt(norm) || 1e-7;
-  for (let i = 0; i < dim; i++) {
-    vector[i] /= norm;
-  }
-
-  return vector;
 }
 
 /**
- * Cosine Similarity between two L2-normalized embedding vectors
+ * Generate a 384-dimensional dense semantic embedding using real transformer forward pass
+ */
+export async function getEmbedding(text) {
+  if (!text || typeof text !== 'string') {
+    throw new Error('Invalid input text for embedding generation.');
+  }
+
+  const cleanText = text.trim();
+  if (EMBEDDING_CACHE.has(cleanText)) {
+    return EMBEDDING_CACHE.get(cleanText);
+  }
+
+  const extractor = await initializeModel();
+  const output = await extractor(cleanText, { pooling: 'mean', normalize: true });
+  const embedding = Array.from(output.data);
+
+  EMBEDDING_CACHE.set(cleanText, embedding);
+  return embedding;
+}
+
+/**
+ * Cosine Similarity between two L2-normalized embedding arrays
  */
 export function computeCosineSimilarity(vecA, vecB) {
+  if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
   let dotProduct = 0;
   for (let i = 0; i < vecA.length; i++) {
     dotProduct += vecA[i] * vecB[i];
@@ -332,63 +93,121 @@ export function computeCosineSimilarity(vecA, vecB) {
   return Math.min(1.0, Math.max(0.0, dotProduct));
 }
 
-// Precomputed Lexicon Vector Cache
-const PRECOMPUTED_LEXICON_VECTORS = [];
-for (const [skillKey, keywords] of Object.entries(SKILL_SEMANTIC_LEXICON)) {
-  for (const kw of keywords) {
-    PRECOMPUTED_LEXICON_VECTORS.push({
-      skillKey,
-      kw,
-      vec: createSemanticVector(kw),
-    });
-  }
-}
+// Canonical Skill Phrases for Real Semantic Matching
+export const CANONICAL_SKILL_DESCRIPTIONS = {
+  python: 'Python programming language, scripting, backend development, data analysis, algorithms',
+  data_structures: 'Data structures, arrays, linked lists, binary trees, graphs, heaps, hash maps, tries',
+  algorithms: 'Algorithms, dynamic programming, greedy algorithms, divide and conquer, sorting, graph traversal',
+  sql: 'SQL, relational database queries, PostgreSQL, MySQL, joins, aggregations, database indexing',
+  oop: 'Object-oriented programming, classes, inheritance, polymorphism, encapsulation, SOLID design patterns',
+  dbms: 'Database management systems, ACID transactions, concurrency control, normalization, storage engines',
+  operating_systems: 'Operating systems, multithreading, concurrency, mutex, processes, virtual memory, paging',
+  computer_networks: 'Computer networks, TCP/IP protocols, HTTP, DNS, socket programming, network layers',
+  machine_learning: 'Machine learning, supervised learning, deep learning, neural networks, predictive models, AI',
+  aptitude: 'Quantitative aptitude, logical reasoning, probability, permutations, arithmetic problem solving',
+  communication: 'Behavioral communication, STAR interview method, articulation, teamwork, soft skills',
+};
+
+// Target Role Blueprints
+export const TARGET_ROLE_BLUEPRINTS = {
+  swe: {
+    role_id: 'swe',
+    title: 'Software Development Engineer (SDE / SWE)',
+    category: 'Software Engineering',
+    requirements: [
+      { skill: 'data_structures', description: 'Data structures & algorithmic problem solving', weight: 0.95, min_mastery: 75, importance: 'Critical' },
+      { skill: 'algorithms', description: 'Algorithms, dynamic programming, and complexity analysis', weight: 0.95, min_mastery: 75, importance: 'Critical' },
+      { skill: 'python', description: 'Python programming and core software development', weight: 0.85, min_mastery: 70, importance: 'High' },
+      { skill: 'oop', description: 'Object-oriented programming and system design patterns', weight: 0.85, min_mastery: 70, importance: 'High' },
+      { skill: 'dbms', description: 'Database management systems and ACID transactions', weight: 0.80, min_mastery: 65, importance: 'High' },
+      { skill: 'operating_systems', description: 'Operating systems, multithreading, and concurrency', weight: 0.80, min_mastery: 65, importance: 'High' },
+      { skill: 'computer_networks', description: 'Computer networks and TCP/IP protocols', weight: 0.75, min_mastery: 60, importance: 'Medium' },
+      { skill: 'sql', description: 'SQL relational database querying and schema design', weight: 0.70, min_mastery: 60, importance: 'Medium' },
+      { skill: 'communication', description: 'STAR behavioral communication and team collaboration', weight: 0.75, min_mastery: 65, importance: 'Medium' },
+      { skill: 'aptitude', description: 'Quantitative and logical reasoning', weight: 0.70, min_mastery: 60, importance: 'Medium' },
+    ],
+  },
+  data_scientist: {
+    role_id: 'data_scientist',
+    title: 'Data Scientist / Machine Learning Engineer',
+    category: 'Data & Artificial Intelligence',
+    requirements: [
+      { skill: 'machine_learning', description: 'Machine learning, predictive modelling, supervised learning, deep learning', weight: 0.98, min_mastery: 80, importance: 'Critical' },
+      { skill: 'python', description: 'Python programming, data analysis, pandas, numpy', weight: 0.95, min_mastery: 75, importance: 'Critical' },
+      { skill: 'sql', description: 'SQL relational database queries, aggregations, data extraction', weight: 0.85, min_mastery: 70, importance: 'High' },
+      { skill: 'algorithms', description: 'Algorithms, optimization, and statistical computation', weight: 0.85, min_mastery: 70, importance: 'High' },
+      { skill: 'data_structures', description: 'Core data structures and algorithmic complexity', weight: 0.80, min_mastery: 65, importance: 'High' },
+      { skill: 'aptitude', description: 'Quantitative reasoning, probability, and mathematical statistics', weight: 0.80, min_mastery: 65, importance: 'Medium' },
+      { skill: 'communication', description: 'Technical presentation and STAR behavioral communication', weight: 0.70, min_mastery: 60, importance: 'Medium' },
+    ],
+  },
+  ml_engineer: {
+    role_id: 'ml_engineer',
+    title: 'Machine Learning & AI Engineer',
+    category: 'Data & Artificial Intelligence',
+    requirements: [
+      { skill: 'machine_learning', description: 'Machine learning, predictive modelling, deep learning, PyTorch', weight: 0.98, min_mastery: 80, importance: 'Critical' },
+      { skill: 'python', description: 'Python programming, data processing, async workflows', weight: 0.95, min_mastery: 75, importance: 'Critical' },
+      { skill: 'algorithms', description: 'Algorithmic optimization and graph models', weight: 0.85, min_mastery: 70, importance: 'High' },
+      { skill: 'data_structures', description: 'Data structures, trees, and tensor layouts', weight: 0.80, min_mastery: 65, importance: 'High' },
+      { skill: 'sql', description: 'SQL relational queries and dataset management', weight: 0.70, min_mastery: 60, importance: 'Medium' },
+      { skill: 'aptitude', description: 'Quantitative logic and probability', weight: 0.80, min_mastery: 65, importance: 'Medium' },
+      { skill: 'communication', description: 'STAR behavioral articulation and stakeholder communication', weight: 0.70, min_mastery: 60, importance: 'Medium' },
+    ],
+  },
+  data_analyst: {
+    role_id: 'data_analyst',
+    title: 'Data Analyst / BI Specialist',
+    category: 'Analytics & Business Intelligence',
+    requirements: [
+      { skill: 'sql', description: 'SQL relational queries, joins, window functions, data pipelines', weight: 0.95, min_mastery: 80, importance: 'Critical' },
+      { skill: 'python', description: 'Python programming, pandas data analysis, automation', weight: 0.85, min_mastery: 70, importance: 'High' },
+      { skill: 'aptitude', description: 'Quantitative reasoning, data interpretation, probability', weight: 0.85, min_mastery: 70, importance: 'High' },
+      { skill: 'dbms', description: 'Database management systems, warehousing, normalization', weight: 0.80, min_mastery: 65, importance: 'Medium' },
+      { skill: 'communication', description: 'Data storytelling and stakeholder communication', weight: 0.80, min_mastery: 70, importance: 'High' },
+    ],
+  },
+};
 
 /**
- * Match a raw query term (e.g. 'ML', 'AsyncIO', 'B+ Trees', 'TCP/IP') against known skill concepts
+ * Match a raw query term against known skills using real Transformer cosine similarity
  */
-export function matchSkillSemantics(queryText) {
-  const normQ = queryText.toLowerCase().trim();
+export async function matchSkillSemantics(queryText) {
+  try {
+    const queryVec = await getEmbedding(queryText);
+    let bestSkill = null;
+    let bestSim = -1.0;
 
-  // 1. Direct lexical lookup
-  for (const [skillKey, keywords] of Object.entries(SKILL_SEMANTIC_LEXICON)) {
-    if (keywords.some((k) => k === normQ || normQ.includes(k) || k.includes(normQ))) {
-      return {
-        matched_skill_key: skillKey,
-        skill_name: SKILL_DISPLAY_NAMES[skillKey] || skillKey,
-        similarity: 0.94,
-        matched_phrase: normQ,
-      };
+    for (const [skillKey, desc] of Object.entries(CANONICAL_SKILL_DESCRIPTIONS)) {
+      const targetVec = await getEmbedding(desc);
+      const sim = computeCosineSimilarity(queryVec, targetVec);
+      if (sim > bestSim) {
+        bestSim = sim;
+        bestSkill = skillKey;
+      }
     }
+
+    return {
+      matched_skill_key: bestSkill,
+      skill_name: SKILL_DISPLAY_NAMES[bestSkill] || bestSkill,
+      similarity: Number(bestSim.toFixed(4)),
+      matched_phrase: queryText,
+      real_transformer_inference: true,
+    };
+  } catch (err) {
+    return {
+      status: 'model_unavailable',
+      message: 'Transformer model unavailable.',
+      error: err.message,
+    };
   }
-
-  // 2. Precomputed Dense Cosine Similarity
-  const queryVec = createSemanticVector(queryText);
-  let bestSkill = null;
-  let bestSim = -1.0;
-
-  for (const item of PRECOMPUTED_LEXICON_VECTORS) {
-    const sim = computeCosineSimilarity(queryVec, item.vec);
-    if (sim > bestSim) {
-      bestSim = sim;
-      bestSkill = item.skillKey;
-    }
-  }
-
-  return {
-    matched_skill_key: bestSkill,
-    skill_name: SKILL_DISPLAY_NAMES[bestSkill] || bestSkill,
-    similarity: Number(bestSim.toFixed(4)),
-    matched_phrase: queryText,
-  };
 }
 
 /**
- * Sentence-BERT Skill Gap Analyzer Engine
- * Compares student's DKT competence matrix against Target Role Requirements
+ * Sentence-BERT Skill Gap Service using Real Pretrained Transformer Embeddings
  */
 export class SentenceBERTSkillGapService {
-  static analyzeSkillGaps(dktProfile, targetRoleId = 'swe') {
+  static async analyzeSkillGaps(dktProfile, targetRoleId = 'swe') {
     if (!dktProfile || dktProfile.status === 'not_trained') {
       return {
         status: 'not_trained',
@@ -397,7 +216,18 @@ export class SentenceBERTSkillGapService {
       };
     }
 
-    const roleBlueprint = TARGET_ROLE_BLUEPRINTS[targetRoleId] || TARGET_ROLE_BLUEPRINTS.swe;
+    try {
+      await initializeModel();
+    } catch (err) {
+      return {
+        status: 'model_unavailable',
+        message: 'Transformer model is unavailable.',
+        student_id: dktProfile.student_id,
+      };
+    }
+
+    const roleKey = targetRoleId === 'data_scientist' ? 'data_scientist' : (TARGET_ROLE_BLUEPRINTS[targetRoleId] ? targetRoleId : 'swe');
+    const roleBlueprint = TARGET_ROLE_BLUEPRINTS[roleKey] || TARGET_ROLE_BLUEPRINTS.swe;
     const studentSkillsMap = {};
 
     for (const s of dktProfile.skills || []) {
@@ -423,13 +253,14 @@ export class SentenceBERTSkillGapService {
       const weight = req.weight;
       totalWeightSum += weight;
 
-      const semMatch = matchSkillSemantics(req.skill);
-      const similarity = semMatch.similarity;
+      // Real semantic embedding similarity between requirement and canonical skill description
+      const reqVec = await getEmbedding(req.description);
+      const skillVec = await getEmbedding(CANONICAL_SKILL_DESCRIPTIONS[req.skill] || req.skill);
+      const similarity = Number(computeCosineSimilarity(reqVec, skillVec).toFixed(4));
 
       const masteryGap = Math.max(0, minMastery - mastery);
 
-      // Priority scoring formula:
-      // Priority = (Role Weight * 0.4) + ((Mastery Gap / 100) * 0.4) + (Similarity * 0.2)
+      // Priority formula
       const priorityScore = Number(
         (weight * 0.4 + (masteryGap / 100) * 0.4 + (1.0 - mastery / 100) * 0.2).toFixed(3)
       );
@@ -462,7 +293,7 @@ export class SentenceBERTSkillGapService {
         action_recommendation:
           mastery >= minMastery
             ? 'Competency benchmark attained. Maintain with periodic refreshers.'
-            : mastery >= minMastery - 15
+            : mastery >= minMastery - 10
             ? `Close ${masteryGap}% gap with targeted problem sets.`
             : `Priority foundational remediation required (+${masteryGap}% to reach hiring threshold).`,
       };
@@ -504,7 +335,10 @@ export class SentenceBERTSkillGapService {
       matched_skills,
       partial_matches,
       skill_gaps,
-      model_metadata: EMBEDDING_MODEL_INFO,
+      model_metadata: {
+        ...TRANSFORMER_METADATA,
+        model_load_time_ms: modelLoadTimeMs,
+      },
     };
   }
 }

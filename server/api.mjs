@@ -4,6 +4,9 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { DKTInference, trainDKT, SKILL_MAP } from '../ai/dkt-engine.mjs';
 import { SentenceBERTSkillGapService, matchSkillSemantics, TARGET_ROLE_BLUEPRINTS, EMBEDDING_MODEL_INFO } from '../ai/sentence-bert-service.mjs';
+import { handleMentorChat } from '../ai/mentor-service.mjs';
+import { generateAdaptiveRoadmap } from '../ai/adaptive-roadmap-service.mjs';
+import { analyzeCodeSubmission } from '../ai/code-analysis-service.mjs';
 
 const DATA_DIR = join(process.cwd(), 'data');
 const EVENTS_FILE = join(DATA_DIR, 'student_events.json');
@@ -53,7 +56,7 @@ export async function handleApi(request, response) {
     // Get real-time DKT prediction
     const dktResult = DKTInference.predict(allEvents, studentId);
     // Get Sentence-BERT skill gap analysis
-    const skillGapResult = SentenceBERTSkillGapService.analyzeSkillGaps(dktResult, 'swe');
+    const skillGapResult = await SentenceBERTSkillGapService.analyzeSkillGaps(dktResult, 'swe');
 
     const defaultSkills = [
       { id: 's1', name: 'Coding', percentage: 72, level: 'Advanced', category: 'coding', targetPercentage: 85 },
@@ -197,7 +200,7 @@ export async function handleApi(request, response) {
 
     const history = getStudentEvents().filter((e) => e.student_id === studentId);
     const dktPrediction = DKTInference.predict(history, studentId);
-    const gapAnalysis = SentenceBERTSkillGapService.analyzeSkillGaps(dktPrediction, targetRole);
+    const gapAnalysis = await SentenceBERTSkillGapService.analyzeSkillGaps(dktPrediction, targetRole);
 
     response.writeHead(200);
     response.end(JSON.stringify(gapAnalysis));
@@ -211,7 +214,7 @@ export async function handleApi(request, response) {
       body += chunk;
     });
 
-    request.on('end', () => {
+    request.on('end', async () => {
       try {
         const payload = JSON.parse(body || '{}');
         const queryText = payload.query || payload.skill || '';
@@ -220,7 +223,7 @@ export async function handleApi(request, response) {
           response.end(JSON.stringify({ error: 'Missing query or skill field in request.' }));
           return;
         }
-        const matchResult = matchSkillSemantics(queryText);
+        const matchResult = await matchSkillSemantics(queryText);
         response.writeHead(200);
         response.end(JSON.stringify(matchResult));
       } catch (err) {
@@ -231,7 +234,173 @@ export async function handleApi(request, response) {
     return;
   }
 
-  // ---------------- 5. DKT Model Training API ----------------
+  // ---------------- 5. AI Career Mentor Chat API ----------------
+  if (pathname === '/api/ai/chat' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => {
+      body += chunk;
+    });
+
+    request.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const studentId = payload.student_id || 's123';
+        const targetRole = payload.target_role || 'swe';
+        const message = payload.message || '';
+        const conversationHistory = payload.conversation_history || [];
+
+        if (!message || message.trim() === '') {
+          response.writeHead(400);
+          response.end(JSON.stringify({ error: 'Message content is required.' }));
+          return;
+        }
+
+        const studentEvents = getStudentEvents().filter((e) => e.student_id === studentId);
+        const chatResponse = await handleMentorChat({
+          studentId,
+          studentEvents,
+          targetRole,
+          message,
+          conversationHistory,
+        });
+
+        response.writeHead(200);
+        response.end(JSON.stringify(chatResponse));
+      } catch (err) {
+        response.writeHead(500);
+        response.end(JSON.stringify({ error: 'Chat processing failed.', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  // ---------------- 6. Adaptive AI Learning Roadmap API ----------------
+  if (pathname === '/api/ai/roadmap' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => {
+      body += chunk;
+    });
+
+    request.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const studentId = payload.student_id || payload.studentId || 's123';
+        const targetCareer = payload.target_career || payload.targetCareer || 'swe';
+        const completedMilestoneIds = payload.completed_milestones || payload.completedMilestoneIds || [];
+        const regenerate = Boolean(payload.regenerate);
+
+        const studentEvents = getStudentEvents().filter((e) => e.student_id === studentId);
+        const roadmap = await generateAdaptiveRoadmap({
+          studentId,
+          studentEvents,
+          targetCareer,
+          completedMilestoneIds,
+          regenerate,
+        });
+
+        response.writeHead(200);
+        response.end(JSON.stringify(roadmap));
+      } catch (err) {
+        response.writeHead(500);
+        response.end(JSON.stringify({ error: 'Roadmap generation failed.', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  if (pathname.startsWith('/api/ai/roadmap') && request.method === 'GET') {
+    const parts = pathname.split('/');
+    let studentId = parts[4] || url.searchParams.get('student_id') || 's123';
+    const targetCareer = url.searchParams.get('target_career') || 'swe';
+
+    try {
+      const studentEvents = getStudentEvents().filter((e) => e.student_id === studentId);
+      const roadmap = await generateAdaptiveRoadmap({
+        studentId,
+        studentEvents,
+        targetCareer,
+      });
+
+      response.writeHead(200);
+      response.end(JSON.stringify(roadmap));
+    } catch (err) {
+      response.writeHead(500);
+      response.end(JSON.stringify({ error: 'Failed to retrieve roadmap.', details: err.message }));
+    }
+    return;
+  }
+
+  // ---------------- 7. AI Code Analysis & Feedback API ----------------
+  if (pathname === '/api/ai/code-analysis' && request.method === 'POST') {
+    let body = '';
+    request.on('data', (chunk) => {
+      body += chunk;
+    });
+
+    request.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const studentId = payload.student_id || payload.studentId || 's123';
+        const language = payload.language || 'python';
+        const problem = payload.problem || 'Binary Tree Maximum Path Sum';
+        const code = payload.code || '';
+        const testCases = payload.test_cases || payload.testCases || [];
+
+        if (!code || code.trim() === '') {
+          response.writeHead(400);
+          response.end(JSON.stringify({ error: 'Code content is required.' }));
+          return;
+        }
+
+        const analysis = await analyzeCodeSubmission({
+          studentId,
+          language,
+          problem,
+          code,
+          testCases,
+        });
+
+        // Feed learning event directly into DKT knowledge tracing persistence
+        const event = {
+          student_id: studentId,
+          skill: analysis.primary_dkt_skill || 'algorithms',
+          activity: 'code_practice',
+          correct: Boolean(analysis.is_correct),
+          difficulty: 'medium',
+          timestamp: new Date().toISOString(),
+          metadata: {
+            language,
+            time_complexity: analysis.time_complexity,
+            code_quality_score: analysis.code_quality_score,
+          },
+        };
+        saveStudentEvent(event);
+
+        // Recompute fresh DKT skill profile
+        const allEvents = getStudentEvents().filter((e) => e.student_id === studentId);
+        const dktProfile = DKTInference.predict(allEvents, studentId);
+
+        response.writeHead(200);
+        response.end(JSON.stringify({
+          success: true,
+          analysis,
+          dkt_telemetry: {
+            event_recorded: true,
+            skill_updated: analysis.primary_dkt_skill,
+            readiness_score: dktProfile.readiness_score,
+            category_mastery: dktProfile.category_mastery,
+            skill_mastery: dktProfile.skills.find((s) => s.id === analysis.primary_dkt_skill),
+          },
+        }));
+      } catch (err) {
+        response.writeHead(500);
+        response.end(JSON.stringify({ error: 'Code analysis failed.', details: err.message }));
+      }
+    });
+    return;
+  }
+
+  // ---------------- 8. DKT Model Training API ----------------
   if (pathname === '/api/ai/train-dkt' && request.method === 'POST') {
     try {
       const devDataPath = join(DATA_DIR, 'development_interactions.json');

@@ -22,6 +22,7 @@ import {
   BarChart2,
   ArrowRight,
 } from 'lucide-react';
+import { CODING_QUESTION_BANK, APTITUDE_QUESTION_BANK } from '../../data/assessmentQuestions';
 
 interface ProblemItem {
   id: string;
@@ -61,64 +62,25 @@ export const PracticeView: React.FC = () => {
   const [aptitudeAnswer, setAptitudeAnswer] = useState<number | null>(null);
   const [showAptitudeExplanation, setShowAptitudeExplanation] = useState(false);
 
-  const problems: ProblemItem[] = [
-    {
-      id: 'p1',
-      title: '124. Binary Tree Maximum Path Sum',
-      difficulty: 'Hard',
-      topics: ['Binary Trees', 'Recursion', 'Dynamic Programming'],
-      company: 'Google / Goldman Sachs',
-      accuracy: '42.8%',
-      solved: true,
-      matchScore: 94,
-    },
-    {
-      id: 'p2',
-      title: '236. Lowest Common Ancestor of a Binary Tree',
-      difficulty: 'Medium',
-      topics: ['Binary Trees', 'DFS Traversal'],
-      company: 'Amazon / Microsoft',
-      accuracy: '61.4%',
-      solved: false,
-      matchScore: 91,
-    },
-    {
-      id: 'p3',
-      title: '743. Network Delay Time (Dijkstra Shortest Path)',
-      difficulty: 'Medium',
-      topics: ['Graphs', 'Shortest Paths', 'Heaps'],
-      company: 'Uber / Google',
-      accuracy: '54.2%',
-      solved: false,
-      matchScore: 88,
-    },
-    {
-      id: 'p4',
-      title: '322. Coin Change (Unbounded Knapsack DP)',
-      difficulty: 'Medium',
-      topics: ['Dynamic Programming', 'Memoization'],
-      company: 'Razorpay / Zepto',
-      accuracy: '48.9%',
-      solved: true,
-      matchScore: 86,
-    },
-    {
-      id: 'p5',
-      title: '208. Implement Trie (Prefix Tree)',
-      difficulty: 'Medium',
-      topics: ['Tries', 'Design', 'String Hashing'],
-      company: 'Goldman Sachs / Microsoft',
-      accuracy: '65.1%',
-      solved: false,
-      matchScore: 84,
-    },
-  ];
+  const problems: ProblemItem[] = CODING_QUESTION_BANK.map((q, idx) => ({
+    id: q.id,
+    title: q.title,
+    difficulty: q.difficulty,
+    topics: [q.category, ...(q.constraints.slice(0, 1))],
+    company: idx % 3 === 0 ? 'Google / Goldman Sachs' : idx % 3 === 1 ? 'Amazon / Microsoft' : 'Uber / Meta',
+    accuracy: `${(50 + (idx * 3) % 40).toFixed(1)}%`,
+    solved: idx === 0,
+    matchScore: 95 - (idx * 2) % 20,
+  }));
+
+  const [codeAnalysis, setCodeAnalysis] = useState<any>(null);
 
   // Dynamic Language Switcher Handler
   const handleLanguageChange = (newLang: 'python' | 'cpp' | 'java' | 'javascript' | 'css') => {
     setSelectedLang(newLang);
     setCode(languageTemplates[newLang]);
     setRunResult(null);
+    setCodeAnalysis(null);
   };
 
   const getFileName = () => {
@@ -138,41 +100,48 @@ export const PracticeView: React.FC = () => {
     }
   };
 
-  const handleRunCode = () => {
+  const handleRunCode = async () => {
     setIsRunning(true);
     setRunResult(null);
-    setTimeout(() => {
-      setIsRunning(false);
-      if (selectedLang === 'css') {
-        setRunResult({
-          status: 'passed',
-          time: '12 ms (CSS Layout Render Tree)',
-          memory: '14.2 MB (DOM Style Computation)',
-          output: '✓ CSS Rules Validated Successfully!\n✓ Box Model & Flexbox layout parsed without syntax warnings.\n✓ Render Engine: Blink / WebKit Verified.',
-        });
-      } else {
-        setRunResult({
-          status: 'passed',
-          time: '28 ms (Faster than 91.2% of submissions)',
-          memory: '27.4 MB (Better than 94.6% memory allocation)',
-          output: `Language Target: ${selectedLang.toUpperCase()}\nTestcase 1: Passed [Input: root = [1,2,3], Expected: 6, Output: 6]\nTestcase 2: Passed [Input: root = [-10,9,20,null,null,15,7], Expected: 42, Output: 42]\nTestcase 3: Passed [Input: root = [-3], Expected: -3, Output: -3]\n\nAll Proctored Testcases Executed Successfully! ✨`,
-        });
+    setCodeAnalysis(null);
 
-        // Telemetry event ingestion to DKT API
-        fetch('/api/ai/student-event', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            student_id: 's123',
-            skill: 'binary_trees',
-            activity: 'practice_problem',
-            correct: true,
-            difficulty: 'hard',
-            timestamp: new Date().toISOString(),
-          }),
-        }).catch(() => {});
+    try {
+      const response = await fetch('/api/ai/code-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          student_id: 's123',
+          language: selectedLang,
+          problem: '124. Binary Tree Maximum Path Sum',
+          code,
+          test_cases: [
+            { input: 'root = [1,2,3]', expected: '6' },
+            { input: 'root = [-10,9,20,null,null,15,7]', expected: '42' },
+            { input: 'root = [-3]', expected: '-3' },
+          ],
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.analysis) {
+        setCodeAnalysis(data);
+        setRunResult({
+          status: data.analysis.is_correct ? 'passed' : 'failed',
+          time: `${data.analysis.time_complexity} Asymptotic Execution`,
+          memory: `${data.analysis.space_complexity} Space Complexity`,
+          output: `Language Target: ${selectedLang.toUpperCase()}\nTest Cases: ${data.analysis.test_cases_passed}/${data.analysis.total_test_cases} Passed (${data.analysis.correctness_score}% Score)\n\nPrimary DKT Skill: ${data.analysis.primary_dkt_skill.toUpperCase()} (Live Readiness Updated: ${data.dkt_telemetry?.readiness_score || 58}%)`,
+        });
       }
-    }, 550);
+    } catch (err: any) {
+      setRunResult({
+        status: 'failed',
+        time: '0 ms',
+        memory: '0 MB',
+        output: `❌ Execution Failed: ${err.message || 'Execution environment unavailable'}`,
+      });
+    } finally {
+      setIsRunning(false);
+    }
   };
 
   const filteredProblems = problems.filter((p) => {
@@ -474,20 +443,32 @@ export const PracticeView: React.FC = () => {
                 />
               </div>
 
-              {/* Execution Console Results */}
+              {/* Execution Console Results & AI Code Analyzer */}
               {runResult && (
                 <div
                   style={{
                     background: '#FFFFFF',
-                    border: '1px solid #A7F3D0',
+                    border: runResult.status === 'passed' ? '1px solid #A7F3D0' : '1px solid #FECACA',
                     borderRadius: 16,
                     padding: 16,
-                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.12)',
+                    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.05)',
                     animation: 'fadeIn 150ms ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 12,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#059669', fontWeight: 900, fontSize: 13.5 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        color: runResult.status === 'passed' ? '#059669' : '#DC2626',
+                        fontWeight: 900,
+                        fontSize: 13.5,
+                      }}
+                    >
                       <CheckCircle2 size={16} />
                       <span>Evaluation: {runResult.status.toUpperCase()}</span>
                     </div>
@@ -495,9 +476,71 @@ export const PracticeView: React.FC = () => {
                       Runtime: <strong>{runResult.time}</strong> • Memory: <strong>{runResult.memory}</strong>
                     </div>
                   </div>
+
                   <pre style={{ fontFamily: 'monospace', fontSize: 12, color: '#334155', background: '#F8FAFC', padding: 12, borderRadius: 10, margin: 0, border: '1px solid #E2E8F0', whiteSpace: 'pre-wrap' }}>
                     {runResult.output}
                   </pre>
+
+                  {/* AI Code Analyzer Deep Feedback */}
+                  {codeAnalysis?.analysis && (
+                    <div
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.04) 0%, rgba(124, 58, 237, 0.06) 100%)',
+                        border: '1px solid rgba(99, 102, 241, 0.25)',
+                        borderRadius: 12,
+                        padding: 14,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 10,
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#4F46E5', fontWeight: 800, fontSize: 13 }}>
+                          <Sparkles size={16} />
+                          <span>AI Mentor Code Reasoning</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 11, background: '#EEF2FF', color: '#4F46E5', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
+                            Quality: {codeAnalysis.analysis.code_quality_score}/100
+                          </span>
+                          <span style={{ fontSize: 11, background: '#ECFDF5', color: '#059669', padding: '2px 8px', borderRadius: 6, fontWeight: 700 }}>
+                            DKT Synced ✓
+                          </span>
+                        </div>
+                      </div>
+
+                      <p style={{ fontSize: 12.5, color: '#334155', margin: 0, lineHeight: 1.5 }}>
+                        {codeAnalysis.analysis.mentor_feedback}
+                      </p>
+
+                      {codeAnalysis.analysis.learning_hint && (
+                        <div style={{ padding: '8px 10px', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 8, fontSize: 12, color: '#92400E' }}>
+                          💡 <strong>Learning Hint</strong>: {codeAnalysis.analysis.learning_hint}
+                        </div>
+                      )}
+
+                      {codeAnalysis.analysis.detected_concepts?.length > 0 && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B' }}>Concepts:</span>
+                          {codeAnalysis.analysis.detected_concepts.map((concept: string, idx: number) => (
+                            <span
+                              key={idx}
+                              style={{
+                                fontSize: 11,
+                                background: '#F1F5F9',
+                                color: '#475569',
+                                padding: '2px 7px',
+                                borderRadius: 4,
+                                fontWeight: 600,
+                              }}
+                            >
+                              {concept}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

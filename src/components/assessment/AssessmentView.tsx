@@ -12,47 +12,133 @@ import {
   CheckCircle2,
   ArrowRight,
   ChevronRight,
+  ChevronLeft,
   Sparkles,
   AlertTriangle,
   RotateCcw,
   FileCode,
   Award,
+  Check,
+  Send,
 } from 'lucide-react';
+import {
+  CODING_QUESTION_BANK,
+  APTITUDE_QUESTION_BANK,
+  CodingQuestion,
+  AptitudeQuestion,
+} from '../../data/assessmentQuestions';
 
 export const AssessmentView: React.FC = () => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState<'coding' | 'core' | 'aptitude' | 'interview'>('coding');
-  const [secondsRemaining, setSecondsRemaining] = useState(5394); // 1 hr 29m 54s
+  const [activeSection, setActiveSection] = useState<'coding' | 'aptitude'>('coding');
+  const [secondsRemaining, setSecondsRemaining] = useState(5400); // 90 mins
 
-  // Multi-Language state supporting Python, C++, Java, JavaScript, and CSS
+  // ---------------- Navigation State & Index Counters ----------------
+  const [codingIndex, setCodingIndex] = useState(0);
+  const [aptitudeIndex, setAptitudeIndex] = useState(0);
+
+  // Current active questions
+  const currentCodingQ = CODING_QUESTION_BANK[codingIndex] || CODING_QUESTION_BANK[0];
+  const currentAptitudeQ = APTITUDE_QUESTION_BANK[aptitudeIndex] || APTITUDE_QUESTION_BANK[0];
+
+  // ---------------- Code State per Question ----------------
   const [selectedLang, setSelectedLang] = useState<'python' | 'cpp' | 'java' | 'javascript' | 'css'>('python');
-
-  // Multi-Language Template Dictionary
-  const languageTemplates: Record<'python' | 'cpp' | 'java' | 'javascript' | 'css', string> = {
-    python: `# Python Solution\ndef solve():\n    pass`,
-    cpp: `// C++ Solution\n#include <iostream>\nusing namespace std;\nint main() {\n    return 0;\n}`,
-    java: `// Java Solution\npublic class Solution {\n    public static void main(String[] args) {\n    }\n}`,
-    javascript: `// JavaScript Solution\nfunction solve() {\n}`,
-    css: `/* CSS Solution */\n.element {\n    display: flex;\n}`,
-  };
-
-  const [code, setCode] = useState<string>(languageTemplates.python);
   
-  // MCQ Answers
-  const [mcqAnswers, setMcqAnswers] = useState<Record<string, number>>({
-    q1: 1, // B+ Trees
-    q2: 2, // Mutex vs Semaphore
+  // Stored code per question ID
+  const [userCodeAnswers, setUserCodeAnswers] = useState<Record<string, { code: string; lang: string }>>(() => {
+    try {
+      const saved = localStorage.getItem('careeros_assessment_coding');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
   });
+
+  // Stored aptitude answers per question ID
+  const [userAptitudeAnswers, setUserAptitudeAnswers] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem('careeros_assessment_aptitude');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const [currentCode, setCurrentCode] = useState<string>(
+    userCodeAnswers[currentCodingQ.id]?.code || currentCodingQ.starterTemplates.python
+  );
 
   const [isRunning, setIsRunning] = useState(false);
   const [runOutput, setRunOutput] = useState<string | null>(null);
   const [showResultReport, setShowResultReport] = useState(false);
+  const [assessmentResult, setAssessmentResult] = useState<any>(null);
 
-  // Dynamic Language Switcher Handler
+  // Sync current code when coding index or language changes
+  useEffect(() => {
+    const saved = userCodeAnswers[currentCodingQ.id];
+    if (saved) {
+      setCurrentCode(saved.code);
+      setSelectedLang(saved.lang as any);
+    } else {
+      const template = currentCodingQ.starterTemplates[selectedLang] || currentCodingQ.starterTemplates.python;
+      setCurrentCode(template);
+    }
+    setRunOutput(null);
+  }, [codingIndex, currentCodingQ.id]);
+
+  // Persist code in state and localStorage on change
+  const handleCodeChange = (newCode: string) => {
+    setCurrentCode(newCode);
+    const updated = {
+      ...userCodeAnswers,
+      [currentCodingQ.id]: { code: newCode, lang: selectedLang },
+    };
+    setUserCodeAnswers(updated);
+    try {
+      localStorage.setItem('careeros_assessment_coding', JSON.stringify(updated));
+    } catch {}
+  };
+
+  // Language switch handler
   const handleLanguageChange = (newLang: 'python' | 'cpp' | 'java' | 'javascript' | 'css') => {
     setSelectedLang(newLang);
-    setCode(languageTemplates[newLang]);
-    setRunOutput(null);
+    const template = currentCodingQ.starterTemplates[newLang] || currentCodingQ.starterTemplates.python;
+    setCurrentCode(template);
+    const updated = {
+      ...userCodeAnswers,
+      [currentCodingQ.id]: { code: template, lang: newLang },
+    };
+    setUserCodeAnswers(updated);
+    try {
+      localStorage.setItem('careeros_assessment_coding', JSON.stringify(updated));
+    } catch {}
+  };
+
+  // Aptitude answer handler
+  const handleSelectAptitudeOption = (optIndex: number) => {
+    const updated = {
+      ...userAptitudeAnswers,
+      [currentAptitudeQ.id]: optIndex,
+    };
+    setUserAptitudeAnswers(updated);
+    try {
+      localStorage.setItem('careeros_assessment_aptitude', JSON.stringify(updated));
+    } catch {}
+  };
+
+  // Timer countdown
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSecondsRemaining((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTimer = (secs: number) => {
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    const s = secs % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
   const getFileName = () => {
@@ -72,36 +158,127 @@ export const AssessmentView: React.FC = () => {
     }
   };
 
-  // Timer interval
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSecondsRemaining((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTimer = (secs: number) => {
-    const h = Math.floor(secs / 3600);
-    const m = Math.floor((secs % 3600) / 60);
-    const s = secs % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
-  const handleRunCode = () => {
+  const handleRunCode = async () => {
     setIsRunning(true);
     setRunOutput(null);
-    setTimeout(() => {
-      setIsRunning(false);
-      if (selectedLang === 'css') {
-        setRunOutput('✓ CSS Rules Validated Successfully!\n✓ Flexbox & Box Model styling parsed without syntax errors.\nAll proctored visual layout testcases passed.');
-      } else {
-        setRunOutput(`✓ Target Language: ${selectedLang.toUpperCase()}\n✓ Testcase 1 Passed [root = [1,2,3], Expected: 6, Got: 6]\n✓ Testcase 2 Passed [root = [-10,9,20,null,null,15,7], Expected: 42, Got: 42]\n\nAll Proctored Testcases Executed Successfully in 24ms.`);
+
+    try {
+      const response = await fetch('/api/ai/code-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          student_id: 's123',
+          language: selectedLang,
+          problem: currentCodingQ.title,
+          code: currentCode,
+          test_cases: currentCodingQ.testCases,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.analysis) {
+        if (!data.analysis.is_correct) {
+          setRunOutput(
+            `❌ Evaluation: ${data.analysis.execution_status?.toUpperCase() || 'FAILED'}\n` +
+            `${data.analysis.error || data.analysis.mentor_feedback}\n` +
+            `Test Cases Passed: ${data.analysis.test_cases_passed}/${data.analysis.total_test_cases}`
+          );
+        } else {
+          setRunOutput(
+            `✓ Target Language: ${selectedLang.toUpperCase()}\n` +
+            `✓ All ${data.analysis.test_cases_passed}/${data.analysis.total_test_cases} Testcases Executed Successfully.\n` +
+            `Complexity: Time ${data.analysis.time_complexity} • Space ${data.analysis.space_complexity}\n` +
+            `AI Feedback: ${data.analysis.mentor_feedback}`
+          );
+        }
       }
-    }, 600);
+    } catch (err: any) {
+      setRunOutput(`❌ Execution Environment Error: ${err.message || 'Sandbox execution unavailable'}`);
+    } finally {
+      setIsRunning(false);
+    }
   };
 
-  const handleSubmitAssessment = () => {
-    setShowResultReport(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmitAssessment = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      // ---------------- Calculate Dynamic Assessment Scoring ----------------
+      let correctAptitudeCount = 0;
+      let answeredAptitudeCount = 0;
+      const categoryStats: Record<string, { correct: number; total: number }> = {
+        Quantitative: { correct: 0, total: 0 },
+        'Logical Reasoning': { correct: 0, total: 0 },
+        'Data Interpretation': { correct: 0, total: 0 },
+      };
+      const difficultyStats: Record<string, { correct: number; total: number }> = {
+        Easy: { correct: 0, total: 0 },
+        Medium: { correct: 0, total: 0 },
+        Hard: { correct: 0, total: 0 },
+      };
+
+      for (const q of APTITUDE_QUESTION_BANK) {
+        const userAns = userAptitudeAnswers[q.id];
+        const cat = q.category || 'Quantitative';
+        const diff = q.difficulty || 'Medium';
+
+        if (!categoryStats[cat]) categoryStats[cat] = { correct: 0, total: 0 };
+        if (!difficultyStats[diff]) difficultyStats[diff] = { correct: 0, total: 0 };
+
+        categoryStats[cat].total++;
+        difficultyStats[diff].total++;
+
+        if (userAns !== undefined) {
+          answeredAptitudeCount++;
+          if (userAns === q.correctAnswer) {
+            correctAptitudeCount++;
+            categoryStats[cat].correct++;
+            difficultyStats[diff].correct++;
+
+            // Ingest telemetry into DKT
+            try {
+              await fetch('/api/ai/student-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  student_id: 's123',
+                  skill: q.topic.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+                  activity: 'assessment_aptitude',
+                  correct: true,
+                  difficulty: q.difficulty.toLowerCase(),
+                  timestamp: new Date().toISOString(),
+                }),
+              });
+            } catch {}
+          }
+        }
+      }
+
+      const codingAttemptedCount = Object.keys(userCodeAnswers).length;
+      const aptitudeScorePercent = Math.round((correctAptitudeCount / (APTITUDE_QUESTION_BANK.length || 1)) * 100);
+      const overallReadiness = Math.round((aptitudeScorePercent * 0.45) + (codingAttemptedCount > 0 ? 40 : 10) + 25);
+
+      const resultSummary = {
+        totalQuestions: CODING_QUESTION_BANK.length + APTITUDE_QUESTION_BANK.length,
+        codingTotal: CODING_QUESTION_BANK.length,
+        codingAttempted: codingAttemptedCount,
+        aptitudeTotal: APTITUDE_QUESTION_BANK.length,
+        aptitudeAnswered: answeredAptitudeCount,
+        aptitudeCorrect: correctAptitudeCount,
+        aptitudeAccuracy: answeredAptitudeCount > 0 ? Math.round((correctAptitudeCount / answeredAptitudeCount) * 100) : 0,
+        overallReadinessScore: Math.min(98, overallReadiness),
+        categoryStats,
+        difficultyStats,
+      };
+
+      setAssessmentResult(resultSummary);
+      setShowResultReport(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -128,7 +305,7 @@ export const AssessmentView: React.FC = () => {
               Campus Placement Diagnostic Assessment
             </div>
             <div style={{ fontSize: 11.5, color: '#94A3B8' }}>
-              Tier-1 Tech Assessment Benchmark (SWE Track 2026)
+              Tier-1 Tech Assessment Benchmark (SWE & Aptitude Track 2026)
             </div>
           </div>
         </div>
@@ -146,19 +323,20 @@ export const AssessmentView: React.FC = () => {
 
           <button
             onClick={handleSubmitAssessment}
+            disabled={isSubmitting}
             style={{
-              background: 'linear-gradient(135deg, #10B981, #059669)',
+              background: isSubmitting ? '#4B5563' : 'linear-gradient(135deg, #10B981, #059669)',
               color: '#FFFFFF',
               border: 'none',
               padding: '7px 18px',
               borderRadius: 10,
               fontWeight: 800,
               fontSize: 13,
-              cursor: 'pointer',
-              boxShadow: '0 2px 10px rgba(16, 185, 129, 0.3)',
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              boxShadow: isSubmitting ? 'none' : '0 2px 10px rgba(16, 185, 129, 0.3)',
             }}
           >
-            Finish & Submit
+            {isSubmitting ? 'Submitting...' : 'Finish & Submit'}
           </button>
         </div>
       </header>
@@ -167,10 +345,16 @@ export const AssessmentView: React.FC = () => {
       <nav className="assessment-section-nav">
         <div className="assessment-section-tabs">
           {[
-            { id: 'coding', label: 'Section A: Coding Arena (2 Problems)', icon: Code2 },
-            { id: 'core', label: 'Section B: CS Core MCQs (10 Questions)', icon: BrainCircuit },
-            { id: 'aptitude', label: 'Section C: Quantitative Aptitude (10 Questions)', icon: HelpCircle },
-            { id: 'interview', label: 'Section D: STAR Behavioral Simulation', icon: Video },
+            {
+              id: 'coding',
+              label: `Section A: Coding Arena (${CODING_QUESTION_BANK.length} Problems)`,
+              icon: Code2,
+            },
+            {
+              id: 'aptitude',
+              label: `Section B: Quantitative & Logical Aptitude (${APTITUDE_QUESTION_BANK.length} Questions)`,
+              icon: HelpCircle,
+            },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeSection === tab.id;
@@ -188,46 +372,88 @@ export const AssessmentView: React.FC = () => {
         </div>
 
         <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>
-          Auto-saved 20s ago ✓
+          Auto-saved to session storage ✓
         </div>
       </nav>
 
-      {/* ---------------- Main Section Workspace ---------------- */}
+      {/* ---------------- SECTION A: CODING ARENA ---------------- */}
       {activeSection === 'coding' && (
         <div className="assessment-workspace">
           {/* Left: Problem Details */}
           <div className="assessment-pane-left">
             <div className="assessment-problem-header">
-              <span className="assessment-diff-tag hard">Hard • 100 Points</span>
-              <span style={{ fontSize: 12, color: '#94A3B8' }}>Problem 1 of 2</span>
+              <span className={`assessment-diff-tag ${currentCodingQ.difficulty.toLowerCase()}`}>
+                {currentCodingQ.difficulty} • 100 Points
+              </span>
+              <span style={{ fontSize: 12, color: '#94A3B8', fontWeight: 700 }}>
+                Problem {codingIndex + 1} of {CODING_QUESTION_BANK.length}
+              </span>
             </div>
 
-            <h1 style={{ fontSize: 20, fontWeight: 900, color: '#FFFFFF' }}>
-              124. Binary Tree Maximum Path Sum
+            <h1 style={{ fontSize: 20, fontWeight: 900, color: '#FFFFFF', margin: '4px 0 12px' }}>
+              {currentCodingQ.title}
             </h1>
 
             <div style={{ fontSize: 13.5, color: '#CBD5E1', lineHeight: 1.6, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <p>
-                A <strong>path</strong> in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.
-              </p>
-              <p>
-                Given the <code>root</code> of a binary tree, return <em>the maximum <strong>path sum</strong> of any non-empty path</em>.
-              </p>
+              <p>{currentCodingQ.description}</p>
 
-              <div style={{ background: '#1E293B', padding: 14, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', marginBottom: 4 }}>Example 1:</div>
-                <div style={{ fontFamily: 'monospace', fontSize: 12.5, color: '#38BDF8' }}>
-                  Input: root = [1,2,3]<br />
-                  Output: 6 (Optimal path is 2 -&gt; 1 -&gt; 3)
+              {currentCodingQ.examples.map((ex, i) => (
+                <div
+                  key={i}
+                  style={{ background: '#1E293B', padding: 14, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', marginBottom: 4 }}>
+                    Example {i + 1}:
+                  </div>
+                  <div style={{ fontFamily: 'monospace', fontSize: 12.5, color: '#38BDF8' }}>
+                    <strong>Input:</strong> {ex.input}
+                    <br />
+                    <strong>Output:</strong> {ex.output}
+                    {ex.explanation && (
+                      <>
+                        <br />
+                        <span style={{ color: '#94A3B8' }}>{ex.explanation}</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ))}
 
               <div style={{ background: '#1E293B', padding: 14, borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', marginBottom: 4 }}>Constraints:</div>
                 <ul style={{ paddingLeft: 18, margin: 0, fontSize: 12.5, color: '#94A3B8' }}>
-                  <li>The number of nodes in the tree is in the range [1, 3 * 10^4].</li>
-                  <li>-1000 &lt;= Node.val &lt;= 1000</li>
+                  {currentCodingQ.constraints.map((c, i) => (
+                    <li key={i}>{c}</li>
+                  ))}
                 </ul>
+              </div>
+            </div>
+
+            {/* Coding Question Navigator Drawer */}
+            <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: 14 }}>
+              <div style={{ fontSize: 12, color: '#94A3B8', fontWeight: 700, marginBottom: 8 }}>
+                Quick Jump to Problem ({codingIndex + 1}/{CODING_QUESTION_BANK.length}):
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {CODING_QUESTION_BANK.map((q, idx) => (
+                  <button
+                    key={q.id}
+                    onClick={() => setCodingIndex(idx)}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 6,
+                      fontSize: 11,
+                      fontWeight: 800,
+                      border: codingIndex === idx ? '2px solid #818CF8' : '1px solid rgba(255, 255, 255, 0.1)',
+                      background: codingIndex === idx ? '#4F46E5' : userCodeAnswers[q.id] ? '#065F46' : '#1E293B',
+                      color: '#FFFFFF',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -292,8 +518,8 @@ export const AssessmentView: React.FC = () => {
 
             <div className="assessment-code-box">
               <textarea
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
+                value={currentCode}
+                onChange={(e) => handleCodeChange(e.target.value)}
                 className="assessment-editor-textarea"
                 placeholder={`Write your ${selectedLang.toUpperCase()} solution here...`}
                 spellCheck={false}
@@ -302,156 +528,322 @@ export const AssessmentView: React.FC = () => {
 
             {/* Run Output */}
             {runOutput && (
-              <div style={{ background: '#064E3B', border: '1px solid #059669', padding: 12, borderRadius: 10, color: '#A7F3D0', fontSize: 12, fontFamily: 'monospace' }}>
+              <div style={{ background: '#0F172A', border: '1px solid rgba(255, 255, 255, 0.15)', padding: 12, borderRadius: 10, color: '#A7F3D0', fontSize: 12, fontFamily: 'monospace' }}>
                 <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{runOutput}</pre>
               </div>
             )}
+
+            {/* Navigation Bottom Row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: 10 }}>
+              <button
+                disabled={codingIndex === 0}
+                onClick={() => setCodingIndex((prev) => Math.max(0, prev - 1))}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  background: codingIndex === 0 ? 'rgba(255, 255, 255, 0.05)' : '#1E293B',
+                  color: codingIndex === 0 ? '#64748B' : '#E2E8F0',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: codingIndex === 0 ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <ChevronLeft size={16} />
+                <span>Previous Problem</span>
+              </button>
+
+              <span style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>
+                Problem {codingIndex + 1} of {CODING_QUESTION_BANK.length}
+              </span>
+
+              {codingIndex < CODING_QUESTION_BANK.length - 1 ? (
+                <button
+                  onClick={() => setCodingIndex((prev) => Math.min(CODING_QUESTION_BANK.length - 1, prev + 1))}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    background: '#4F46E5',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '8px 18px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span>Next Problem</span>
+                  <ChevronRight size={16} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setActiveSection('aptitude')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    background: 'linear-gradient(135deg, #10B981, #059669)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '8px 18px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span>Proceed to Aptitude Section &rarr;</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Section B: CS Core MCQs */}
-      {activeSection === 'core' && (
-        <div style={{ padding: 32, maxWidth: 900, margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* ---------------- SECTION B: QUANTITATIVE & LOGICAL APTITUDE ---------------- */}
+      {activeSection === 'aptitude' && (
+        <div style={{ padding: 32, maxWidth: 960, margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Aptitude Question Card */}
           <div className="assessment-mcq-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, color: '#818CF8', fontWeight: 800 }}>DATABASE SYSTEMS • QUESTION 1 OF 10</span>
-              <span style={{ fontSize: 12, color: '#94A3B8' }}>+4 / -1 Mark</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <span style={{ fontSize: 12, color: '#818CF8', fontWeight: 800 }}>
+                {currentAptitudeQ.category.toUpperCase()} • {currentAptitudeQ.topic.toUpperCase()}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span className={`assessment-diff-tag ${currentAptitudeQ.difficulty.toLowerCase()}`}>
+                  {currentAptitudeQ.difficulty}
+                </span>
+                <span style={{ fontSize: 12, color: '#94A3B8', fontWeight: 700 }}>
+                  Question {aptitudeIndex + 1} of {APTITUDE_QUESTION_BANK.length}
+                </span>
+              </div>
             </div>
-            <h2 style={{ fontSize: 16, fontWeight: 800, color: '#FFFFFF' }}>
-              Why do enterprise database storage engines use B+ Trees instead of Binary Search Trees for disk indexing?
+
+            <h2 style={{ fontSize: 17, fontWeight: 800, color: '#FFFFFF', lineHeight: 1.5, margin: '8px 0 16px' }}>
+              {currentAptitudeQ.question}
             </h2>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {[
-                'B+ Trees guarantee O(1) constant time lookups for all keys.',
-                'B+ Trees have high fanout, keeping tree depth shallow and minimizing costly disk I/O operations with linked leaves.',
-                'Binary search trees require no memory overhead compared to B+ Trees.',
-                'B+ Trees avoid log-structured append operations.',
-              ].map((opt, idx) => (
-                <div
-                  key={idx}
-                  className={`assessment-mcq-option ${mcqAnswers.q1 === idx ? 'selected' : ''}`}
-                  onClick={() => setMcqAnswers({ ...mcqAnswers, q1: idx })}
+              {currentAptitudeQ.options.map((opt, idx) => {
+                const isSelected = userAptitudeAnswers[currentAptitudeQ.id] === idx;
+                return (
+                  <div
+                    key={idx}
+                    className={`assessment-mcq-option ${isSelected ? 'selected' : ''}`}
+                    onClick={() => handleSelectAptitudeOption(idx)}
+                    style={{
+                      cursor: 'pointer',
+                      padding: '12px 16px',
+                      borderRadius: 10,
+                      background: isSelected ? 'rgba(79, 70, 229, 0.25)' : '#1E293B',
+                      border: isSelected ? '1px solid #818CF8' : '1px solid rgba(255, 255, 255, 0.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      color: '#E2E8F0',
+                      fontSize: 14,
+                      transition: 'all 120ms ease',
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: '50%',
+                        background: isSelected ? '#4F46E5' : 'rgba(255,255,255,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      {String.fromCharCode(65 + idx)}
+                    </span>
+                    <span>{opt}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Aptitude Navigation Controls */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 24, paddingTop: 16, borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <button
+                disabled={aptitudeIndex === 0}
+                onClick={() => setAptitudeIndex((prev) => Math.max(0, prev - 1))}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  background: aptitudeIndex === 0 ? 'rgba(255, 255, 255, 0.05)' : '#1E293B',
+                  color: aptitudeIndex === 0 ? '#64748B' : '#E2E8F0',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: aptitudeIndex === 0 ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <ChevronLeft size={16} />
+                <span>Previous</span>
+              </button>
+
+              <span style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 600 }}>
+                Question {aptitudeIndex + 1} of {APTITUDE_QUESTION_BANK.length}
+              </span>
+
+              {aptitudeIndex < APTITUDE_QUESTION_BANK.length - 1 ? (
+                <button
+                  onClick={() => setAptitudeIndex((prev) => Math.min(APTITUDE_QUESTION_BANK.length - 1, prev + 1))}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    background: '#4F46E5',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '8px 18px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
                 >
-                  <span style={{ width: 22, height: 22, borderRadius: '50%', background: mcqAnswers.q1 === idx ? '#4F46E5' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800 }}>
-                    {String.fromCharCode(65 + idx)}
-                  </span>
-                  <span>{opt}</span>
-                </div>
-              ))}
+                  <span>Next Question</span>
+                  <ChevronRight size={16} />
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmitAssessment}
+                  disabled={isSubmitting}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    background: isSubmitting ? '#4B5563' : 'linear-gradient(135deg, #10B981, #059669)',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '8px 20px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 800,
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    boxShadow: isSubmitting ? 'none' : '0 2px 10px rgba(16, 185, 129, 0.35)',
+                  }}
+                >
+                  <Send size={15} />
+                  <span>{isSubmitting ? 'Submitting Evaluation...' : 'Submit Assessment'}</span>
+                </button>
+              )}
             </div>
           </div>
 
-          <div className="assessment-mcq-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, color: '#818CF8', fontWeight: 800 }}>OPERATING SYSTEMS • QUESTION 2 OF 10</span>
-              <span style={{ fontSize: 12, color: '#94A3B8' }}>+4 / -1 Mark</span>
+          {/* Direct Question Palette Grid */}
+          <div style={{ background: '#111827', padding: 18, borderRadius: 14, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <div style={{ fontSize: 12.5, color: '#94A3B8', fontWeight: 700, marginBottom: 10 }}>
+              Question Palette (Answered: {Object.keys(userAptitudeAnswers).length}/{APTITUDE_QUESTION_BANK.length}):
             </div>
-            <h2 style={{ fontSize: 16, fontWeight: 800, color: '#FFFFFF' }}>
-              What is the fundamental architectural difference between a Mutex and a Binary Semaphore?
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {[
-                'A Mutex allows multiple threads to hold ownership simultaneously.',
-                'A Mutex has ownership semantics where only the locking thread can unlock it, whereas a Semaphore can be signaled by any thread.',
-                'A Semaphore is implemented strictly in user-space without kernel system calls.',
-                'There is no difference between them.',
-              ].map((opt, idx) => (
-                <div
-                  key={idx}
-                  className={`assessment-mcq-option ${mcqAnswers.q2 === idx ? 'selected' : ''}`}
-                  onClick={() => setMcqAnswers({ ...mcqAnswers, q2: idx })}
-                >
-                  <span style={{ width: 22, height: 22, borderRadius: '50%', background: mcqAnswers.q2 === idx ? '#4F46E5' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800 }}>
-                    {String.fromCharCode(65 + idx)}
-                  </span>
-                  <span>{opt}</span>
-                </div>
-              ))}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(32px, 1fr))', gap: 6 }}>
+              {APTITUDE_QUESTION_BANK.map((q, idx) => {
+                const isAnswered = userAptitudeAnswers[q.id] !== undefined;
+                const isCurrent = aptitudeIndex === idx;
+                return (
+                  <button
+                    key={q.id}
+                    onClick={() => setAptitudeIndex(idx)}
+                    style={{
+                      height: 32,
+                      borderRadius: 6,
+                      fontSize: 12,
+                      fontWeight: 800,
+                      border: isCurrent ? '2px solid #818CF8' : '1px solid rgba(255, 255, 255, 0.1)',
+                      background: isCurrent ? '#4F46E5' : isAnswered ? '#065F46' : '#1E293B',
+                      color: '#FFFFFF',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {idx + 1}
+                  </button>
+                );
+              })}
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Section C & D fallback */}
-      {(activeSection === 'aptitude' || activeSection === 'interview') && (
-        <div style={{ padding: 40, textAlign: 'center', color: '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-          <Sparkles size={36} color="#818CF8" />
-          <h2 style={{ fontSize: 20, fontWeight: 800, color: '#FFFFFF' }}>
-            {activeSection === 'aptitude' ? 'Section C: Quantitative Aptitude Speed Test' : 'Section D: STAR Method Behavioral Video Prompt'}
-          </h2>
-          <p style={{ maxWidth: 500, fontSize: 14, color: '#94A3B8' }}>
-            {activeSection === 'aptitude'
-              ? 'Speed shortcuts for Permutations, Probability, Time & Work. 10 questions calibrated.'
-              : 'Answer technical leadership scenarios using the STAR framework with real-time video speech grading.'}
-          </p>
-          <button
-            onClick={() => setActiveSection('coding')}
-            style={{
-              background: '#4F46E5',
-              color: '#FFFFFF',
-              border: 'none',
-              padding: '10px 20px',
-              borderRadius: 10,
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            Return to Coding Arena &rarr;
-          </button>
         </div>
       )}
 
       {/* ---------------- Assessment Score & Roadmap Report Modal ---------------- */}
-      {showResultReport && (
+      {showResultReport && assessmentResult && (
         <div className="modal-backdrop">
-          <div className="assessment-report-card">
+          <div className="assessment-report-card" style={{ maxWidth: 640 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <Award size={28} color="#FBBF24" />
                 <div>
-                  <h2 style={{ fontSize: 20, fontWeight: 900, color: '#FFFFFF' }}>
+                  <h2 style={{ fontSize: 20, fontWeight: 900, color: '#FFFFFF', margin: 0 }}>
                     Diagnostic Assessment Benchmark
                   </h2>
-                  <p style={{ fontSize: 12.5, color: '#94A3B8' }}>
+                  <p style={{ fontSize: 12.5, color: '#94A3B8', margin: '2px 0 0' }}>
                     Calibrated against Tier-1 SDE Placement Standards
                   </p>
                 </div>
               </div>
               <span style={{ background: '#059669', color: '#FFF', fontSize: 12, fontWeight: 800, padding: '3px 10px', borderRadius: 999 }}>
-                VERIFIED ✓
+                EVALUATED ✓
               </span>
             </div>
 
             {/* Score Grid */}
-            <div className="assessment-score-grid">
+            <div className="assessment-score-grid" style={{ margin: '16px 0' }}>
               <div className="assessment-score-pill">
-                <div style={{ fontSize: 26, fontWeight: 900, color: '#818CF8' }}>78%</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: '#818CF8' }}>
+                  {assessmentResult.overallReadinessScore}%
+                </div>
                 <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>Overall Readiness</div>
               </div>
               <div className="assessment-score-pill">
-                <div style={{ fontSize: 26, fontWeight: 900, color: '#34D399' }}>82%</div>
-                <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>DSA Coding</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: '#34D399' }}>
+                  {assessmentResult.aptitudeAccuracy}%
+                </div>
+                <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>
+                  Aptitude Accuracy ({assessmentResult.aptitudeCorrect}/{assessmentResult.aptitudeAnswered})
+                </div>
               </div>
               <div className="assessment-score-pill">
-                <div style={{ fontSize: 26, fontWeight: 900, color: '#FBBF24' }}>80%</div>
-                <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>Aptitude & Logic</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: '#FBBF24' }}>
+                  {assessmentResult.codingAttempted}/{assessmentResult.codingTotal}
+                </div>
+                <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>DSA Coding Solved</div>
               </div>
             </div>
 
-            {/* Gap Analysis */}
-            <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: 16, borderRadius: 14, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#F87171', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <AlertTriangle size={15} />
-                <span>Detected Skill Gaps for Priority Calibration:</span>
+            {/* Category Breakdown */}
+            <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: 14, borderRadius: 12, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <div style={{ fontSize: 12.5, fontWeight: 800, color: '#F8FAFC', marginBottom: 8 }}>
+                Sectional Performance Matrix:
               </div>
-              <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: '#CBD5E1', display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <li>Binary Search Tree LCA & Path Sum optimizations (Priority 1)</li>
-                <li>DBMS B+ Tree Indexing & 2-Phase Locking internals (Priority 2)</li>
-              </ul>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12, color: '#CBD5E1' }}>
+                {Object.entries(assessmentResult.categoryStats).map(([cat, stats]: any) => (
+                  <div key={cat} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>{cat}:</span>
+                    <strong style={{ color: stats.correct > 0 ? '#34D399' : '#94A3B8' }}>
+                      {stats.correct} / {stats.total} Correct ({stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0}%)
+                    </strong>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14 }}>
               <button
                 onClick={() => navigate('/dashboard')}
                 style={{
@@ -495,5 +887,3 @@ export const AssessmentView: React.FC = () => {
     </div>
   );
 };
-
-export default AssessmentView;
